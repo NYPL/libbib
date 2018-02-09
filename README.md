@@ -1,4 +1,7 @@
-# libbib
+libbib
+===
+
+![libbib logo](http://statethatiamin.onlythisrose.com/libbibsmall.png)
 
 ## Description
 An R package providing functions for validating and normalizing
