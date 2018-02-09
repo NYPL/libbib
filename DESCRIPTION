@@ -11,6 +11,8 @@ Description: Provides functions for validating and normalizing bibliographic
    codes such as ISBN, ISSN, LCCN, and OCLC.
 License: MIT + file LICENSE
 LazyData: TRUE
+Imports:
+    stringr
 Suggests:
     assertr,
     testthat,

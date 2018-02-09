@@ -30,7 +30,7 @@ get_isbn_10_check_digit <- function(x){
   first9 <- lapply(strsplit(substr(x, 1, 9), ""), as.numeric)
   rem <- unlist(lapply(lapply(first9, function(x) x*(10:2)), sum))
   should.be <- (11 - (rem %% 11)) %% 11
-  ifelse(should.be==10, "X", should.be)
+  ifelse(should.be==10, "X", as.character(should.be))
 }
 attr(get_isbn_10_check_digit, "assertr_vectorized") <- TRUE
 
@@ -41,7 +41,7 @@ attr(get_isbn_10_check_digit, "assertr_vectorized") <- TRUE
 #' Takes a string representation of an ISBN 10 and verifies that check digit
 #' checks out
 #'
-#' @param x A string of or 10 digits or nine digits with terminal "X"
+#' @param x A string of 10 digits or 9 digits with terminal "X"
 #'
 #' @param error.is.false return false if error instead of throwing error
 #'
@@ -61,6 +61,7 @@ check_isbn_10_check_digit <- function(x, error.is.false=FALSE){
     stop("Input must be a character string")
   }
   if(error.is.false){
+    # we can do better
     x[nchar(x)!=10] <- "0124915401" # invalid isbn 10
   }
   if(sum(!(nchar(x[!is.na(x)])==10))>0){
@@ -108,6 +109,186 @@ is_valid_isbn_10 <- function(x, lower.x.allowed=TRUE){
   return(ret)
 }
 attr(is_valid_isbn_10, "assertr_vectorized") <- TRUE
+
+
+
+
+
+
+
+
+
+
+
+#' Attempt to enforce validity and canonical form to ISBN 10
+#'
+#' Takes a string representation of an ISBN 10. Strips all non-digit
+#' or "X" characters and checks if it is valid (whether the
+#' check digit works out, etc). User can specify whether "aggresive"
+#' measures should be taken to salvage the malformed ISBN 10 string.
+#'
+#' @param x A string of or 10 digits or nine digits with terminal "X"
+#' @param aggresive A logical indicating whether aggresive measures
+#'                      should be taken to try to get the "ISBN 10"
+#'                      into a valid form. See "Details" for more info
+#'
+#' @details If \code{aggresive} is TRUE, aggresive measures are taken to
+#' try to salvage the malformed ISBN 10 string. If the ISBN 10, for example,
+#' is 9 digits, and either adding an "X" to the end, or leading "0"s fix it,
+#' this function will return the salvaged ISBN 10
+#'
+#' @return Returns TRUE if checks pass, FALSE if not, and NA if NA
+#' @examples
+#'
+#' is_valid_isbn_10("012491540X")  # TRUE
+#'
+#' # vectorized
+#' is_valid_isbn_10(c("012491540X", "9004037812"))  # TRUE FALSE
+#' is_valid_isbn_10(c("012491540X", "hubo un tiempo"))  # TRUE FALSE
+#'
+#' @export
+normalize_isbn_10 <- function(x, aggresive=TRUE){
+  if(class(x)!="character")
+    x <- as.character(x)
+  x <- toupper(x)
+  x <- gsub("[^\\d|X]", "", x, perl=TRUE)
+  if(all(is_valid_isbn_10(x)))
+    return(x)
+
+  if(aggresive){
+    will_padding_zeros_fix_it <- function(x){
+      ifelse(nchar(x)==9 & is_valid_isbn_10(stringr::str_pad(x, 10, "left", "0")), TRUE, FALSE)
+    }
+
+    will_adding_an_X_fix_it <- function(x){
+      ifelse(nchar(x)==9 & get_isbn_10_check_digit(x)=="X", TRUE, FALSE)
+    }
+
+    will_cutting_in_half_fix_it <- function(x){
+      ifelse(nchar)
+    }
+
+    thenines <- x[nchar(x)==9 & !is.na(x)]
+    x[nchar(x)==9 & !is.na(x)] <- ifelse(will_padding_zeros_fix_it(thenines),
+                                         stringr::str_pad(thenines, 10, "left", "0"),
+                                         thenines)
+
+    thenines <- x[nchar(x)==9 & !is.na(x)]
+    x[nchar(x)==9 & !is.na(x)] <- ifelse(will_adding_an_X_fix_it(thenines),
+                                         sprintf("%sX", thenines),
+                                         thenines)
+  }
+
+  # maybe shouldn't return NA if couldn't be salvaged?
+  return(ifelse(is_valid_isbn_10(x), x, NA))
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#' Get ISSN check digit
+#'
+#' Takes a string representation of an ISSN
+#' and returns the check digit that satisfies the necessary condition.
+#' It can take a 8 digit string (and ignore the already extant check digit)
+#' or a 7 digit string (without the last digit)
+#'
+#' @param x A string of 7 or 8 digits
+#' @param allow.hyphens A logical indicating whether the hyphen
+#'     separator should be allowed
+#'
+#' @return Returns the character check digit that satifies the
+#'         mod 11 condition. Returns "X" if 10. Returns NA if input is NA
+#' @examples
+#'
+#' get_issn_check_digit("03785955")
+#'
+#' get_issn_check_digit("2434-561X", allow.hyphens=TRUE)
+#'
+#' # nine digit string
+#' get_issn_check_digit("0378595")
+#'
+#' # vectorized
+#' get_issn_check_digit(c("0378595", "2434561X", NA))
+#'
+#' @export
+get_issn_check_digit <- function(x, allow.hyphens=FALSE){
+  if(class(x)!="character")
+    stop("Input must be a character string")
+  if(allow.hyphens)
+    x <- gsub("-", "", x)
+  if(sum(!(nchar(x[!is.na(x)]) %in% c(7, 8)))>0)
+    stop("Input must be either 7 or 8 characters")
+  first7 <- lapply(strsplit(substr(x, 1, 7), ""), as.numeric)
+  rem <- unlist(lapply(lapply(first7, function(x) x*(8:2)), sum))
+  should.be <- (11 - (rem %% 11)) %% 11
+  ifelse(should.be==10, "X", as.character(should.be))
+}
+attr(get_issn_check_digit, "assertr_vectorized") <- TRUE
+
+
+
+
+
+#' Check the check digit of an ISSN
+#'
+#' Takes a string representation of an ISSN and verifies that check digit
+#' checks out
+#'
+#' @param x A string of 8 digits or 7 digits with terminal "X"
+#' @param allow.hyphens A logical indicating whether the hyphen
+#'     separator should be allowed
+#' @param error.is.false return false if error instead of throwing error
+#'
+#' @return Returns TRUE if check passes, FALSE if not, and NA if NA
+#' @examples
+#'
+#' check_issn_check_digit("2434561X")  # TRUE
+#'
+#' # vectorized
+#' check_issn_check_digit(c("03785955", "2434561X", NA)  # TRUE TRUE NA
+#' check_issn_check_digit(c("03785955", "2434-561X", NA),
+#'                        allow.hyphens=TRUE)  # TRUE TRUE NA
+#'
+#' @export
+check_issn_check_digit <- function(x, allow.hyphens=FALSE, error.is.false=FALSE){
+  if(class(x)!="character"){
+    if(error.is.false)
+      return(rep(FALSE, length(x)))
+    stop("Input must be a character string")
+  }
+  if(error.is.false){
+    # we can do better
+    x[nchar(x)!=8] <- "0378595X" # invalid issn
+  }
+  if(allow.hyphens)
+    x <- gsub("-", "", x)
+  if(sum(!(nchar(x[!is.na(x)])==8))>0){
+    stop("Input must be 8 characters")
+  }
+  check.digit <- substr(x, 8, 8)
+  should.be <- get_issn_check_digit(x, allow.hyphens=allow.hyphens)
+  ifelse(should.be==toupper(check.digit), TRUE, FALSE)
+}
+attr(check_issn_check_digit, "assertr_vectorized") <- TRUE
+
+
+
+
+
+
+
 
 
 
