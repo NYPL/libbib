@@ -1,0 +1,21 @@
+Package: libbib
+Type: Package
+Title: Verification and Normalization of Various Bibliographic Codes
+Version: 0.1.0
+Authors@R: person("Tony", "Fischetti",
+             email="tony.fischetti@gmail.com",
+             role=c("aut", "cre"))
+Author: Tony Fischetti
+Maintainer: Tony Fischetti <tony.fischetti@gmail.com>
+Description: Provides functions for validating and normalizing bibliographic
+   codes such as ISBN, ISSN, LCCN, and OCLC.
+License: MIT + file LICENSE
+LazyData: TRUE
+Suggests:
+    assertr,
+    testthat,
+    knitr,
+    magrittr
+VignetteBuilder: knitr
+Encoding: UTF-8
+RoxygenNote: 6.0.1

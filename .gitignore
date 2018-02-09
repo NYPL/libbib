@@ -1,0 +1,25 @@
+packrat/lib*/
+.Rhistory
+.DS_Store
+.Rproj.user
+.Rproj
+.Rapp.history
+.RData
+.Ruserdata
+
+recent_documentation.pdf
+
+# Object files
+*.o
+# Libraries
+*.lib
+*.a
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
+# Executables
+*.exe
+*.out
+*.app
