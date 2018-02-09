@@ -1,7 +1,7 @@
 # libbib
 
 ## Description
-An R package Providing functions for validating and normalizing
+An R package providing functions for validating and normalizing
 bibliographic codes such as ISBN, ISSN, LCCN, and OCLC
 
 ## Functions
@@ -10,4 +10,5 @@ bibliographic codes such as ISBN, ISSN, LCCN, and OCLC
 - `is_valid_isbn_10`
 
 
-# THIS IS A STUB. IN EARLY ACTIVE DEVELOPMENT
+
+## THIS IS A STUB. IN EARLY ACTIVE DEVELOPMENT
