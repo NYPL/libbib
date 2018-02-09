@@ -7,7 +7,7 @@
 check_isbn_10_check_digit(x, error.is.false = FALSE)
 }
 \arguments{
-\item{x}{A string of or 10 digits or nine digits with terminal "X"}
+\item{x}{A string of 10 digits or 9 digits with terminal "X"}
 
 \item{error.is.false}{return false if error instead of throwing error}
 }
