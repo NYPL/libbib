@@ -134,6 +134,20 @@ test_that("normalize_isbn_10() succeeds properly", {
   expect_equal(normalize_isbn_10(EX.hairy.isbn.10s, aggresive=FALSE),
                c("012491540X", NA, "9004037810", NA,
                  NA, NA, NA, NA, NA, NA))
+  expect_equal(normalize_isbn_10("012491540x"),
+               "012491540X")
+  expect_equal(normalize_isbn_10("012491540x xe32ea"),
+               "012491540X")
+  expect_equal(normalize_isbn_10("012491540x", pretty=TRUE),
+               "0-124-91540-X")
+  expect_equal(normalize_isbn_10("012491540x", convert.to.isbn.13=TRUE),
+               "9780124915404")
+  expect_equal(normalize_isbn_10("012491540x", convert.to.isbn.13=TRUE, pretty=TRUE),
+               "978-0-12-491540-4")
+  expect_equal(normalize_isbn_10(c("513213012491540x", "012491540x", NA)),
+               c("012491540X", "012491540X", NA))
+  expect_equal(normalize_isbn_10(c("513213012491540x", "012491540x", NA), aggresive=FALSE),
+               c(NA, "012491540X", NA))
   expect_equal(normalize_isbn_10(NA), as.character(NA))
 })
 
@@ -239,27 +253,27 @@ test_that("is_valid_isbn_13() fails properly", {
 
 # convert_to_isbn_13
 test_that("convert_to_isbn_13() succeeds properly", {
-  expect_equal(convert_to_ISBN_13(c("012491540X", "9004037810")),
+  expect_equal(convert_to_isbn_13(c("012491540X", "9004037810")),
                                   c("9780124915404", "9789004037816"))
-  expect_equal(convert_to_ISBN_13(c("012491540X", "9004037810"), pretty=TRUE),
+  expect_equal(convert_to_isbn_13(c("012491540X", "9004037810"), pretty=TRUE),
                c("978-0-12-491540-4", "978-9-00-403781-6"))
-  expect_equal(convert_to_ISBN_13(c("012491540X", "9004037810", NA)),
+  expect_equal(convert_to_isbn_13(c("012491540X", "9004037810", NA)),
                c("9780124915404", "9789004037816", NA))
-  expect_equal(convert_to_ISBN_13("0124915401", errors.as.nas=TRUE),
+  expect_equal(convert_to_isbn_13("0124915401", errors.as.nas=TRUE),
                c(NA))
-  expect_equal(convert_to_ISBN_13(NA, errors.as.nas=TRUE),
+  expect_equal(convert_to_isbn_13(NA, errors.as.nas=TRUE),
                as.character(c(NA)))
-  expect_equal(convert_to_ISBN_13("9780124915404", skip.validity.check=TRUE),
+  expect_equal(convert_to_isbn_13("9780124915404", skip.validity.check=TRUE),
                "9789780124915")
-  expect_equal(convert_to_ISBN_13(NA, skip.validity.check=TRUE),
+  expect_equal(convert_to_isbn_13(NA, skip.validity.check=TRUE),
                as.character(c(NA)))
 
 })
 
 test_that("convert_to_isbn_13() fails properly", {
-  expect_error(convert_to_ISBN_13("0124915401"),
+  expect_error(convert_to_isbn_13("0124915401"),
                "Invalid ISBN 10 detected")
-  expect_error(convert_to_ISBN_13(123),
+  expect_error(convert_to_isbn_13(123),
                "Input must be a character string")
 })
 

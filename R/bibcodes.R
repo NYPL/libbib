@@ -163,32 +163,41 @@ attr(is_valid_isbn_10, "assertr_vectorized") <- TRUE
 #' @param aggresive A logical indicating whether aggresive measures
 #'                      should be taken to try to get the "ISBN 10"
 #'                      into a valid form. See "Details" for more info
+#' @param convert.to.isbn.13 A logical indication whether the ISBN 10
+#'                           should be converted into an ISBN 13
+#' @param pretty A logical indicating whether the ISBN should be
+#'               prettily hyphenated
 #'
 #' @details If \code{aggresive} is TRUE, aggresive measures are taken to
 #' try to salvage the malformed ISBN 10 string. If the ISBN 10, for example,
 #' is 9 digits, and either adding an "X" to the end, or leading "0"s fix it,
-#' this function will return the salvaged ISBN 10  #### MORE!!!!
+#' this function will return the salvaged ISBN 10. If the ISBN 10 has
+#' garbage digits/characters in the front and has an "X" check digit,
+#' it will return the salvaged ISBN 10.
+#' #### MORE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #'
 #' @return Returns TRUE if checks pass, FALSE if not, and NA if NA
 #' @examples
 #'
-#' is_valid_isbn_10("012491540X")  # TRUE
-#'
-#' # vectorized
-#' is_valid_isbn_10(c("012491540X", "9004037812"))      # TRUE FALSE
-#' is_valid_isbn_10(c("012491540X", "hubo un tiempo"))  # TRUE FALSE
+#' normalize_isbn_10("012491540x")                    # "012491540X"
+#' normalize_isbn_10("012491540x xe32ea")             # "012491540X"
+#' normalize_isbn_10("012491540x", pretty=TRUE)       # "0-124-91540-X"
+#' normalize_isbn_10("012491540x", convert.to.isbn.13=TRUE)
+#' # "9780124915404"
+#' normalize_isbn_10("012491540x", convert.to.isbn.13=TRUE, pretty=TRUE)
+#' # "978-0-12-491540-4"
+#' normalize_isbn_10("513213012491540x")              # "012491540X"
 #'
 #' @export
-normalize_isbn_10 <- function(x, aggresive=TRUE){
+normalize_isbn_10 <- function(x, aggresive=TRUE, convert.to.isbn.13=FALSE, pretty=FALSE){
   if(all(is.na(x))) return(as.character(x))
   if(class(x)!="character")
     x <- as.character(x)
   x <- toupper(x)
   x <- gsub("[^\\d|X]", "", x, perl=TRUE)
   x <- gsub("X(.+$)", "\\1", x, perl=TRUE)
-  if(all(is_valid_isbn_10(x)))
-    return(x)
-  if(aggresive){
+  is.all.valid <- all(is_valid_isbn_10(x))
+  if(aggresive && !is.all.valid){
     will_padding_zeros_fix_it <- function(x){
       ifelse(nchar(x)==9 & is_valid_isbn_10(stringr::str_pad(x, 10, "left", "0")), TRUE, FALSE)
     }
@@ -198,25 +207,52 @@ normalize_isbn_10 <- function(x, aggresive=TRUE){
     will_the_first_10_do <- function(x){
       ifelse(nchar(x)>10 & is_valid_isbn_10(substr(x, 1, 10)), TRUE, FALSE)
     }
+    will_the_hiddens_do <- function(x){
+      ifelse(nchar(x)>10 & is_valid_isbn_10(gsub("^.*?(\\d{9}X).*$", "\\1",
+                                                 x, perl=TRUE)), TRUE, FALSE)
+    }
     thenines <- x[nchar(x)==9 & !is.na(x)]
-    x[nchar(x)==9 & !is.na(x)] <- ifelse(will_padding_zeros_fix_it(thenines),
-                                         stringr::str_pad(thenines, 10, "left", "0"),
-                                         thenines)
+    if(length(thenines)>0){
+      x[nchar(x)==9 & !is.na(x)] <- ifelse(will_padding_zeros_fix_it(thenines),
+                                           stringr::str_pad(thenines, 10, "left", "0"),
+                                           thenines)
+    }
     thenines <- x[nchar(x)==9 & !is.na(x)]
-    x[nchar(x)==9 & !is.na(x)] <- ifelse(will_adding_an_X_fix_it(thenines),
-                                         sprintf("%sX", thenines),
-                                         thenines)
+    if(length(thenines)>0){
+      x[nchar(x)==9 & !is.na(x)] <- ifelse(will_adding_an_X_fix_it(thenines),
+                                           sprintf("%sX", thenines),
+                                           thenines)
+    }
     thebig <- x[nchar(x)>10 & !is.na(x)]
-    x[nchar(x)>10 & !is.na(x)] <- ifelse(will_the_first_10_do(thebig),
-                                         substr(thebig, 1, 10),
-                                         thebig)
+    if(length(thebig)){
+      x[nchar(x)>10 & !is.na(x)] <- ifelse(will_the_first_10_do(thebig),
+                                           substr(thebig, 1, 10),
+                                           thebig)
+    }
+    thehiddens <- x[grepl("\\d{9}X", x) & !is.na(x)]
+    if(length(thehiddens)){
+      x[grepl("\\d{9}X", x) & !is.na(x)] <- ifelse(will_the_hiddens_do(thehiddens),
+                                                   gsub("^.*?(\\d{9}X).*$", "\\1",
+                                                        x, perl=TRUE),
+                                                   thehiddens)
+    }
   }
   # maybe shouldn't return NA if couldn't be salvaged?
-  return(ifelse(is_valid_isbn_10(x), x, NA))
+  ret <- ifelse(is_valid_isbn_10(x), x, NA)
+  if(convert.to.isbn.13)
+    return(convert_to_isbn_13(ret, pretty=pretty))
+  if(pretty){
+    nonnas <- !is.na(ret)
+    these <- ret[nonnas]
+    ret[nonnas] <- sprintf("%s-%s-%s-%s", substr(these, 1, 1),
+                           substr(these, 2, 4), substr(these, 5, 9),
+                           substr(these, 10, 10))
+  }
+  return(ret)
 }
 
-# TO THIS!!!! add "pretty" and "convert.to.13" options
-# and examples
+
+# also add functionality to find an "X" and look 9 digits behind
 
 # ------------------------------------------ #
 
@@ -365,15 +401,15 @@ attr(is_valid_isbn_13, "assertr_vectorized") <- TRUE
 #' @return Returns ISBN 13 as a string
 #' @examples
 #'
-#' convert_to_ISBN_13("012491540X")                # 9780124915404
-#' convert_to_ISBN_13("012491540X", pretty=TRUE)   # 978-0-12-491540-4
+#' convert_to_isbn_13("012491540X")                # 9780124915404
+#' convert_to_isbn_13("012491540X", pretty=TRUE)   # 978-0-12-491540-4
 #'
 #' # vectorized
-#' convert_to_ISBN_13(c("012491540X", "9004037810"), pretty=TRUE)
+#' convert_to_isbn_13(c("012491540X", "9004037810"), pretty=TRUE)
 #' # "978-0-12-491540-4" "978-9-00-403781-6"
 #'
 #' @export
-convert_to_ISBN_13 <- function(x, skip.validity.check=FALSE,
+convert_to_isbn_13 <- function(x, skip.validity.check=FALSE,
                                errors.as.nas=FALSE, pretty=FALSE){
   if(all(is.na(x))) return(as.character(x))
   if(class(x)!="character"){
@@ -394,12 +430,9 @@ convert_to_ISBN_13 <- function(x, skip.validity.check=FALSE,
   if(pretty){
     nonnas <- !is.na(newisbn13)
     these <- newisbn13[nonnas]
-    newisbn13[nonnas] <- sprintf("%s-%s-%s-%s-%s",
-                                 substr(these, 1, 3),
-                                 substr(these, 4, 4),
-                                 substr(these, 5, 6),
-                                 substr(these, 7, 12),
-                                 substr(these, 13, 13))
+    newisbn13[nonnas] <- sprintf("%s-%s-%s-%s-%s", substr(these, 1, 3),
+                                 substr(these, 4, 4), substr(these, 5, 6),
+                                 substr(these, 7, 12), substr(these, 13, 13))
   }
   return(newisbn13)
 }
@@ -520,6 +553,6 @@ check_issn_check_digit <- function(x, allow.hyphens=TRUE, errors.as.false=FALSE)
   return(ret)
 }
 
-# is valid ISSN
+# is valid ISSN (assertr vectorize it)
 # normalize ISSN
 

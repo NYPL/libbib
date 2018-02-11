@@ -12,8 +12,8 @@ To the end of speed and efficiency, carefull consideration is taken
 to exploit vectorized functions in the code.
 INCLUDE TIME EXAMPLE
 
-As for robustness, this package is well tested, with over 90
-automated tests, at time of writing (*update this*)
+As for robustness, this package is well tested, with over 100
+automated tests, at time of writing (*keep up to date*)
 
 ## Functions
 ### ISBNs
