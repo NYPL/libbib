@@ -3,12 +3,18 @@
 REGEX.ISBN.10.9 <- "^(\\d{9,10}|\\d{9}[xX])$"
 REGEX.ISBN.10.flex <- "^\\d{9}(x|X|\\d)$"
 REGEX.ISBN.10 <- "^\\d{9}(X|\\d)$"
+
 REGEX.ISBN.13.12 <- "^\\d{12,13}$"
+REGEX.ISBN.13 <- "^\\d{13}$"
 
 REGEX.ISSN.8.7 <- "^(\\d{7,8}|\\d{7}[xX])$"
 REGEX.ISSN.flex <- "^\\d{7}(x|X|\\d)$"
 REGEX.ISSN <- "^\\d{7}(X|\\d)$"
 
+
+##############################################
+###               ISBN 10                  ###
+##############################################
 
 #' Get ISBN 10 check digit
 #'
@@ -56,7 +62,6 @@ get_isbn_10_check_digit <- function(x, allow.hyphens=FALSE, errors.as.nas=FALSE)
   should.be <- (11 - (rem %% 11)) %% 11
   ifelse(should.be==10, "X", as.character(should.be))
 }
-
 
 
 #' Check the check digit of an ISBN 10
@@ -144,14 +149,6 @@ attr(is_valid_isbn_10, "assertr_vectorized") <- TRUE
 
 
 
-
-
-
-
-
-
-
-
 #' Attempt to enforce validity and canonical form to ISBN 10
 #'
 #' Takes a string representation of an ISBN 10. Strips all non-digit
@@ -217,9 +214,12 @@ normalize_isbn_10 <- function(x, aggresive=TRUE){
 # TO THIS!!!! add "pretty" and "convert.to.13" options
 # and examples
 
+# ------------------------------------------ #
 
 
-
+##############################################
+###               ISBN 13                  ###
+##############################################
 
 #' Get ISBN 13 check digit
 #'
@@ -269,25 +269,53 @@ get_isbn_13_check_digit <- function(x, allow.hyphens=FALSE, errors.as.nas=FALSE)
 
 
 
+#' Check the check digit of an ISBN 13
+#'
+#' Takes a string representation of an ISBN 13 and verifies that check digit
+#' checks out
+#'
+#' @param x A string of 13 digits
+#' @param allow.hyphens A logical indicating whether the hyphen
+#'     separator should be allowed
+#' @param errors.as.false return false if error instead of throwing error
+#'
+#' @return Returns TRUE if check passes, FALSE if not, and NA if NA
+#' @examples
+#'
+#' check_isbn_13_check_digit("9780306406157")          # TRUE
+#' check_isbn_13_check_digit("978-0-306-40615-7")      # TRUE
+#'
+#' # vectorized
+#' check_isbn_13_check_digit(c("978-0-306-40615-7", "9783161484103"))  # TRUE FALSE
+#'
+#' @export
+check_isbn_13_check_digit <- function(x, allow.hyphens=TRUE, errors.as.false=TRUE){
+  if(class(x)!="character"){
+    if(errors.as.false)
+      return(rep(FALSE, length(x)))
+    stop("Input must be a character string")
+  }
+  if(allow.hyphens)
+    x <- gsub("-", "", x)
+  where.bad <- (!grepl(REGEX.ISBN.13, x, perl=TRUE) & !is.na(x))
+  if(sum(where.bad)>0){
+    if(!errors.as.false) stop("Illegal input")
+  }
+  check.digit <- substr(x, 13, 13)
+  should.be <- get_isbn_13_check_digit(x, errors.as.nas = errors.as.false)
+  ret <- ifelse(should.be==check.digit, TRUE, FALSE)
+  ret[where.bad] <- FALSE
+  return(ret)
+}
+
+
+# ------------------------------------------ #
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+##############################################
+###                 ISSN                   ###
+##############################################
 
 
 #' Get ISSN check digit
@@ -337,8 +365,6 @@ get_issn_check_digit <- function(x, allow.hyphens=FALSE, errors.as.nas=FALSE){
 }
 
 
-
-
 #' Check the check digit of an ISSN
 #'
 #' Takes a string representation of an ISSN and verifies that check digit
@@ -380,4 +406,7 @@ check_issn_check_digit <- function(x, allow.hyphens=TRUE, errors.as.false=FALSE)
   ret[where.bad] <- FALSE
   return(ret)
 }
+
+# is valid ISSN
+# normalize ISSN
 

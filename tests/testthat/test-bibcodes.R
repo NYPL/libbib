@@ -1,6 +1,10 @@
 context("checking functions in bibcodes.R")
 
 
+##############################################
+###               SETUP                    ###
+##############################################
+
 EX.valid.10.digit.isbns <- c("012491540X", "9004037810", "0256016054")
 EX.invalid.10.digit.isbns <- c("0124915401", "9004037811", "0256016051", "0256X01605")
 EX.9.digit.isbns <- c("012491540", "900403781", "025601605")
@@ -25,7 +29,9 @@ EX.invalid.13.digit.isbns <- c("978316__84101", "9780306406151")
 
 
 
-
+##############################################
+###               ISBN 10                  ###
+##############################################
 
 # get_isbn_10_check_digit succeeds properly
 test_that("get_isbn_10_check_digit() succeeds properly", {
@@ -134,8 +140,11 @@ test_that("normalize_isbn_10() succeeds properly", {
 #
 # })
 
+# ------------------------------------------ #
 
-
+##############################################
+###               ISBN 13                  ###
+##############################################
 
 # get_isbn_13_check_digit succeeds properly
 test_that("get_isbn_13_check_digit() succeeds properly", {
@@ -162,14 +171,51 @@ test_that("get_isbn_13_check_digit() fails properly", {
 })
 
 
+# check_isbn_10_check_digit succeeds properly
+test_that("get_isbn_10_check_digit() succeeds properly", {
+  expect_equal(check_isbn_10_check_digit(EX.valid.10.digit.isbns[1]),
+               TRUE)
+  expect_equal(check_isbn_10_check_digit(EX.valid.10.digit.isbns),
+               c(TRUE, TRUE, TRUE))
+  expect_equal(check_isbn_10_check_digit(EX.invalid.10.digit.isbns),
+               c(FALSE, FALSE, FALSE, FALSE))
+  expect_equal(check_isbn_10_check_digit(c(EX.valid.10.digit.isbns,
+                                           EX.invalid.10.digit.isbns)),
+               c(TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, FALSE))
+  expect_equal(check_isbn_10_check_digit(c(12, 12), errors.as.false = TRUE),
+               c(FALSE, FALSE))
+  expect_equal(check_isbn_10_check_digit(c(EX.valid.10.digit.isbns,
+                                           "hubo un tiempo"),
+                                         errors.as.false = TRUE),
+               c(TRUE, TRUE, TRUE, FALSE))
+  expect_equal(check_isbn_10_check_digit("0-124-91540-X"), TRUE)
+  expect_equal(check_isbn_10_check_digit("0-124-91540-X", allow.hyphens=FALSE),
+               FALSE)
+})
+
+# check_isbn_10_check_digit fails properly
+test_that("check_isbn_10_check_digit() fails properly", {
+  expect_equal(check_isbn_10_check_digit(c(EX.valid.10.digit.isbns, NA)),
+               c(TRUE, TRUE, TRUE, NA))
+  expect_error(check_isbn_10_check_digit(0123456789, errors.as.false=FALSE),
+               "Input must be a character string")
+  expect_error(check_isbn_10_check_digit("123456789", errors.as.false=FALSE),
+               "Illegal input")
+  expect_error(check_isbn_10_check_digit("0-124-91540-X", allow.hyphens=FALSE,
+                                         errors.as.false=FALSE),
+               "Illegal input")
+}) #######
+
+
+# ------------------------------------------ #
 
 
 
 
 
-
-
-##################################################
+##############################################
+###                 ISSN                   ###
+##############################################
 
 # get_issn_check_digit succeeds properly
 test_that("get_issn_check_digit() succeeds properly", {
@@ -211,6 +257,6 @@ test_that("get_issn_check_digit() fails properly", {
                "Illegal input")
 })
 
-
+# ------------------------------------------ #
 
 
