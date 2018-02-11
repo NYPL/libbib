@@ -174,7 +174,6 @@ attr(is_valid_isbn_10, "assertr_vectorized") <- TRUE
 #' this function will return the salvaged ISBN 10. If the ISBN 10 has
 #' garbage digits/characters in the front and has an "X" check digit,
 #' it will return the salvaged ISBN 10.
-#' #### MORE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #'
 #' @return Returns TRUE if checks pass, FALSE if not, and NA if NA
 #' @examples
@@ -250,9 +249,6 @@ normalize_isbn_10 <- function(x, aggresive=TRUE, convert.to.isbn.13=FALSE, prett
   }
   return(ret)
 }
-
-
-# also add functionality to find an "X" and look 9 digits behind
 
 # ------------------------------------------ #
 

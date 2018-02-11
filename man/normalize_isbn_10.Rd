@@ -36,7 +36,6 @@ is 9 digits, and either adding an "X" to the end, or leading "0"s fix it,
 this function will return the salvaged ISBN 10. If the ISBN 10 has
 garbage digits/characters in the front and has an "X" check digit,
 it will return the salvaged ISBN 10.
-#### MORE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 }
 \examples{
 
