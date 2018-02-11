@@ -131,7 +131,7 @@ test_that("normalize_isbn_10() succeeds properly", {
   expect_equal(normalize_isbn_10(EX.hairy.isbn.10s),
                c("012491540X", NA, "9004037810", "898477250X",
                  NA, "012491540X", "9570068353", "9570068353", NA, NA))
-  expect_equal(normalize_isbn_10(EX.hairy.isbn.10s, aggresive=FALSE),
+  expect_equal(normalize_isbn_10(EX.hairy.isbn.10s, aggressive=FALSE),
                c("012491540X", NA, "9004037810", NA,
                  NA, NA, NA, NA, NA, NA))
   expect_equal(normalize_isbn_10("012491540x"),
@@ -146,7 +146,7 @@ test_that("normalize_isbn_10() succeeds properly", {
                "978-0-12-491540-4")
   expect_equal(normalize_isbn_10(c("513213012491540x", "012491540x", NA)),
                c("012491540X", "012491540X", NA))
-  expect_equal(normalize_isbn_10(c("513213012491540x", "012491540x", NA), aggresive=FALSE),
+  expect_equal(normalize_isbn_10(c("513213012491540x", "012491540x", NA), aggressive=FALSE),
                c(NA, "012491540X", NA))
   expect_equal(normalize_isbn_10(NA), as.character(NA))
 })

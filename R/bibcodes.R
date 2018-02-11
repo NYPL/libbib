@@ -156,11 +156,11 @@ attr(is_valid_isbn_10, "assertr_vectorized") <- TRUE
 #'
 #' Takes a string representation of an ISBN 10. Strips all non-digit
 #' or "X" characters and checks if it is valid (whether the
-#' check digit works out, etc). User can specify whether "aggresive"
+#' check digit works out, etc). User can specify whether "aggressive"
 #' measures should be taken to salvage the malformed ISBN 10 string.
 #'
 #' @param x A string
-#' @param aggresive A logical indicating whether aggresive measures
+#' @param aggressive A logical indicating whether aggressive measures
 #'                      should be taken to try to get the "ISBN 10"
 #'                      into a valid form. See "Details" for more info
 #' @param convert.to.isbn.13 A logical indication whether the ISBN 10
@@ -168,7 +168,7 @@ attr(is_valid_isbn_10, "assertr_vectorized") <- TRUE
 #' @param pretty A logical indicating whether the ISBN should be
 #'               prettily hyphenated
 #'
-#' @details If \code{aggresive} is TRUE, aggresive measures are taken to
+#' @details If \code{aggressive} is TRUE, aggressive measures are taken to
 #' try to salvage the malformed ISBN 10 string. If the ISBN 10, for example,
 #' is 9 digits, and either adding an "X" to the end, or leading "0"s fix it,
 #' this function will return the salvaged ISBN 10. If the ISBN 10 has
@@ -188,7 +188,7 @@ attr(is_valid_isbn_10, "assertr_vectorized") <- TRUE
 #' normalize_isbn_10("513213012491540x")              # "012491540X"
 #'
 #' @export
-normalize_isbn_10 <- function(x, aggresive=TRUE, convert.to.isbn.13=FALSE, pretty=FALSE){
+normalize_isbn_10 <- function(x, aggressive=TRUE, convert.to.isbn.13=FALSE, pretty=FALSE){
   if(all(is.na(x))) return(as.character(x))
   if(class(x)!="character")
     x <- as.character(x)
@@ -196,7 +196,7 @@ normalize_isbn_10 <- function(x, aggresive=TRUE, convert.to.isbn.13=FALSE, prett
   x <- gsub("[^\\d|X]", "", x, perl=TRUE)
   x <- gsub("X(.+$)", "\\1", x, perl=TRUE)
   is.all.valid <- all(is_valid_isbn_10(x))
-  if(aggresive && !is.all.valid){
+  if(aggressive && !is.all.valid){
     will_padding_zeros_fix_it <- function(x){
       ifelse(nchar(x)==9 & is_valid_isbn_10(stringr::str_pad(x, 10, "left", "0")), TRUE, FALSE)
     }

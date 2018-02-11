@@ -4,13 +4,13 @@
 \alias{normalize_isbn_10}
 \title{Attempt to enforce validity and canonical form to ISBN 10}
 \usage{
-normalize_isbn_10(x, aggresive = TRUE, convert.to.isbn.13 = FALSE,
+normalize_isbn_10(x, aggressive = TRUE, convert.to.isbn.13 = FALSE,
   pretty = FALSE)
 }
 \arguments{
 \item{x}{A string}
 
-\item{aggresive}{A logical indicating whether aggresive measures
+\item{aggressive}{A logical indicating whether aggressive measures
 should be taken to try to get the "ISBN 10"
 into a valid form. See "Details" for more info}
 
@@ -26,11 +26,11 @@ Returns TRUE if checks pass, FALSE if not, and NA if NA
 \description{
 Takes a string representation of an ISBN 10. Strips all non-digit
 or "X" characters and checks if it is valid (whether the
-check digit works out, etc). User can specify whether "aggresive"
+check digit works out, etc). User can specify whether "aggressive"
 measures should be taken to salvage the malformed ISBN 10 string.
 }
 \details{
-If \code{aggresive} is TRUE, aggresive measures are taken to
+If \code{aggressive} is TRUE, aggressive measures are taken to
 try to salvage the malformed ISBN 10 string. If the ISBN 10, for example,
 is 9 digits, and either adding an "X" to the end, or leading "0"s fix it,
 this function will return the salvaged ISBN 10. If the ISBN 10 has
