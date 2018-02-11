@@ -26,7 +26,8 @@ with a terminal "X" AND the check digit matches
 }
 \examples{
 
-is_valid_isbn_10("012491540X")  # TRUE
+is_valid_isbn_10("012491540X")    # TRUE
+is_valid_isbn_10("0-124-91540-X") # TRUE
 
 # vectorized
 is_valid_isbn_10(c("012491540X", "9004037812"))  # TRUE FALSE

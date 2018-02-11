@@ -4,10 +4,13 @@
 \alias{get_isbn_13_check_digit}
 \title{Get ISBN 13 check digit}
 \usage{
-get_isbn_13_check_digit(x, errors.as.nas = FALSE)
+get_isbn_13_check_digit(x, allow.hyphens = FALSE, errors.as.nas = FALSE)
 }
 \arguments{
 \item{x}{A string of 12 or 13 digits}
+
+\item{allow.hyphens}{A logical indicating whether the hyphen
+separator should be allowed}
 
 \item{errors.as.nas}{return NA if error instead of throwing eroror}
 }

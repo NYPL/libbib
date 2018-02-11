@@ -12,7 +12,7 @@ get_isbn_10_check_digit(x, allow.hyphens = FALSE, errors.as.nas = FALSE)
 \item{allow.hyphens}{A logical indicating whether the hyphen
 separator should be allowed}
 
-\item{errors.as.nas}{return NA if error instead of throwing eroror}
+\item{errors.as.nas}{return NA if error instead of throwing error}
 }
 \value{
 Returns the character check digit that satifies the

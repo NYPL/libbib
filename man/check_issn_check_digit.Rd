@@ -4,7 +4,7 @@
 \alias{check_issn_check_digit}
 \title{Check the check digit of an ISSN}
 \usage{
-check_issn_check_digit(x, allow.hyphens = FALSE, error.is.false = FALSE)
+check_issn_check_digit(x, allow.hyphens = TRUE, errors.as.false = FALSE)
 }
 \arguments{
 \item{x}{A string of 8 digits or 7 digits with terminal "X"}
@@ -12,7 +12,7 @@ check_issn_check_digit(x, allow.hyphens = FALSE, error.is.false = FALSE)
 \item{allow.hyphens}{A logical indicating whether the hyphen
 separator should be allowed}
 
-\item{error.is.false}{return false if error instead of throwing error}
+\item{errors.as.false}{return false if error instead of throwing error}
 }
 \value{
 Returns TRUE if check passes, FALSE if not, and NA if NA
@@ -23,11 +23,12 @@ checks out
 }
 \examples{
 
-check_issn_check_digit("2434561X")  # TRUE
+check_issn_check_digit("2434561X")   # TRUE
+check_issn_check_digit("2434-561X")  # TRUE
 
 # vectorized
 check_issn_check_digit(c("03785955", "2434561X", NA))  # TRUE TRUE NA
-check_issn_check_digit(c("03785955", "2434-561X", NA), allow.hyphens=TRUE)
+check_issn_check_digit(c("0378-5955", "2434-561X", NA))
 # TRUE TRUE NA
 
 }

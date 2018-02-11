@@ -22,8 +22,6 @@ EX.valid.13.digit.isbns <- c("9780306406157", "9783161484100")
 EX.12.digit.isbns <- c("978030640615", "978316148410")
 EX.invalid.13.digit.isbns <- c("978316__84101", "9780306406151")
 
-# "97831614841__" "onetwothreefo"
-
 
 
 
@@ -148,6 +146,7 @@ test_that("get_isbn_13_check_digit() succeeds properly", {
                c("7", "0", NA))
   expect_equal(get_isbn_13_check_digit(EX.invalid.13.digit.isbns, errors.as.nas=TRUE),
                c(NA, "7"))
+  expect_equal(get_isbn_13_check_digit("978-0-306-40615-7", allow.hyphens=TRUE), "7")
 })
 
 # get_isbn_13_check_digit fails properly
@@ -158,6 +157,8 @@ test_that("get_isbn_13_check_digit() fails properly", {
               "Input must be either 12 or 13 characters")
  expect_error(get_isbn_13_check_digit(EX.invalid.13.digit.isbns),
               "Illegal input")
+ expect_error(get_isbn_13_check_digit("978-0-306-40615-7"),
+              "Input must be either 12 or 13 characters")
 })
 
 
@@ -191,31 +192,24 @@ test_that("get_issn_check_digit() fails properly", {
 
 
 # check_issn_check_digit succeeds properly
-test_that("get_isssn_check_digit() succeeds properly", {
+test_that("get_issn_check_digit() succeeds properly", {
   expect_equal(check_issn_check_digit(c("03785955", "2434561X", NA)),
                c(TRUE, TRUE, NA))
-  expect_equal(check_issn_check_digit(c("03785954", "2434561X", NA)),
+  expect_equal(check_issn_check_digit(c("03785954", "2434-561X", NA)),
                c(FALSE, TRUE, NA))
-  expect_equal(check_issn_check_digit(c("03785954", "2434-561X", NA),
-                                      error.is.false=TRUE),
+  expect_equal(check_issn_check_digit(c("03785954", "________", NA),
+                                      errors.as.false=TRUE),
                c(FALSE, FALSE, NA))
-  expect_equal(check_issn_check_digit(c("03785954", "2434-561X", NA),
-                                      allow.hyphens=TRUE),
-               c(FALSE, TRUE, NA))
 })
 
 # check_issn_check_digit fails properly
 test_that("get_issn_check_digit() fails properly", {
   expect_error(check_issn_check_digit(c(12345678)),
                "Input must be a character string")
-  expect_error(check_issn_check_digit(c("03785954", "2434-561X", NA)),
-               "Input must be 8 characters")
+  expect_error(check_issn_check_digit(c("03785954", "2434-561X", NA),
+                                      allow.hyphens=FALSE),
+               "Illegal input")
 })
-
-
-
-
-
 
 
 

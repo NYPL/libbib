@@ -23,7 +23,8 @@ checks out
 }
 \examples{
 
-check_isbn_10_check_digit("012491540X")  # TRUE
+check_isbn_10_check_digit("012491540X")      # TRUE
+check_isbn_10_check_digit("0-124-91540-X")   # TRUE
 
 # vectorized
 check_isbn_10_check_digit(c("012491540X", "9004037812"))  # TRUE FALSE

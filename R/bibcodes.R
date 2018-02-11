@@ -1,10 +1,14 @@
 
 
-REGEX.ISBN.10.9 <- "^\\d{8,9}?[x|X|\\d]$"
-REGEX.ISBN.10.9 <- "^(\\d{9,10}|\\d{8,9}[xX])$"
+REGEX.ISBN.10.9 <- "^(\\d{9,10}|\\d{9}[xX])$"
 REGEX.ISBN.10.flex <- "^\\d{9}(x|X|\\d)$"
 REGEX.ISBN.10 <- "^\\d{9}(X|\\d)$"
 REGEX.ISBN.13.12 <- "^\\d{12,13}$"
+
+REGEX.ISSN.8.7 <- "^(\\d{7,8}|\\d{7}[xX])$"
+REGEX.ISSN.flex <- "^\\d{7}(x|X|\\d)$"
+REGEX.ISSN <- "^\\d{7}(X|\\d)$"
+
 
 #' Get ISBN 10 check digit
 #'
@@ -16,7 +20,7 @@ REGEX.ISBN.13.12 <- "^\\d{12,13}$"
 #' @param x A string of 9 or 10 digits
 #' @param allow.hyphens A logical indicating whether the hyphen
 #'     separator should be allowed
-#' @param errors.as.nas return NA if error instead of throwing eroror
+#' @param errors.as.nas return NA if error instead of throwing error
 #'
 #' @return Returns the character check digit that satifies the
 #'         mod 11 condition. Returns "X" if 10. Returns NA if input is NA
@@ -68,7 +72,8 @@ get_isbn_10_check_digit <- function(x, allow.hyphens=FALSE, errors.as.nas=FALSE)
 #' @return Returns TRUE if check passes, FALSE if not, and NA if NA
 #' @examples
 #'
-#' check_isbn_10_check_digit("012491540X")  # TRUE
+#' check_isbn_10_check_digit("012491540X")      # TRUE
+#' check_isbn_10_check_digit("0-124-91540-X")   # TRUE
 #'
 #' # vectorized
 #' check_isbn_10_check_digit(c("012491540X", "9004037812"))  # TRUE FALSE
@@ -111,7 +116,8 @@ check_isbn_10_check_digit <- function(x, allow.hyphens=TRUE, errors.as.false=TRU
 #' @return Returns TRUE if checks pass, FALSE if not, and NA if NA
 #' @examples
 #'
-#' is_valid_isbn_10("012491540X")  # TRUE
+#' is_valid_isbn_10("012491540X")    # TRUE
+#' is_valid_isbn_10("0-124-91540-X") # TRUE
 #'
 #' # vectorized
 #' is_valid_isbn_10(c("012491540X", "9004037812"))  # TRUE FALSE
@@ -153,7 +159,7 @@ attr(is_valid_isbn_10, "assertr_vectorized") <- TRUE
 #' check digit works out, etc). User can specify whether "aggresive"
 #' measures should be taken to salvage the malformed ISBN 10 string.
 #'
-#' @param x A string of or 10 digits or nine digits with terminal "X"
+#' @param x A string
 #' @param aggresive A logical indicating whether aggresive measures
 #'                      should be taken to try to get the "ISBN 10"
 #'                      into a valid form. See "Details" for more info
@@ -161,7 +167,7 @@ attr(is_valid_isbn_10, "assertr_vectorized") <- TRUE
 #' @details If \code{aggresive} is TRUE, aggresive measures are taken to
 #' try to salvage the malformed ISBN 10 string. If the ISBN 10, for example,
 #' is 9 digits, and either adding an "X" to the end, or leading "0"s fix it,
-#' this function will return the salvaged ISBN 10
+#' this function will return the salvaged ISBN 10  #### MORE!!!!
 #'
 #' @return Returns TRUE if checks pass, FALSE if not, and NA if NA
 #' @examples
@@ -209,6 +215,8 @@ normalize_isbn_10 <- function(x, aggresive=TRUE){
 }
 
 # TO THIS!!!! add "pretty" and "convert.to.13" options
+# and examples
+
 
 
 
@@ -221,6 +229,8 @@ normalize_isbn_10 <- function(x, aggresive=TRUE){
 #' or a 12 digit string (without the last digit)
 #'
 #' @param x A string of 12 or 13 digits
+#' @param allow.hyphens A logical indicating whether the hyphen
+#'     separator should be allowed
 #' @param errors.as.nas return NA if error instead of throwing eroror
 #'
 #' @return Returns the character check digit that satifies the
@@ -238,9 +248,11 @@ normalize_isbn_10 <- function(x, aggresive=TRUE){
 #' get_isbn_13_check_digit(c("9780306406157", "9783161484100"))
 #'
 #' @export
-get_isbn_13_check_digit <- function(x, errors.as.nas=FALSE){
+get_isbn_13_check_digit <- function(x, allow.hyphens=FALSE, errors.as.nas=FALSE){
   if(class(x)!="character")
     stop("Input must be a character string")
+  if(allow.hyphens)
+    x <- gsub("-", "", x)
   if(sum(!(nchar(x[!is.na(x)]) %in% c(12, 13)))>0){
     if(!errors.as.nas) stop("Input must be either 12 or 13 characters")
   }
@@ -288,6 +300,7 @@ get_isbn_13_check_digit <- function(x, errors.as.nas=FALSE){
 #' @param x A string of 7 or 8 digits
 #' @param allow.hyphens A logical indicating whether the hyphen
 #'     separator should be allowed
+#' @param errors.as.nas return NA if error instead of throwing error
 #'
 #' @return Returns the character check digit that satifies the
 #'         mod 11 condition. Returns "X" if 10. Returns NA if input is NA
@@ -304,19 +317,24 @@ get_isbn_13_check_digit <- function(x, errors.as.nas=FALSE){
 #' get_issn_check_digit(c("0378595", "2434561X", NA))
 #'
 #' @export
-get_issn_check_digit <- function(x, allow.hyphens=FALSE){
+get_issn_check_digit <- function(x, allow.hyphens=FALSE, errors.as.nas=FALSE){
   if(class(x)!="character")
     stop("Input must be a character string")
   if(allow.hyphens)
     x <- gsub("-", "", x)
-  if(sum(!(nchar(x[!is.na(x)]) %in% c(7, 8)))>0)
-    stop("Input must be either 7 or 8 characters")
+  if(sum(!(nchar(x[!is.na(x)]) %in% c(7, 8)))>0){
+    if(!errors.as.nas) stop("Input must be either 7 or 8 characters")
+  }
+  where.bad <- !grepl(REGEX.ISSN.8.7, x, perl=TRUE) & !is.na(x)
+  if(sum(where.bad)>0){
+    if(!errors.as.nas) stop("Illegal input")
+    x[where.bad] <- NA
+  }
   first7 <- lapply(strsplit(substr(x, 1, 7), ""), as.numeric)
   rem <- unlist(lapply(lapply(first7, function(x) x*(8:2)), sum))
   should.be <- (11 - (rem %% 11)) %% 11
   ifelse(should.be==10, "X", as.character(should.be))
 }
-
 
 
 
@@ -329,46 +347,37 @@ get_issn_check_digit <- function(x, allow.hyphens=FALSE){
 #' @param x A string of 8 digits or 7 digits with terminal "X"
 #' @param allow.hyphens A logical indicating whether the hyphen
 #'     separator should be allowed
-#' @param error.is.false return false if error instead of throwing error
+#' @param errors.as.false return false if error instead of throwing error
 #'
 #' @return Returns TRUE if check passes, FALSE if not, and NA if NA
 #' @examples
 #'
-#' check_issn_check_digit("2434561X")  # TRUE
+#' check_issn_check_digit("2434561X")   # TRUE
+#' check_issn_check_digit("2434-561X")  # TRUE
 #'
 #' # vectorized
 #' check_issn_check_digit(c("03785955", "2434561X", NA))  # TRUE TRUE NA
-#' check_issn_check_digit(c("03785955", "2434-561X", NA), allow.hyphens=TRUE)
+#' check_issn_check_digit(c("0378-5955", "2434-561X", NA))
 #' # TRUE TRUE NA
 #'
 #' @export
-check_issn_check_digit <- function(x, allow.hyphens=FALSE, error.is.false=FALSE){
+check_issn_check_digit <- function(x, allow.hyphens=TRUE, errors.as.false=FALSE){
   if(class(x)!="character"){
-    if(error.is.false)
+    if(errors.as.false)
       return(rep(FALSE, length(x)))
     stop("Input must be a character string")
   }
-  if(error.is.false){
-    # we can do better
-    x[nchar(x)!=8] <- "0378595X" # invalid issn
-  }
+  x <- toupper(x)
   if(allow.hyphens)
     x <- gsub("-", "", x)
-  if(sum(!(nchar(x[!is.na(x)])==8))>0){
-    stop("Input must be 8 characters")
+  where.bad <- (!grepl(REGEX.ISSN, x, perl=TRUE) & !is.na(x))
+  if(sum(where.bad)>0){
+    if(!errors.as.false) stop("Illegal input")
   }
   check.digit <- substr(x, 8, 8)
-  should.be <- get_issn_check_digit(x, allow.hyphens=allow.hyphens)
-  ifelse(should.be==toupper(check.digit), TRUE, FALSE)
+  should.be <- get_issn_check_digit(x, allow.hyphens=allow.hyphens, errors.as.nas=errors.as.false)
+  ret <- ifelse(should.be==toupper(check.digit), TRUE, FALSE)
+  ret[where.bad] <- FALSE
+  return(ret)
 }
-
-
-
-
-
-
-
-
-
-
 

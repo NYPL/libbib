@@ -7,7 +7,7 @@
 normalize_isbn_10(x, aggresive = TRUE)
 }
 \arguments{
-\item{x}{A string of or 10 digits or nine digits with terminal "X"}
+\item{x}{A string}
 
 \item{aggresive}{A logical indicating whether aggresive measures
 should be taken to try to get the "ISBN 10"
@@ -26,7 +26,7 @@ measures should be taken to salvage the malformed ISBN 10 string.
 If \code{aggresive} is TRUE, aggresive measures are taken to
 try to salvage the malformed ISBN 10 string. If the ISBN 10, for example,
 is 9 digits, and either adding an "X" to the end, or leading "0"s fix it,
-this function will return the salvaged ISBN 10
+this function will return the salvaged ISBN 10  #### MORE!!!!
 }
 \examples{
 

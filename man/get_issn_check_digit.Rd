@@ -4,13 +4,15 @@
 \alias{get_issn_check_digit}
 \title{Get ISSN check digit}
 \usage{
-get_issn_check_digit(x, allow.hyphens = FALSE)
+get_issn_check_digit(x, allow.hyphens = FALSE, errors.as.nas = FALSE)
 }
 \arguments{
 \item{x}{A string of 7 or 8 digits}
 
 \item{allow.hyphens}{A logical indicating whether the hyphen
 separator should be allowed}
+
+\item{errors.as.nas}{return NA if error instead of throwing error}
 }
 \value{
 Returns the character check digit that satifies the
