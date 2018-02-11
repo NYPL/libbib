@@ -45,6 +45,7 @@ REGEX.ISSN <- "^\\d{7}(X|\\d)$"
 #'
 #' @export
 get_isbn_10_check_digit <- function(x, allow.hyphens=FALSE, errors.as.nas=FALSE){
+  if(all(is.na(x))) return(as.character(x))
   if(class(x)!="character")
     stop("Input must be a character string")
   if(allow.hyphens)
@@ -85,6 +86,7 @@ get_isbn_10_check_digit <- function(x, allow.hyphens=FALSE, errors.as.nas=FALSE)
 #'
 #' @export
 check_isbn_10_check_digit <- function(x, allow.hyphens=TRUE, errors.as.false=TRUE){
+  if(all(is.na(x))) return(as.character(x))
   if(class(x)!="character"){
     if(errors.as.false)
       return(rep(FALSE, length(x)))
@@ -130,6 +132,7 @@ check_isbn_10_check_digit <- function(x, allow.hyphens=TRUE, errors.as.false=TRU
 #'
 #' @export
 is_valid_isbn_10 <- function(x, allow.hyphens=TRUE, lower.x.allowed=TRUE){
+  if(all(is.na(x))) return(as.character(x))
   if(class(x)!="character"){
     stop("Input must be a character string")
   }
@@ -177,6 +180,7 @@ attr(is_valid_isbn_10, "assertr_vectorized") <- TRUE
 #'
 #' @export
 normalize_isbn_10 <- function(x, aggresive=TRUE){
+  if(all(is.na(x))) return(as.character(x))
   if(class(x)!="character")
     x <- as.character(x)
   x <- toupper(x)
@@ -231,7 +235,7 @@ normalize_isbn_10 <- function(x, aggresive=TRUE){
 #' @param x A string of 12 or 13 digits
 #' @param allow.hyphens A logical indicating whether the hyphen
 #'     separator should be allowed
-#' @param errors.as.nas return NA if error instead of throwing eroror
+#' @param errors.as.nas return NA if error instead of throwing error
 #'
 #' @return Returns the character check digit that satifies the
 #'         mod 10 condition. Returns NA if input is NA
@@ -249,6 +253,7 @@ normalize_isbn_10 <- function(x, aggresive=TRUE){
 #'
 #' @export
 get_isbn_13_check_digit <- function(x, allow.hyphens=FALSE, errors.as.nas=FALSE){
+  if(all(is.na(x))) return(as.character(x))
   if(class(x)!="character")
     stop("Input must be a character string")
   if(allow.hyphens)
@@ -290,6 +295,7 @@ get_isbn_13_check_digit <- function(x, allow.hyphens=FALSE, errors.as.nas=FALSE)
 #'
 #' @export
 check_isbn_13_check_digit <- function(x, allow.hyphens=TRUE, errors.as.false=TRUE){
+  if(all(is.na(x))) return(as.character(x))
   if(class(x)!="character"){
     if(errors.as.false)
       return(rep(FALSE, length(x)))
@@ -308,6 +314,43 @@ check_isbn_13_check_digit <- function(x, allow.hyphens=TRUE, errors.as.false=TRU
   return(ret)
 }
 
+#' Return TRUE if valid ISBN 13
+#'
+#' Takes a string representation of an ISBN 13 verifies that it is valid.
+#' An ISBN 13 is valid if it is a 13 digit string and the check digit matches
+#'
+#' @param x A string of 13
+#' @param allow.hyphens A logical indicating whether the hyphen
+#'     separator should be allowed
+#'
+#' @return Returns TRUE if checks pass, FALSE if not, and NA if NA
+#' @examples
+#'
+#' is_valid_isbn_13("9780306406157")          # TRUE
+#' is_valid_isbn_13("978-0-306-40615-7")      # TRUE
+#'
+#' # vectorized
+#' is_valid_isbn_10(c("012491540X", "9004037812"))  # TRUE FALSE
+#' is_valid_isbn_13(c("978-0-306-40615-7", "9783161484103"))  # TRUE FALSE
+#' is_valid_isbn_13(c("978-0-306-40615-7", "hubo un tiempo"))  # TRUE FALSE
+#'
+#' @export
+is_valid_isbn_13 <- function(x, allow.hyphens=TRUE){
+  if(all(is.na(x))) return(as.character(x))
+  if(class(x)!="character"){
+    stop("Input must be a character string")
+  }
+  if(allow.hyphens)
+    x <- gsub("-", "", x)
+  where.bad <- !grepl(REGEX.ISBN.13, x, perl=TRUE) & !is.na(x)
+  x[where.bad] <- NA
+  ret <- ifelse(check_isbn_13_check_digit(x, errors.as.false=TRUE), TRUE, FALSE)
+  ret[is.na(x)] <- NA
+  ret[where.bad] <- FALSE
+  return(ret)
+}
+attr(is_valid_isbn_13, "assertr_vectorized") <- TRUE
+
 
 #' Convert ISBN 10 to ISBN 13
 #'
@@ -315,17 +358,24 @@ check_isbn_13_check_digit <- function(x, allow.hyphens=TRUE, errors.as.false=TRU
 #'
 #' @param x A string of 10 digits or 9 digits with terminal "X"
 #' @param skip.validity.check Skip the checking for whether the ISBN 10 is valid
+#' @param errors.as.nas return NA if error instead of throwing error
 #' @param pretty A logical indicating whether the ISBN 13 should be
 #'               prettily hyphenated
 #'
 #' @return Returns ISBN 13 as a string
 #' @examples
 #'
-#' print("whatup")
+#' convert_to_ISBN_13("012491540X")                # 9780124915404
+#' convert_to_ISBN_13("012491540X", pretty=TRUE)   # 978-0-12-491540-4
+#'
+#' # vectorized
+#' convert_to_ISBN_13(c("012491540X", "9004037810"), pretty=TRUE)
+#' # "978-0-12-491540-4" "978-9-00-403781-6"
 #'
 #' @export
 convert_to_ISBN_13 <- function(x, skip.validity.check=FALSE,
                                errors.as.nas=FALSE, pretty=FALSE){
+  if(all(is.na(x))) return(as.character(x))
   if(class(x)!="character"){
     stop("Input must be a character string")
   }
@@ -341,14 +391,23 @@ convert_to_ISBN_13 <- function(x, skip.validity.check=FALSE,
   first12 <- ifelse(!is.na(first9), sprintf("978%s", first9), NA)
   newcheckdigit <- get_isbn_13_check_digit(as.character(first12))
   newisbn13 <- ifelse(!is.na(first12), sprintf("%s%s", first12, newcheckdigit), NA)
+  if(pretty){
+    nonnas <- !is.na(newisbn13)
+    these <- newisbn13[nonnas]
+    newisbn13[nonnas] <- sprintf("%s-%s-%s-%s-%s",
+                                 substr(these, 1, 3),
+                                 substr(these, 4, 4),
+                                 substr(these, 5, 6),
+                                 substr(these, 7, 12),
+                                 substr(these, 13, 13))
+  }
   return(newisbn13)
 }
 
-convert_to_ISBN_13("012491540X")
-convert_to_ISBN_13(c("012491540X", NA))
-convert_to_ISBN_13("0124915401")
-convert_to_ISBN_13("0124915401", errors.as.nas=TRUE)
-convert_to_ISBN_13("0124915401", skip.validity.check = TRUE)
+# make sure that in normalize isbn 10 (if convert is TRUE)
+# that the validity check is skipped, and that
+# pretty is propagated
+
 
 
 ###### NO NORMALIZE ISBN 13 YET!!!
@@ -398,6 +457,7 @@ convert_to_ISBN_13("0124915401", skip.validity.check = TRUE)
 #'
 #' @export
 get_issn_check_digit <- function(x, allow.hyphens=FALSE, errors.as.nas=FALSE){
+  if(all(is.na(x))) return(as.character(x))
   if(class(x)!="character")
     stop("Input must be a character string")
   if(allow.hyphens)
@@ -440,6 +500,7 @@ get_issn_check_digit <- function(x, allow.hyphens=FALSE, errors.as.nas=FALSE){
 #'
 #' @export
 check_issn_check_digit <- function(x, allow.hyphens=TRUE, errors.as.false=FALSE){
+  if(all(is.na(x))) return(as.character(x))
   if(class(x)!="character"){
     if(errors.as.false)
       return(rep(FALSE, length(x)))

@@ -1,7 +1,7 @@
 Package: libbib
 Type: Package
 Title: Verification and Normalization of Various Bibliographic Codes
-Version: 0.1.0
+Version: 0.1.5
 Authors@R: person("Tony", "Fischetti",
              email="tony.fischetti@gmail.com",
              role=c("aut", "cre"))
