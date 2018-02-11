@@ -3,6 +3,7 @@
 export(check_isbn_10_check_digit)
 export(check_issn_check_digit)
 export(get_isbn_10_check_digit)
+export(get_isbn_13_check_digit)
 export(get_issn_check_digit)
 export(is_valid_isbn_10)
 export(normalize_isbn_10)

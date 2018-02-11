@@ -4,10 +4,12 @@
 \alias{get_isbn_10_check_digit}
 \title{Get ISBN 10 check digit}
 \usage{
-get_isbn_10_check_digit(x)
+get_isbn_10_check_digit(x, errors.as.nas = FALSE)
 }
 \arguments{
-\item{x}{A string of nine or 10 digits}
+\item{x}{A string of 9 or 10 digits}
+
+\item{errors.as.nas}{return NA if error instead of throwing eroror}
 }
 \value{
 Returns the character check digit that satifies the
@@ -25,6 +27,8 @@ get_isbn_10_check_digit("012491540X")
 
 # nine digit string
 get_isbn_10_check_digit("900403781")
+
+get_isbn_10_check_digit("onetwothre", errors.as.nas=TRUE)  # NA
 
 # vectorized
 get_isbn_10_check_digit(c("012491540X", "9004037810", "900403781"))

@@ -26,8 +26,8 @@ checks out
 check_issn_check_digit("2434561X")  # TRUE
 
 # vectorized
-check_issn_check_digit(c("03785955", "2434561X", NA)  # TRUE TRUE NA
-check_issn_check_digit(c("03785955", "2434-561X", NA),
-                       allow.hyphens=TRUE)  # TRUE TRUE NA
+check_issn_check_digit(c("03785955", "2434561X", NA))  # TRUE TRUE NA
+check_issn_check_digit(c("03785955", "2434-561X", NA), allow.hyphens=TRUE)
+# TRUE TRUE NA
 
 }

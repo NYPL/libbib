@@ -7,7 +7,7 @@
 is_valid_isbn_10(x, lower.x.allowed = TRUE)
 }
 \arguments{
-\item{x}{A string of or 10 digits or nine digits with terminal "X"}
+\item{x}{A string of 10 digits or 9 digits with terminal "X"}
 
 \item{lower.x.allowed}{A logical indicating whether ISBN 10s with
 a check digit with a lower-case "x" should

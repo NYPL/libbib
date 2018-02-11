@@ -4,12 +4,12 @@
 \alias{check_isbn_10_check_digit}
 \title{Check the check digit of an ISBN 10}
 \usage{
-check_isbn_10_check_digit(x, error.is.false = FALSE)
+check_isbn_10_check_digit(x, errors.as.false = TRUE)
 }
 \arguments{
 \item{x}{A string of 10 digits or 9 digits with terminal "X"}
 
-\item{error.is.false}{return false if error instead of throwing error}
+\item{errors.as.false}{return false if error instead of throwing error}
 }
 \value{
 Returns TRUE if check passes, FALSE if not, and NA if NA
