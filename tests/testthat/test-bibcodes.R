@@ -38,6 +38,7 @@ test_that("get_isbn_10_check_digit() succeeds properly", {
                c("X", "0", "4", NA))
   expect_equal(get_isbn_10_check_digit(EX.invalid.10.digit.isbns, errors.as.nas=TRUE),
                c("X", "0", "4", NA))
+  expect_equal(get_isbn_10_check_digit("0-124-91540-X", allow.hyphens=TRUE), "X")
 })
 
 # get_isbn_10_check_digit fails properly
@@ -68,6 +69,9 @@ test_that("get_isbn_10_check_digit() succeeds properly", {
                                            "hubo un tiempo"),
                                          errors.as.false = TRUE),
                c(TRUE, TRUE, TRUE, FALSE))
+  expect_equal(check_isbn_10_check_digit("0-124-91540-X"), TRUE)
+  expect_equal(check_isbn_10_check_digit("0-124-91540-X", allow.hyphens=FALSE),
+               FALSE)
 })
 
 # check_isbn_10_check_digit fails properly
@@ -78,7 +82,13 @@ test_that("check_isbn_10_check_digit() fails properly", {
                "Input must be a character string")
   expect_error(check_isbn_10_check_digit("123456789", errors.as.false=FALSE),
                "Illegal input")
+  expect_error(check_isbn_10_check_digit("0-124-91540-X", allow.hyphens=FALSE,
+                                         errors.as.false=FALSE),
+               "Illegal input")
 })
+
+
+
 
 # is_valid_isbn_10
 test_that("is_valid_isbn_10() succeeds properly", {
@@ -98,6 +108,9 @@ test_that("is_valid_isbn_10() succeeds properly", {
                c(TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, FALSE))
   expect_equal(is_valid_isbn_10(c(EX.valid.10.digit.isbns, "hubo un tiempo")),
                c(TRUE, TRUE, TRUE, FALSE))
+  expect_equal(is_valid_isbn_10("0-124-91540-X"), TRUE)
+  expect_equal(is_valid_isbn_10("0-124-91540-1"), FALSE)
+  expect_equal(is_valid_isbn_10("0-124-91540-X", allow.hyphens=FALSE), FALSE)
 })
 
 test_that("is_valid_isbn_10() fails properly", {

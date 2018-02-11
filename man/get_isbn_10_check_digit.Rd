@@ -4,10 +4,13 @@
 \alias{get_isbn_10_check_digit}
 \title{Get ISBN 10 check digit}
 \usage{
-get_isbn_10_check_digit(x, errors.as.nas = FALSE)
+get_isbn_10_check_digit(x, allow.hyphens = FALSE, errors.as.nas = FALSE)
 }
 \arguments{
 \item{x}{A string of 9 or 10 digits}
+
+\item{allow.hyphens}{A logical indicating whether the hyphen
+separator should be allowed}
 
 \item{errors.as.nas}{return NA if error instead of throwing eroror}
 }
@@ -24,6 +27,7 @@ or a 9 digit string (without the last digit)
 \examples{
 
 get_isbn_10_check_digit("012491540X")
+get_isbn_10_check_digit("0-124-91540-X", allow.hyphens=TRUE)
 
 # nine digit string
 get_isbn_10_check_digit("900403781")

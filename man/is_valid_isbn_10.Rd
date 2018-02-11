@@ -4,10 +4,13 @@
 \alias{is_valid_isbn_10}
 \title{Return TRUE if valid ISBN 10}
 \usage{
-is_valid_isbn_10(x, lower.x.allowed = TRUE)
+is_valid_isbn_10(x, allow.hyphens = TRUE, lower.x.allowed = TRUE)
 }
 \arguments{
 \item{x}{A string of 10 digits or 9 digits with terminal "X"}
+
+\item{allow.hyphens}{A logical indicating whether the hyphen
+separator should be allowed}
 
 \item{lower.x.allowed}{A logical indicating whether ISBN 10s with
 a check digit with a lower-case "x" should

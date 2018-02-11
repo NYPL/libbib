@@ -14,6 +14,8 @@ REGEX.ISBN.13.12 <- "^\\d{12,13}$"
 #' or a 9 digit string (without the last digit)
 #'
 #' @param x A string of 9 or 10 digits
+#' @param allow.hyphens A logical indicating whether the hyphen
+#'     separator should be allowed
 #' @param errors.as.nas return NA if error instead of throwing eroror
 #'
 #' @return Returns the character check digit that satifies the
@@ -21,6 +23,7 @@ REGEX.ISBN.13.12 <- "^\\d{12,13}$"
 #' @examples
 #'
 #' get_isbn_10_check_digit("012491540X")
+#' get_isbn_10_check_digit("0-124-91540-X", allow.hyphens=TRUE)
 #'
 #' # nine digit string
 #' get_isbn_10_check_digit("900403781")
@@ -31,9 +34,11 @@ REGEX.ISBN.13.12 <- "^\\d{12,13}$"
 #' get_isbn_10_check_digit(c("012491540X", "9004037810", "900403781"))
 #'
 #' @export
-get_isbn_10_check_digit <- function(x, errors.as.nas=FALSE){
+get_isbn_10_check_digit <- function(x, allow.hyphens=FALSE, errors.as.nas=FALSE){
   if(class(x)!="character")
     stop("Input must be a character string")
+  if(allow.hyphens)
+    x <- gsub("-", "", x)
   if(sum(!(nchar(x[!is.na(x)]) %in% c(9, 10)))>0){
     if(!errors.as.nas) stop("Input must be either 9 or 10 characters")
   }
@@ -56,6 +61,8 @@ get_isbn_10_check_digit <- function(x, errors.as.nas=FALSE){
 #' checks out
 #'
 #' @param x A string of 10 digits or 9 digits with terminal "X"
+#' @param allow.hyphens A logical indicating whether the hyphen
+#'     separator should be allowed
 #' @param errors.as.false return false if error instead of throwing error
 #'
 #' @return Returns TRUE if check passes, FALSE if not, and NA if NA
@@ -67,13 +74,15 @@ get_isbn_10_check_digit <- function(x, errors.as.nas=FALSE){
 #' check_isbn_10_check_digit(c("012491540X", "9004037812"))  # TRUE FALSE
 #'
 #' @export
-check_isbn_10_check_digit <- function(x, errors.as.false=TRUE){
+check_isbn_10_check_digit <- function(x, allow.hyphens=TRUE, errors.as.false=TRUE){
   if(class(x)!="character"){
     if(errors.as.false)
       return(rep(FALSE, length(x)))
     stop("Input must be a character string")
   }
   x <- toupper(x)
+  if(allow.hyphens)
+    x <- gsub("-", "", x)
   where.bad <- (!grepl(REGEX.ISBN.10, x, perl=TRUE) & !is.na(x))
   if(sum(where.bad)>0){
     if(!errors.as.false) stop("Illegal input")
@@ -93,6 +102,8 @@ check_isbn_10_check_digit <- function(x, errors.as.false=TRUE){
 #' with a terminal "X" AND the check digit matches
 #'
 #' @param x A string of 10 digits or 9 digits with terminal "X"
+#' @param allow.hyphens A logical indicating whether the hyphen
+#'     separator should be allowed
 #' @param lower.x.allowed A logical indicating whether ISBN 10s with
 #'                        a check digit with a lower-case "x" should
 #'                        be treated as valid
@@ -107,10 +118,12 @@ check_isbn_10_check_digit <- function(x, errors.as.false=TRUE){
 #' is_valid_isbn_10(c("012491540X", "hubo un tiempo"))  # TRUE FALSE
 #'
 #' @export
-is_valid_isbn_10 <- function(x, lower.x.allowed=TRUE){
+is_valid_isbn_10 <- function(x, allow.hyphens=TRUE, lower.x.allowed=TRUE){
   if(class(x)!="character"){
     stop("Input must be a character string")
   }
+  if(allow.hyphens)
+    x <- gsub("-", "", x)
   CHECKREGEX <- REGEX.ISBN.10
   if(lower.x.allowed)
     CHECKREGEX <- REGEX.ISBN.10.flex

@@ -4,10 +4,13 @@
 \alias{check_isbn_10_check_digit}
 \title{Check the check digit of an ISBN 10}
 \usage{
-check_isbn_10_check_digit(x, errors.as.false = TRUE)
+check_isbn_10_check_digit(x, allow.hyphens = TRUE, errors.as.false = TRUE)
 }
 \arguments{
 \item{x}{A string of 10 digits or 9 digits with terminal "X"}
+
+\item{allow.hyphens}{A logical indicating whether the hyphen
+separator should be allowed}
 
 \item{errors.as.false}{return false if error instead of throwing error}
 }
