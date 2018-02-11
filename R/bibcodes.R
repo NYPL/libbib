@@ -125,7 +125,7 @@ check_isbn_10_check_digit <- function(x, allow.hyphens=TRUE, errors.as.false=TRU
 #' is_valid_isbn_10("0-124-91540-X") # TRUE
 #'
 #' # vectorized
-#' is_valid_isbn_10(c("012491540X", "9004037812"))  # TRUE FALSE
+#' is_valid_isbn_10(c("012491540X", "9004037812"))      # TRUE FALSE
 #' is_valid_isbn_10(c("012491540X", "hubo un tiempo"))  # TRUE FALSE
 #'
 #' @export
@@ -138,7 +138,7 @@ is_valid_isbn_10 <- function(x, allow.hyphens=TRUE, lower.x.allowed=TRUE){
   CHECKREGEX <- REGEX.ISBN.10
   if(lower.x.allowed)
     CHECKREGEX <- REGEX.ISBN.10.flex
-  where.bad <- !grepl(CHECKREGEX, x, perl=TRUE) & !is.na(x) ###
+  where.bad <- !grepl(CHECKREGEX, x, perl=TRUE) & !is.na(x)
   x[where.bad] <- NA
   ret <- ifelse(check_isbn_10_check_digit(x, errors.as.false=TRUE), TRUE, FALSE)
   ret[is.na(x)] <- NA
@@ -172,7 +172,7 @@ attr(is_valid_isbn_10, "assertr_vectorized") <- TRUE
 #' is_valid_isbn_10("012491540X")  # TRUE
 #'
 #' # vectorized
-#' is_valid_isbn_10(c("012491540X", "9004037812"))  # TRUE FALSE
+#' is_valid_isbn_10(c("012491540X", "9004037812"))      # TRUE FALSE
 #' is_valid_isbn_10(c("012491540X", "hubo un tiempo"))  # TRUE FALSE
 #'
 #' @export
@@ -307,6 +307,43 @@ check_isbn_13_check_digit <- function(x, allow.hyphens=TRUE, errors.as.false=TRU
   ret[where.bad] <- FALSE
   return(ret)
 }
+
+
+#' Return TRUE if valid ISBN 13
+#'
+#' Takes a string representation of an ISBN 13 verifies that it is valid.
+#' An ISBN 13 is valid if it is a 13 digit string and the check digit matches
+#'
+#' @param x A string of 13
+#' @param allow.hyphens A logical indicating whether the hyphen
+#'     separator should be allowed
+#'
+#' @return Returns TRUE if checks pass, FALSE if not, and NA if NA
+#' @examples
+#'
+#' is_valid_isbn_13("9780306406157")          # TRUE
+#' is_valid_isbn_13("978-0-306-40615-7")      # TRUE
+#'
+#' # vectorized
+#' is_valid_isbn_10(c("012491540X", "9004037812"))  # TRUE FALSE
+#' is_valid_isbn_13(c("978-0-306-40615-7", "9783161484103"))  # TRUE FALSE
+#' is_valid_isbn_13(c("978-0-306-40615-7", "hubo un tiempo"))  # TRUE FALSE
+#'
+#' @export
+is_valid_isbn_13 <- function(x, allow.hyphens=TRUE){
+  if(class(x)!="character"){
+    stop("Input must be a character string")
+  }
+  if(allow.hyphens)
+    x <- gsub("-", "", x)
+  where.bad <- !grepl(REGEX.ISBN.13, x, perl=TRUE) & !is.na(x)
+  x[where.bad] <- NA
+  ret <- ifelse(check_isbn_13_check_digit(x, errors.as.false=TRUE), TRUE, FALSE)
+  ret[is.na(x)] <- NA
+  ret[where.bad] <- FALSE
+  return(ret)
+}
+attr(is_valid_isbn_13, "assertr_vectorized") <- TRUE
 
 
 # ------------------------------------------ #

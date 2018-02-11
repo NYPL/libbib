@@ -57,7 +57,7 @@ test_that("get_isbn_10_check_digit() fails properly", {
 
 
 # check_isbn_10_check_digit succeeds properly
-test_that("get_isbn_10_check_digit() succeeds properly", {
+test_that("check_isbn_10_check_digit() succeeds properly", {
   expect_equal(check_isbn_10_check_digit(EX.valid.10.digit.isbns[1]),
                TRUE)
   expect_equal(check_isbn_10_check_digit(EX.valid.10.digit.isbns),
@@ -90,8 +90,6 @@ test_that("check_isbn_10_check_digit() fails properly", {
                                          errors.as.false=FALSE),
                "Illegal input")
 })
-
-
 
 
 # is_valid_isbn_10
@@ -171,40 +169,65 @@ test_that("get_isbn_13_check_digit() fails properly", {
 })
 
 
-# check_isbn_10_check_digit succeeds properly
-test_that("get_isbn_10_check_digit() succeeds properly", {
-  expect_equal(check_isbn_10_check_digit(EX.valid.10.digit.isbns[1]),
+# check_isbn_13_check_digit succeeds properly
+test_that("get_isbn_13_check_digit() succeeds properly", {
+  expect_equal(check_isbn_13_check_digit(EX.valid.13.digit.isbns[1]),
                TRUE)
-  expect_equal(check_isbn_10_check_digit(EX.valid.10.digit.isbns),
-               c(TRUE, TRUE, TRUE))
-  expect_equal(check_isbn_10_check_digit(EX.invalid.10.digit.isbns),
-               c(FALSE, FALSE, FALSE, FALSE))
-  expect_equal(check_isbn_10_check_digit(c(EX.valid.10.digit.isbns,
-                                           EX.invalid.10.digit.isbns)),
-               c(TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, FALSE))
-  expect_equal(check_isbn_10_check_digit(c(12, 12), errors.as.false = TRUE),
+  expect_equal(check_isbn_13_check_digit(EX.valid.13.digit.isbns),
+               c(TRUE, TRUE))
+  expect_equal(check_isbn_13_check_digit(EX.invalid.13.digit.isbns),
                c(FALSE, FALSE))
-  expect_equal(check_isbn_10_check_digit(c(EX.valid.10.digit.isbns,
+  expect_equal(check_isbn_13_check_digit(c(EX.valid.13.digit.isbns,
+                                           EX.invalid.13.digit.isbns)),
+               c(TRUE, TRUE, FALSE, FALSE))
+  expect_equal(check_isbn_13_check_digit(c(12, 12), errors.as.false = TRUE),
+               c(FALSE, FALSE))
+  expect_equal(check_isbn_13_check_digit(c(EX.valid.13.digit.isbns,
                                            "hubo un tiempo"),
                                          errors.as.false = TRUE),
-               c(TRUE, TRUE, TRUE, FALSE))
-  expect_equal(check_isbn_10_check_digit("0-124-91540-X"), TRUE)
-  expect_equal(check_isbn_10_check_digit("0-124-91540-X", allow.hyphens=FALSE),
+               c(TRUE, TRUE, FALSE))
+  expect_equal(check_isbn_13_check_digit("978-0-306-40615-7"), TRUE)
+  expect_equal(check_isbn_13_check_digit("978-0-306-40615-7", allow.hyphens=FALSE),
                FALSE)
 })
 
-# check_isbn_10_check_digit fails properly
-test_that("check_isbn_10_check_digit() fails properly", {
-  expect_equal(check_isbn_10_check_digit(c(EX.valid.10.digit.isbns, NA)),
-               c(TRUE, TRUE, TRUE, NA))
-  expect_error(check_isbn_10_check_digit(0123456789, errors.as.false=FALSE),
+# check_isbn_13_check_digit fails properly
+test_that("check_isbn_13_check_digit() fails properly", {
+  expect_equal(check_isbn_13_check_digit(c(EX.valid.13.digit.isbns, NA)),
+               c(TRUE, TRUE, NA))
+  expect_error(check_isbn_13_check_digit(0123456789, errors.as.false=FALSE),
                "Input must be a character string")
-  expect_error(check_isbn_10_check_digit("123456789", errors.as.false=FALSE),
+  expect_error(check_isbn_13_check_digit("978-0-306-40615-", errors.as.false=FALSE),
                "Illegal input")
-  expect_error(check_isbn_10_check_digit("0-124-91540-X", allow.hyphens=FALSE,
+  expect_error(check_isbn_13_check_digit("978-0-306-40615-7", allow.hyphens=FALSE,
                                          errors.as.false=FALSE),
                "Illegal input")
-}) #######
+})
+
+# is_valid_isbn_13
+test_that("is_valid_isbn_13() succeeds properly", {
+  expect_equal(is_valid_isbn_13(EX.valid.13.digit.isbns[1]),
+               TRUE)
+  expect_equal(is_valid_isbn_13(EX.valid.13.digit.isbns),
+               c(TRUE, TRUE))
+  expect_equal(is_valid_isbn_13(EX.invalid.13.digit.isbns),
+               c(FALSE, FALSE))
+  expect_equal(is_valid_isbn_13(c(EX.valid.13.digit.isbns,
+                                  EX.invalid.13.digit.isbns)),
+               c(TRUE, TRUE, FALSE, FALSE))
+  expect_equal(is_valid_isbn_13(c(EX.valid.13.digit.isbns, "hubo un tiempo")),
+               c(TRUE, TRUE, FALSE))
+  expect_equal(is_valid_isbn_13("978-0-306-40615-7"), TRUE)
+  expect_equal(is_valid_isbn_13("978-0-306-40615-1"), FALSE)
+  expect_equal(is_valid_isbn_13("978-0-306-40615-7", allow.hyphens=FALSE), FALSE)
+})
+
+test_that("is_valid_isbn_13() fails properly", {
+  expect_equal(is_valid_isbn_13(c(EX.valid.13.digit.isbns, NA)),
+               c(TRUE, TRUE, NA))
+  expect_error(is_valid_isbn_13(0123456789),
+               "Input must be a character string")
+})
 
 
 # ------------------------------------------ #

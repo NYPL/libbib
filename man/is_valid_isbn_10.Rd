@@ -30,7 +30,7 @@ is_valid_isbn_10("012491540X")    # TRUE
 is_valid_isbn_10("0-124-91540-X") # TRUE
 
 # vectorized
-is_valid_isbn_10(c("012491540X", "9004037812"))  # TRUE FALSE
+is_valid_isbn_10(c("012491540X", "9004037812"))      # TRUE FALSE
 is_valid_isbn_10(c("012491540X", "hubo un tiempo"))  # TRUE FALSE
 
 }
