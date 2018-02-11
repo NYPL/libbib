@@ -309,41 +309,56 @@ check_isbn_13_check_digit <- function(x, allow.hyphens=TRUE, errors.as.false=TRU
 }
 
 
-#' Return TRUE if valid ISBN 13
+#' Convert ISBN 10 to ISBN 13
 #'
-#' Takes a string representation of an ISBN 13 verifies that it is valid.
-#' An ISBN 13 is valid if it is a 13 digit string and the check digit matches
+#' Takes a string representation of an ISBN 10 and converts it to an ISBN 13.
 #'
-#' @param x A string of 13
-#' @param allow.hyphens A logical indicating whether the hyphen
-#'     separator should be allowed
+#' @param x A string of 10 digits or 9 digits with terminal "X"
+#' @param skip.validity.check Skip the checking for whether the ISBN 10 is valid
+#' @param pretty A logical indicating whether the ISBN 13 should be
+#'               prettily hyphenated
 #'
-#' @return Returns TRUE if checks pass, FALSE if not, and NA if NA
+#' @return Returns ISBN 13 as a string
 #' @examples
 #'
-#' is_valid_isbn_13("9780306406157")          # TRUE
-#' is_valid_isbn_13("978-0-306-40615-7")      # TRUE
-#'
-#' # vectorized
-#' is_valid_isbn_10(c("012491540X", "9004037812"))  # TRUE FALSE
-#' is_valid_isbn_13(c("978-0-306-40615-7", "9783161484103"))  # TRUE FALSE
-#' is_valid_isbn_13(c("978-0-306-40615-7", "hubo un tiempo"))  # TRUE FALSE
+#' print("whatup")
 #'
 #' @export
-is_valid_isbn_13 <- function(x, allow.hyphens=TRUE){
+convert_to_ISBN_13 <- function(x, skip.validity.check=FALSE,
+                               errors.as.nas=FALSE, pretty=FALSE){
   if(class(x)!="character"){
     stop("Input must be a character string")
   }
-  if(allow.hyphens)
-    x <- gsub("-", "", x)
-  where.bad <- !grepl(REGEX.ISBN.13, x, perl=TRUE) & !is.na(x)
-  x[where.bad] <- NA
-  ret <- ifelse(check_isbn_13_check_digit(x, errors.as.false=TRUE), TRUE, FALSE)
-  ret[is.na(x)] <- NA
-  ret[where.bad] <- FALSE
-  return(ret)
+  x <- toupper(x)
+  x <- gsub("[^\\d|X]", "", x, perl=TRUE)
+  x <- gsub("X(.+$)", "\\1", x, perl=TRUE)
+  if(!skip.validity.check){
+    where.bad <- !is_valid_isbn_10(x) & !is.na(x)
+    if(any(where.bad) & !errors.as.nas) stop("Invalid ISBN 10 detected")
+    x[where.bad] <- NA
+  }
+  first9 <- substr(x, 1, 9)
+  first12 <- ifelse(!is.na(first9), sprintf("978%s", first9), NA)
+  newcheckdigit <- get_isbn_13_check_digit(as.character(first12))
+  newisbn13 <- ifelse(!is.na(first12), sprintf("%s%s", first12, newcheckdigit), NA)
+  return(newisbn13)
 }
-attr(is_valid_isbn_13, "assertr_vectorized") <- TRUE
+
+convert_to_ISBN_13("012491540X")
+convert_to_ISBN_13(c("012491540X", NA))
+convert_to_ISBN_13("0124915401")
+convert_to_ISBN_13("0124915401", errors.as.nas=TRUE)
+convert_to_ISBN_13("0124915401", skip.validity.check = TRUE)
+
+
+###### NO NORMALIZE ISBN 13 YET!!!
+
+
+
+
+
+
+
 
 
 # ------------------------------------------ #
