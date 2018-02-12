@@ -155,7 +155,7 @@ attr(is_valid_isbn_10, "assertr_vectorized") <- TRUE
 #' Attempt to enforce validity and canonical form to ISBN 10
 #'
 #' Takes a string representation of an ISBN 10. Strips all non-digit
-#' or "X" characters and checks if it is valid (whether the
+#' and non-"X" characters and checks if it is valid (whether the
 #' check digit works out, etc). User can specify whether "aggressive"
 #' measures should be taken to salvage the malformed ISBN 10 string.
 #'
@@ -163,7 +163,7 @@ attr(is_valid_isbn_10, "assertr_vectorized") <- TRUE
 #' @param aggressive A logical indicating whether aggressive measures
 #'                      should be taken to try to get the "ISBN 10"
 #'                      into a valid form. See "Details" for more info
-#' @param convert.to.isbn.13 A logical indication whether the ISBN 10
+#' @param convert.to.isbn.13 A logical indicating whether the ISBN 10
 #'                           should be converted into an ISBN 13
 #' @param pretty A logical indicating whether the ISBN should be
 #'               prettily hyphenated
@@ -175,7 +175,7 @@ attr(is_valid_isbn_10, "assertr_vectorized") <- TRUE
 #' garbage digits/characters in the front and has an "X" check digit,
 #' it will return the salvaged ISBN 10.
 #'
-#' @return Returns TRUE if checks pass, FALSE if not, and NA if NA
+#' @return Returns ISBN 10 if checks pass, FALSE if not, and NA if NA
 #' @examples
 #'
 #' normalize_isbn_10("012491540x")                    # "012491540X"
@@ -187,6 +187,8 @@ attr(is_valid_isbn_10, "assertr_vectorized") <- TRUE
 #' # "978-0-12-491540-4"
 #' normalize_isbn_10("513213012491540x")              # "012491540X"
 #'
+#' @seealso \code{\link{normalize_isbn}} \code{\link{normalize_isbn_13}}
+#'
 #' @export
 normalize_isbn_10 <- function(x, aggressive=TRUE, convert.to.isbn.13=FALSE, pretty=FALSE){
   if(all(is.na(x))) return(as.character(x))
@@ -194,6 +196,7 @@ normalize_isbn_10 <- function(x, aggressive=TRUE, convert.to.isbn.13=FALSE, pret
     x <- as.character(x)
   x <- toupper(x)
   x <- gsub("[^\\d|X]", "", x, perl=TRUE)
+  y <- x
   x <- gsub("X(.+$)", "\\1", x, perl=TRUE)
   is.all.valid <- all(is_valid_isbn_10(x))
   if(aggressive && !is.all.valid){
@@ -228,24 +231,20 @@ normalize_isbn_10 <- function(x, aggressive=TRUE, convert.to.isbn.13=FALSE, pret
                                            substr(thebig, 1, 10),
                                            thebig)
     }
-    thehiddens <- x[grepl("\\d{9}X", x) & !is.na(x)]
-    if(length(thehiddens)){
-      x[grepl("\\d{9}X", x) & !is.na(x)] <- ifelse(will_the_hiddens_do(thehiddens),
-                                                   gsub("^.*?(\\d{9}X).*$", "\\1",
-                                                        x, perl=TRUE),
-                                                   thehiddens)
+    loghidden <- grepl("\\d{9}X", y, perl=TRUE) & !is.na(x)
+    if(any(loghidden)){
+      loghidden[loghidden] <- will_the_hiddens_do(y[loghidden])
+      thehiddens <- y[loghidden]
+      x[loghidden] <- gsub("^.*?(\\d{9}X).*$", "\\1", thehiddens, perl=TRUE)
     }
+
   }
   # maybe shouldn't return NA if couldn't be salvaged?
   ret <- ifelse(is_valid_isbn_10(x), x, NA)
   if(convert.to.isbn.13)
     return(convert_to_isbn_13(ret, pretty=pretty))
   if(pretty){
-    nonnas <- !is.na(ret)
-    these <- ret[nonnas]
-    ret[nonnas] <- sprintf("%s-%s-%s-%s", substr(these, 1, 1),
-                           substr(these, 2, 4), substr(these, 5, 9),
-                           substr(these, 10, 10))
+    ret <- prettify_isbn_10(ret)
   }
   return(ret)
 }
@@ -439,14 +438,148 @@ convert_to_isbn_13 <- function(x, skip.validity.check=FALSE,
 
 
 
-###### NO NORMALIZE ISBN 13 YET!!!
+#' Attempt to enforce validity and canonical form to ISBN 13
+#'
+#' Takes a string representation of an ISBN 13. Strips all non-digit
+#' characters and checks if it is valid (whether the
+#' check digit works out, etc). User can specify whether "aggressive"
+#' measures should be taken to salvage the malformed ISBN 13 string.
+#'
+#' @param x A string
+#' @param aggressive A logical indicating whether aggressive measures
+#'                   should be taken to try to get the "ISBN 13"
+#'                   into a valid form. See "Details" for more info
+#' @param pretty A logical indicating whether the ISBN should be
+#'               prettily hyphenated
+#'
+#' @details If \code{aggressive} is TRUE, aggressive measures are taken to
+#' try to salvage the malformed ISBN 13 string. If the ISBN 13, for example,
+#' is more than 13 characters, this function will attempt to make a valid
+#' ISBN 13 from the first 13 digits.
+#'
+#' @return Returns valid ISBN 13 if checks pass, FALSE if not, and NA if NA
+#' @examples
+#'
+#' normalize_isbn_13("978966819^*!X7918")        # "9789668197918"
+#'
+#' # vectorized
+#' normalize_isbn_13(c("978-9-66-819791-8", "__9__781572411579"))
+#' # "9789668197918" "9781572411579"
+#'
+#' @seealso \code{\link{normalize_isbn}} \code{\link{normalize_isbn_10}}
+#'
+#' @export
+normalize_isbn_13 <- function(x, aggressive=TRUE, pretty=FALSE){
+  if(all(is.na(x))) return(as.character(x))
+  if(class(x)!="character")
+    x <- as.character(x)
+  x <- gsub("\\D", "", x, perl=TRUE)
+  is.all.valid <- all(is_valid_isbn_13(x))
+  if(aggressive && !is.all.valid){
+    will_the_first_13_do <- function(x){
+      ifelse(nchar(x)>13 & is_valid_isbn_13(substr(x, 1, 13)), TRUE, FALSE)
+    }
+    thebig <- x[nchar(x)>13 & !is.na(x)]
+    if(length(thebig)){
+      x[nchar(x)>13 & !is.na(x)] <- ifelse(will_the_first_13_do(thebig),
+                                           substr(thebig, 1, 13),
+                                           thebig)
+    }
+  }
+  # maybe shouldn't return NA if couldn't be salvaged?
+  ret <- ifelse(is_valid_isbn_13(x), x, NA)
+  if(pretty){
+    ret <- prettify_isbn_13(ret)
+  }
+  return(ret)
+}
+
+
+# ------------------------------------------ #
+
+
+##############################################
+###             GENERAL ISBN               ###
+##############################################
+
+# these are wrong
+prettify_isbn_10 <- function(x){
+  nonnas <- !is.na(x)
+  these <- x[nonnas]
+  x[nonnas] <- sprintf("%s-%s-%s-%s", substr(these, 1, 1),
+                       substr(these, 2, 4), substr(these, 5, 9),
+                       substr(these, 10, 10))
+  return(x)
+}
+
+# these are wrong
+prettify_isbn_13 <- function(x){
+  nonnas <- !is.na(x)
+  these <- x[nonnas]
+  x[nonnas] <- sprintf("%s-%s-%s-%s-%s", substr(these, 1, 3),
+                       substr(these, 4, 4), substr(these, 5, 6),
+                       substr(these, 7, 12), substr(these, 13, 13))
+
+  return(x)
+}
 
 
 
-
-
-
-
+#' Attempt to enforce validity and canonical form to an ISBN
+#'
+#' Takes a string representation of an ISBN (10 or 13). This function uses
+#' tries to normalize the string as a ISBN 13, then an ISBN 10. If one of
+#' those methods are able to salvage the ISBN, the canonicalized ISBN is
+#' returned. User can specify whether "aggressive"
+#' measures should be taken to salvage the malformed ISBN string.
+#'
+#' @param x A string
+#' @param aggressive A logical indicating whether aggressive measures
+#'                      should be taken to try to get the "ISBN 10"
+#'                      into a valid form. See "Details" for more info
+#' @param convert.to.isbn.13 A logical indicating whether the ISBN 10
+#'                           should be converted into an ISBN 13
+#' @param pretty A logical indicating whether the ISBN should be
+#'               prettily hyphenated
+#'
+#' @details If \code{aggressive} is TRUE, aggressive measures are taken to
+#' try to salvage the malformed ISBN string. Since this function attempts
+#' to salvage both an ISBN 10 and 13, to learn about examples of the
+#' aggressive methods, see \code{\link{normalize_isbn_10}} and
+#' \code{\link{normalize_isbn_13}}
+#'
+#' @return Returns ISBN if checks pass, FALSE if not, and NA if NA
+#' @examples
+#'
+#' normalize_isbn("012491540x")                           # "012491540X"
+#' normalize_isbn("012491540x", convert.to.isbn.13=TRUE)
+#' "9780124915404"
+#'
+#' normalize_isbn("012491540x xe32ea", pretty=TRUE)       # "0-124-91540-X"
+#'
+#' # vectorized
+#' normalize_isbn(c("513213012491540x245",
+#'                  "978966819^*!X7918",
+#'                  NA,
+#'                  "97815724115799781572411579"))
+#' # "012491540X", "9789668197918", NA, "9781572411579"
+#'
+#' @seealso \code{\link{normalize_isbn_10}} \code{\link{normalize_isbn_13}}
+#'
+#' @export
+normalize_isbn <- function(x, aggressive=TRUE, convert.to.isbn.13=FALSE, pretty=FALSE){
+  if(all(is.na(x))) return(as.character(x))
+  if(class(x)!="character")
+    x <- as.character(x)
+  x <- toupper(x)
+  x <- gsub("[^\\d|X]", "", x, perl=TRUE)
+  tried13 <- normalize_isbn_13(x, aggressive=aggressive, pretty=pretty)
+  tried10 <- normalize_isbn_10(x, aggressive=aggressive,
+                               convert.to.isbn.13=convert.to.isbn.13, pretty=pretty)
+  ret <- ifelse(!is.na(tried13), tried13, ifelse(!is.na(tried10), tried10, FALSE))
+  ret <- ifelse(!is.na(tried13), tried13, tried10)
+  return(ret)
+}
 
 
 # ------------------------------------------ #

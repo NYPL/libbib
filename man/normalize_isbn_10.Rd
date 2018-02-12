@@ -14,18 +14,18 @@ normalize_isbn_10(x, aggressive = TRUE, convert.to.isbn.13 = FALSE,
 should be taken to try to get the "ISBN 10"
 into a valid form. See "Details" for more info}
 
-\item{convert.to.isbn.13}{A logical indication whether the ISBN 10
+\item{convert.to.isbn.13}{A logical indicating whether the ISBN 10
 should be converted into an ISBN 13}
 
 \item{pretty}{A logical indicating whether the ISBN should be
 prettily hyphenated}
 }
 \value{
-Returns TRUE if checks pass, FALSE if not, and NA if NA
+Returns ISBN 10 if checks pass, FALSE if not, and NA if NA
 }
 \description{
 Takes a string representation of an ISBN 10. Strips all non-digit
-or "X" characters and checks if it is valid (whether the
+and non-"X" characters and checks if it is valid (whether the
 check digit works out, etc). User can specify whether "aggressive"
 measures should be taken to salvage the malformed ISBN 10 string.
 }
@@ -48,4 +48,7 @@ normalize_isbn_10("012491540x", convert.to.isbn.13=TRUE, pretty=TRUE)
 # "978-0-12-491540-4"
 normalize_isbn_10("513213012491540x")              # "012491540X"
 
+}
+\seealso{
+\code{\link{normalize_isbn}} \code{\link{normalize_isbn_13}}
 }

@@ -19,13 +19,21 @@ EX.hairy.isbn.10s <- c("01249-^@^1540X",         # has nonsense but good
                        "95700683539570068361",   # good if divided in half
                        "95700683539570068361",   # good if divided in half
                        NA,                       # NA (obviously)
-                       "90040X3781"              # no
+                       "90040X3781",             # no
+                       "32132012491540X23464"    # ok but hidden
 )
 
 EX.valid.13.digit.isbns <- c("9780306406157", "9783161484100")
 EX.12.digit.isbns <- c("978030640615", "978316148410")
 EX.invalid.13.digit.isbns <- c("978316__84101", "9780306406151")
 
+EX.hairy.isbn.13s <- c("9789668197918",
+                       "978966819^*@!)X7918",
+                       NA,
+                       "9770800783197708007912",
+                       "97815724115799781572411579",
+                       "",
+                       "9789668197911")
 
 
 
@@ -130,10 +138,11 @@ test_that("is_valid_isbn_10() fails properly", {
 test_that("normalize_isbn_10() succeeds properly", {
   expect_equal(normalize_isbn_10(EX.hairy.isbn.10s),
                c("012491540X", NA, "9004037810", "898477250X",
-                 NA, "012491540X", "9570068353", "9570068353", NA, NA))
+                 NA, "012491540X", "9570068353", "9570068353", NA, NA,
+                 "012491540X"))
   expect_equal(normalize_isbn_10(EX.hairy.isbn.10s, aggressive=FALSE),
                c("012491540X", NA, "9004037810", NA,
-                 NA, NA, NA, NA, NA, NA))
+                 NA, NA, NA, NA, NA, NA, NA))
   expect_equal(normalize_isbn_10("012491540x"),
                "012491540X")
   expect_equal(normalize_isbn_10("012491540x xe32ea"),
@@ -251,6 +260,17 @@ test_that("is_valid_isbn_13() fails properly", {
 })
 
 
+# normalize ISBN 13
+test_that("normalize_isbn_13() succeeds properly", {
+  expect_equal(normalize_isbn_13(EX.hairy.isbn.13s),
+               c("9789668197918", "9789668197918", NA, NA, "9781572411579", NA, NA))
+  expect_equal(normalize_isbn_13(EX.hairy.isbn.13s, aggressive=FALSE),
+               c("9789668197918", "9789668197918", NA, NA, NA, NA, NA))
+  expect_equal(normalize_isbn_13(NA), as.character(NA))
+})
+
+
+
 # convert_to_isbn_13
 test_that("convert_to_isbn_13() succeeds properly", {
   expect_equal(convert_to_isbn_13(c("012491540X", "9004037810")),
@@ -278,6 +298,32 @@ test_that("convert_to_isbn_13() fails properly", {
 })
 
 # ------------------------------------------ #
+
+
+
+# ------------------------------------------ #
+
+
+##############################################
+###             GENERAL ISBN               ###
+##############################################
+
+
+# normalize ISBN (general)
+test_that("normalize_isbn() succeeds properly", {
+  expect_equal(normalize_isbn(c(EX.hairy.isbn.10s, EX.hairy.isbn.13s)),
+               c(c("012491540X", NA, "9004037810", "898477250X",
+                   NA, "012491540X", "9570068353", "9570068353", NA, NA,
+                   "012491540X"),
+                 c("9789668197918", "9789668197918", NA, "9770800783",
+                   "9781572411579", NA, NA)))
+
+
+  #expect_equal(normalize_isbn(c(EX.hairy.isbn.10s, EX.hairy.isbn.13s), aggressive=FALSE),
+  #             c("9789668197918", "9789668197918", NA, NA, NA, NA, NA))
+  expect_equal(normalize_isbn(NA), as.character(NA))
+})
+
 
 
 
