@@ -204,7 +204,7 @@ normalize_isbn_10 <- function(x, aggressive=TRUE, convert.to.isbn.13=FALSE, pret
       ifelse(nchar(x)==9 & is_valid_isbn_10(stringr::str_pad(x, 10, "left", "0")), TRUE, FALSE)
     }
     will_adding_an_X_fix_it <- function(x){
-      ifelse(nchar(x)==9 & get_isbn_10_check_digit(x)=="X", TRUE, FALSE)
+      ifelse(nchar(x)==9 & get_isbn_10_check_digit(x, errors.as.nas=TRUE)=="X", TRUE, FALSE)
     }
     will_the_first_10_do <- function(x){
       ifelse(nchar(x)>10 & is_valid_isbn_10(substr(x, 1, 10)), TRUE, FALSE)
