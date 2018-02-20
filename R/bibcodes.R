@@ -199,7 +199,7 @@ normalize_isbn_10 <- function(x, aggressive=TRUE, convert.to.isbn.13=FALSE, pret
   x <- gsub("[^\\d|X]", "", x, perl=TRUE)
   y <- x
   x <- gsub("X(.+$)", "\\1", x, perl=TRUE)
-  is.all.valid <- all(is_valid_isbn_10(x))
+  is.all.valid <- all(is_valid_isbn_10(x), na.rm=TRUE)
   if(aggressive && !is.all.valid){
     will_padding_zeros_fix_it <- function(x){
       ifelse(nchar(x)==9 & is_valid_isbn_10(stringr::str_pad(x, 10, "left", "0")), TRUE, FALSE)
@@ -475,7 +475,7 @@ normalize_isbn_13 <- function(x, aggressive=TRUE, pretty=FALSE){
   if(class(x)!="character")
     x <- as.character(x)
   x <- gsub("\\D", "", x, perl=TRUE)
-  is.all.valid <- all(is_valid_isbn_13(x))
+  is.all.valid <- all(is_valid_isbn_13(x), na.rm=TRUE)
   if(aggressive && !is.all.valid){
     will_the_first_13_do <- function(x){
       ifelse(nchar(x)>13 & is_valid_isbn_13(substr(x, 1, 13)), TRUE, FALSE)
