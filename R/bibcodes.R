@@ -782,7 +782,7 @@ normalize_issn <- function(x, aggressive=TRUE, pretty=FALSE){
       ifelse(nchar(x)==7 & is_valid_issn(stringr::str_pad(x, 8, "left", "0")), TRUE, FALSE)
     }
     will_adding_an_X_fix_it <- function(x){
-      ifelse(nchar(x)==7 & get_issn_check_digit(x)=="X", TRUE, FALSE)
+      ifelse(nchar(x)==7 & get_issn_check_digit(x, errors.as.nas=TRUE)=="X", TRUE, FALSE)
     }
     will_the_first_8_do <- function(x){
       ifelse(nchar(x)>8 & is_valid_issn(substr(x, 1, 8)), TRUE, FALSE)
