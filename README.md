@@ -41,6 +41,10 @@ automated tests, at time of writing
 ### ISSN
 - `check_issn_check_digit`
 - `get_issn_check_digit`
+- `is_valid_issn`
+- `normalize_issn`
+### LCCN
+- `normalize_lccn`
 
 ---
 

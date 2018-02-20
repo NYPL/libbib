@@ -17,7 +17,7 @@ into a valid form. See "Details" for more info}
 prettily hyphenated}
 }
 \value{
-Returns valid ISBN 13 if checks pass, FALSE if not, and NA if NA
+Returns valid ISBN 13 if possible, NA if not
 }
 \description{
 Takes a string representation of an ISBN 13. Strips all non-digit

@@ -21,7 +21,7 @@ should be converted into an ISBN 13}
 prettily hyphenated}
 }
 \value{
-Returns ISBN if checks pass, FALSE if not, and NA if NA
+Returns valid ISBN if possible, NA if not
 }
 \description{
 Takes a string representation of an ISBN (10 or 13). This function uses

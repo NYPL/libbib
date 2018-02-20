@@ -12,6 +12,7 @@ REGEX.ISSN.flex <- "^\\d{7}(x|X|\\d)$"
 REGEX.ISSN <- "^\\d{7}(X|\\d)$"
 
 
+
 ##############################################
 ###               ISBN 10                  ###
 ##############################################
@@ -175,7 +176,7 @@ attr(is_valid_isbn_10, "assertr_vectorized") <- TRUE
 #' garbage digits/characters in the front and has an "X" check digit,
 #' it will return the salvaged ISBN 10.
 #'
-#' @return Returns ISBN 10 if checks pass, FALSE if not, and NA if NA
+#' @return Returns valid ISBN 10 if possible, NA if not
 #' @examples
 #'
 #' normalize_isbn_10("012491540x")                    # "012491540X"
@@ -457,7 +458,7 @@ convert_to_isbn_13 <- function(x, skip.validity.check=FALSE,
 #' is more than 13 characters, this function will attempt to make a valid
 #' ISBN 13 from the first 13 digits.
 #'
-#' @return Returns valid ISBN 13 if checks pass, FALSE if not, and NA if NA
+#' @return Returns valid ISBN 13 if possible, NA if not
 #' @examples
 #'
 #' normalize_isbn_13("978966819^*!X7918")        # "9789668197918"
@@ -548,7 +549,7 @@ prettify_isbn_13 <- function(x){
 #' aggressive methods, see \code{\link{normalize_isbn_10}} and
 #' \code{\link{normalize_isbn_13}}
 #'
-#' @return Returns ISBN if checks pass, FALSE if not, and NA if NA
+#' @return Returns valid ISBN if possible, NA if not
 #' @examples
 #'
 #' normalize_isbn("012491540x")                           # "012491540X"
@@ -682,6 +683,232 @@ check_issn_check_digit <- function(x, allow.hyphens=TRUE, errors.as.false=FALSE)
   return(ret)
 }
 
-# is valid ISSN (assertr vectorize it)
-# normalize ISSN
+
+
+#' Return TRUE if valid ISSN
+#'
+#' Takes a string representation of an ISSN verifies that it is valid.
+#' An ISSN is valid if it is a 8 digit string or a 7 digit string
+#' with a terminal "X" AND the check digit matches
+#'
+#' @param x A string of 8 digits or 7 digits with terminal "X"
+#' @param allow.hyphens A logical indicating whether the hyphen
+#'     separator should be allowed
+#' @param lower.x.allowed A logical indicating whether ISSNs with
+#'                        a check digit with a lower-case "x" should
+#'                        be treated as valid
+#'
+#' @return Returns TRUE if checks pass, FALSE if not, and NA if NA
+#' @examples
+#'
+#' is_valid_issn("2434561X")           # TRUE
+#' is_valid_issn("2434-561X")          # TRUE
+#'
+#' # vectorized
+#'
+#' is_valid_issn(c("2434-561X", "2434-5611", "0378-5955", NA))
+#' # TRUE FALSE TRUE NA
+#'
+#' @export
+is_valid_issn <- function(x, allow.hyphens=TRUE, lower.x.allowed=TRUE){
+  if(all(is.na(x))) return(as.character(x))
+  if(class(x)!="character"){
+    stop("Input must be a character string")
+  }
+  if(allow.hyphens)
+    x <- gsub("-", "", x)
+  if(lower.x.allowed)
+    x <- toupper(x)
+  where.bad <- !grepl(REGEX.ISSN, x, perl=TRUE) & !is.na(x)
+  x[where.bad] <- NA
+  ret <- ifelse(check_issn_check_digit(x, errors.as.false=TRUE), TRUE, FALSE)
+  ret[is.na(x)] <- NA
+  ret[where.bad] <- FALSE
+  return(ret)
+}
+attr(is_valid_issn, "assertr_vectorized") <- TRUE
+
+
+
+#' Attempt to enforce validity and canonical form to ISSN
+#'
+#' Takes a string representation of an ISSN. Strips all non-digit
+#' and non-"X" characters and checks if it is valid (whether the
+#' check digit works out, etc). User can specify whether "aggressive"
+#' measures should be taken to salvage the malformed ISSN string.
+#'
+#' @param x A string
+#' @param aggressive A logical indicating whether aggressive measures
+#'                      should be taken to try to get the "ISSN"
+#'                      into a valid form. See "Details" for more info
+#' @param pretty A logical indicating whether the ISSN should be
+#'               prettily hyphenated
+#'
+#' @details If \code{aggressive} is TRUE, aggressive measures are taken to
+#' try to salvage the malformed ISSN string. If the ISSN, for example,
+#' is 7 digits, and either adding an "X" to the end, or leading "0"s fix it,
+#' this function will return the salvaged ISSN. If the ISSN has
+#' garbage digits/characters in the front and has an "X" check digit,
+#' it will return the salvaged ISSN.
+#'
+#' @return Returns valid ISSN if possible, NA if not
+#' @examples
+#'
+#' # adds leading zero
+#' normalize_issn("3785955")                          # "03785955"
+#'
+#' # adds X to 7 digit ISSN if valid
+#' normalize_issn("2434561", pretty=TRUE)             # "2434-561X"
+#'
+#' # finds correct sequence
+#' normalize_issn("21335212434561X")                  # "2434561X"
+#'
+#' # vectorized
+#' normalize_issn(c("__2434__561X", "2434561", "21335212434561X"))
+#' # "2434561X" "2434561X" "2434561X"
+#'
+#' @export
+normalize_issn <- function(x, aggressive=TRUE, pretty=FALSE){
+  if(all(is.na(x))) return(as.character(x))
+  if(class(x)!="character")
+    x <- as.character(x)
+  x <- toupper(x)
+  x <- gsub("[^\\d|X]", "", x, perl=TRUE)
+  y <- x
+  x <- gsub("X(.+$)", "\\1", x, perl=TRUE)
+  is.all.valid <- all(is_valid_issn(x))
+  if(aggressive && !is.all.valid){
+    will_padding_zeros_fix_it <- function(x){
+      ifelse(nchar(x)==7 & is_valid_issn(stringr::str_pad(x, 8, "left", "0")), TRUE, FALSE)
+    }
+    will_adding_an_X_fix_it <- function(x){
+      ifelse(nchar(x)==7 & get_issn_check_digit(x)=="X", TRUE, FALSE)
+    }
+    will_the_first_8_do <- function(x){
+      ifelse(nchar(x)>8 & is_valid_issn(substr(x, 1, 8)), TRUE, FALSE)
+    }
+    will_the_hiddens_do <- function(x){
+      ifelse(nchar(x)>8 & is_valid_issn(gsub("^.*?(\\d{7}X).*$", "\\1",
+                                             x, perl=TRUE)), TRUE, FALSE)
+    }
+    thesevens <- x[nchar(x)==7 & !is.na(x)]
+    if(length(thesevens)>0){
+      x[nchar(x)==7 & !is.na(x)] <- ifelse(will_padding_zeros_fix_it(thesevens),
+                                           stringr::str_pad(thesevens, 8, "left", "0"),
+                                           thesevens)
+    }
+    thesevens <- x[nchar(x)==7 & !is.na(x)]
+    if(length(thesevens)>0){
+      x[nchar(x)==7 & !is.na(x)] <- ifelse(will_adding_an_X_fix_it(thesevens),
+                                           sprintf("%sX", thesevens),
+                                           thesevens)
+    }
+    thebig <- x[nchar(x)>8 & !is.na(x)]
+    if(length(thebig)){
+      x[nchar(x)>8 & !is.na(x)] <- ifelse(will_the_first_8_do(thebig),
+                                          substr(thebig, 1, 8),
+                                          thebig)
+    }
+    loghidden <- grepl("\\d{7}X", y, perl=TRUE) & !is.na(x)
+    if(any(loghidden)){
+      loghidden[loghidden] <- will_the_hiddens_do(y[loghidden])
+      thehiddens <- y[loghidden]
+      x[loghidden] <- gsub("^.*?(\\d{7}X).*$", "\\1", thehiddens, perl=TRUE)
+    }
+
+  }
+  # maybe shouldn't return NA if couldn't be salvaged?
+  ret <- ifelse(is_valid_issn(x), x, NA)
+  if(pretty){
+    ret <- sprintf("%s-%s", substr(x, 1, 4), substr(x, 5, 8))
+  }
+  return(ret)
+}
+
+# ------------------------------------------ #
+
+
+
+##############################################
+###                 LCCN                   ###
+##############################################
+
+
+#' Attempt to enforce validity and canonical form to LCCN
+#'
+#' Takes a string representation of an LCCN. THIS IS A STUB
+#'
+#' @param x A string
+#' @param year.cutoff STUB
+#' @param include.revisions STUB
+#' @param pad.char STUB
+#'
+#' @details THIS IS A STUB
+#'
+#' @return Returns valid LCCN if possible, NA if not
+#' @examples
+#'
+#' # THIS IS A STUB
+#' print("hi")
+#'
+#' @export
+normalize_lccn <- function(x, year.cutoff=NA, include.revisions=FALSE, pad.char="#"){
+  ## CHECKS
+  ## like check if pad char is nchar > 1
+  padit <- function(x, len){ x }
+  if(!is.na(pad.char)){
+    padit <- function(x, len){
+      stringr::str_pad(x, len, side="left", pad=pad.char)
+    }
+  }
+
+  prefix <- function(x){ gsub("^([a-zA-Z]*?)\\s*\\d+\\D*.*$", "\\1", x, perl=TRUE) }
+  middle <- function(x){ gsub("^[A-Za-z]*?\\s*(\\d+)\\D*.*$", "\\1", x, perl=TRUE) }
+  postfix <- function(x){ gsub("^[A-Za-z]*?\\s*\\d+\\s*(\\D*.*)$", "\\1", x, perl=TRUE) }
+
+  dprefix       <- prefix(x)
+  dprenc        <- nchar(dprefix)
+  dmiddle       <- middle(x)
+  dmnc          <- nchar(dmiddle)
+  dpostfix      <- postfix(x)
+  dpostnc       <- nchar(dpostfix)
+
+  wherebad <- ifelse(dmnc %in% c(8, 10), FALSE, TRUE)
+  wherebad <- wherebad | ifelse(dprenc>3, TRUE, FALSE)
+  x[wherebad]             <- NA
+  dprefix[wherebad]       <- NA
+  dprenc[wherebad]        <- NA
+  dmiddle[wherebad]       <- NA
+  dmnc[wherebad]          <- NA
+  dpostfix[wherebad]      <- NA
+  dpostnc[wherebad]       <- NA
+
+  IS.STUCTURE.B <- ifelse(dmnc==10 & as.numeric(substr(dmiddle, 1, 4))>2000, TRUE, FALSE)
+
+  wherebad <- wherebad | ifelse(IS.STUCTURE.B & nchar(dprefix)> 2, TRUE, FALSE)
+
+  dyear         <- ifelse(IS.STUCTURE.B, substr(dmiddle, 1, 4), substr(dmiddle, 1, 2))
+  dserial       <- ifelse(IS.STUCTURE.B, substr(dmiddle, 5, 10), substr(dmiddle, 3, 8))
+
+  dwhole <- ifelse(IS.STUCTURE.B,
+                   # struct b
+                   sprintf("%s%s%s", padit(tolower(dprefix), 2),
+                           dyear, stringr::str_pad(dserial, 6, side="left", pad="0")),
+                   # struct a
+                   sprintf("%s%s%s", padit(tolower(dprefix), 3),
+                           dyear, stringr::str_pad(dserial, 6, side="left", pad="0")))
+  dwhole <- ifelse((!(IS.STUCTURE.B)) & !is.na(pad.char), sprintf("%s%s", dwhole, pad.char), dwhole)
+
+  if(!is.na(year.cutoff))
+    wherebad <- wherebad | ifelse(as.numeric(dyear)>year.cutoff, TRUE, FALSE)
+
+  dwhole[wherebad] <- NA
+
+  if(include.revisions)
+    dwhole <- ifelse(IS.STUCTURE.B, dwhole, sprintf("%s%s", dwhole, dpostfix))
+
+  return(dwhole)
+}
+
+
 
