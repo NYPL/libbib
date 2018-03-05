@@ -50,19 +50,23 @@ get_isbn_10_check_digit <- function(x, allow.hyphens=FALSE, errors.as.nas=FALSE)
   if(class(x)!="character")
     stop("Input must be a character string")
   if(allow.hyphens)
-    x <- gsub("-", "", x)
-  if(sum(!(nchar(x[!is.na(x)]) %in% c(9, 10)))>0){
+    x <- stringr::str_replace_all(x, stringr::fixed("-"), "")
+  if(any(!(nchar(x[!is.na(x)]) %in% c(9, 10))>0))
     if(!errors.as.nas) stop("Input must be either 9 or 10 characters")
-  }
-  where.bad <- !grepl(REGEX.ISBN.10.9, x, perl=TRUE) & !is.na(x)
-  if(sum(where.bad)>0){
+  where.bad <- !stringr::str_detect(x, REGEX.ISBN.10.9) & !is.na(x)
+  if(any(where.bad)){
     if(!errors.as.nas) stop("Illegal input")
     x[where.bad] <- NA
   }
-  first9 <- lapply(strsplit(substr(x, 1, 9), ""), as.numeric)
-  rem <- unlist(lapply(lapply(first9, function(x) x*(10:2)), sum))
-  should.be <- (11 - (rem %% 11)) %% 11
-  ifelse(should.be==10, "X", as.character(should.be))
+  if(any(!where.bad)){
+    first9 <- stringr::str_split(stringr::str_sub(x[!where.bad], 1, 9), "", simplify=TRUE)
+    class(first9) <- "numeric"
+    first9 <- as.numeric(first9 %*% matrix(10:2))
+    should.be <- (11 - (first9 %% 11)) %% 11
+    ret <- ifelse(should.be==10, "X", as.character(should.be))
+    x[!where.bad] <- ret
+  }
+  x
 }
 
 
@@ -93,16 +97,16 @@ check_isbn_10_check_digit <- function(x, allow.hyphens=TRUE, errors.as.false=TRU
       return(rep(FALSE, length(x)))
     stop("Input must be a character string")
   }
-  x <- toupper(x)
+  x <- stringr::str_to_upper(x)
   if(allow.hyphens)
-    x <- gsub("-", "", x)
-  where.bad <- (!grepl(REGEX.ISBN.10, x, perl=TRUE) & !is.na(x))
-  if(sum(where.bad)>0){
+    x <- stringr::str_replace_all(x, stringr::fixed("-"), "")
+  where.bad <- !stringr::str_detect(x, REGEX.ISBN.10) & !is.na(x)
+  if(any(where.bad)){
     if(!errors.as.false) stop("Illegal input")
   }
-  check.digit <- substr(x, 10, 10)
+  check.digit <- stringr::str_sub(x, -1)
   should.be <- get_isbn_10_check_digit(x, errors.as.nas = errors.as.false)
-  ret <- ifelse(should.be==toupper(check.digit), TRUE, FALSE)
+  ret <- ifelse(should.be==check.digit, TRUE, FALSE)
   ret[where.bad] <- FALSE
   return(ret)
 }
@@ -138,11 +142,11 @@ is_valid_isbn_10 <- function(x, allow.hyphens=TRUE, lower.x.allowed=TRUE){
     stop("Input must be a character string")
   }
   if(allow.hyphens)
-    x <- gsub("-", "", x)
+    x <- stringr::str_replace_all(x, stringr::fixed("-"), "")
   CHECKREGEX <- REGEX.ISBN.10
   if(lower.x.allowed)
     CHECKREGEX <- REGEX.ISBN.10.flex
-  where.bad <- !grepl(CHECKREGEX, x, perl=TRUE) & !is.na(x)
+  where.bad <- !stringr::str_detect(x, CHECKREGEX) & !is.na(x)
   x[where.bad] <- NA
   ret <- ifelse(check_isbn_10_check_digit(x, errors.as.false=TRUE), TRUE, FALSE)
   ret[is.na(x)] <- NA
@@ -195,24 +199,24 @@ normalize_isbn_10 <- function(x, aggressive=TRUE, convert.to.isbn.13=FALSE, pret
   if(all(is.na(x))) return(as.character(x))
   if(class(x)!="character")
     x <- as.character(x)
-  x <- toupper(x)
-  x <- gsub("[^\\d|X]", "", x, perl=TRUE)
+  x <- stringr::str_to_upper(x)
+  x <- stringr::str_replace_all(x, "[^\\d|X]", "")
   y <- x
-  x <- gsub("X(.+$)", "\\1", x, perl=TRUE)
+  x <- stringr::str_replace_all(x, "X(.+$)", "\\1")
   is.all.valid <- all(is_valid_isbn_10(x), na.rm=TRUE)
   if(aggressive && !is.all.valid){
     will_padding_zeros_fix_it <- function(x){
-      ifelse(nchar(x)==9 & is_valid_isbn_10(stringr::str_pad(x, 10, "left", "0")), TRUE, FALSE)
+      nchar(x)==9 & is_valid_isbn_10(stringr::str_pad(x, 10, "left", "0"), lower.x.allowed=FALSE)
     }
     will_adding_an_X_fix_it <- function(x){
-      ifelse(nchar(x)==9 & get_isbn_10_check_digit(x, errors.as.nas=TRUE)=="X", TRUE, FALSE)
+      nchar(x)==9 & get_isbn_10_check_digit(x, errors.as.nas=TRUE)=="X"
     }
     will_the_first_10_do <- function(x){
-      ifelse(nchar(x)>10 & is_valid_isbn_10(substr(x, 1, 10)), TRUE, FALSE)
+      nchar(x)>10 & is_valid_isbn_10(substr(x, 1, 10), lower.x.allowed=FALSE)
     }
     will_the_hiddens_do <- function(x){
-      ifelse(nchar(x)>10 & is_valid_isbn_10(gsub("^.*?(\\d{9}X).*$", "\\1",
-                                                 x, perl=TRUE)), TRUE, FALSE)
+      nchar(x)>10 & is_valid_isbn_10(stringr::str_replace_all(x,
+                                            "^.*?(\\d{9}X).*$", "\\1"), lower.x.allowed=FALSE)
     }
     thenines <- x[nchar(x)==9 & !is.na(x)]
     if(length(thenines)>0){
@@ -232,18 +236,18 @@ normalize_isbn_10 <- function(x, aggressive=TRUE, convert.to.isbn.13=FALSE, pret
                                            substr(thebig, 1, 10),
                                            thebig)
     }
-    loghidden <- grepl("\\d{9}X", y, perl=TRUE) & !is.na(x)
+    loghidden <- stringr::str_detect(y, "\\d{9}X") & !is.na(x)
     if(any(loghidden)){
       loghidden[loghidden] <- will_the_hiddens_do(y[loghidden])
       thehiddens <- y[loghidden]
-      x[loghidden] <- gsub("^.*?(\\d{9}X).*$", "\\1", thehiddens, perl=TRUE)
+      x[loghidden] <- stringr::str_replace_all(thehiddens, "^.*?(\\d{9}X).*$", "\\1")
     }
 
   }
   # maybe shouldn't return NA if couldn't be salvaged?
   ret <- ifelse(is_valid_isbn_10(x), x, NA)
   if(convert.to.isbn.13)
-    return(convert_to_isbn_13(ret, pretty=pretty))
+    return(convert_to_isbn_13(ret, pretty=pretty, skip.validity.check=TRUE))
   if(pretty){
     ret <- prettify_isbn_10(ret)
   }
@@ -289,19 +293,22 @@ get_isbn_13_check_digit <- function(x, allow.hyphens=FALSE, errors.as.nas=FALSE)
   if(class(x)!="character")
     stop("Input must be a character string")
   if(allow.hyphens)
-    x <- gsub("-", "", x)
-  if(sum(!(nchar(x[!is.na(x)]) %in% c(12, 13)))>0){
+    x <- stringr::str_replace_all(x, stringr::fixed("-"), "")
+  if(any(!(nchar(x[!is.na(x)]) %in% c(12, 13))>0))
     if(!errors.as.nas) stop("Input must be either 12 or 13 characters")
-  }
-  where.bad <- !grepl(REGEX.ISBN.13.12, x, perl=TRUE) & !is.na(x)
-  if(sum(where.bad)>0){
+  where.bad <- !stringr::str_detect(x, REGEX.ISBN.13.12) & !is.na(x)
+  if(any(where.bad)){
     if(!errors.as.nas) stop("Illegal input")
     x[where.bad] <- NA
   }
-  first12 <- lapply(strsplit(substr(x, 1, 12), ""), as.numeric)
-  rem <- unlist(lapply(lapply(first12, function(x) x*(rep(c(1,3), 6))), sum))
-  should.be <- (10 - (rem %% 10)) %% 10
-  return(as.character(should.be))
+  if(any(!where.bad)){
+    first12 <- stringr::str_split(stringr::str_sub(x[!where.bad], 1, 12), "", simplify=TRUE)
+    class(first12) <- "numeric"
+    first12 <- as.numeric(first12 %*% matrix(rep(c(1,3), 6)))
+    should.be <- (10 - (first12 %% 10)) %% 10
+    x[!where.bad] <- as.character(should.be)
+  }
+  x
 }
 
 
@@ -334,12 +341,12 @@ check_isbn_13_check_digit <- function(x, allow.hyphens=TRUE, errors.as.false=TRU
     stop("Input must be a character string")
   }
   if(allow.hyphens)
-    x <- gsub("-", "", x)
-  where.bad <- (!grepl(REGEX.ISBN.13, x, perl=TRUE) & !is.na(x))
-  if(sum(where.bad)>0){
+    x <- stringr::str_replace_all(x, stringr::fixed("-"), "")
+  where.bad <- !stringr::str_detect(x, REGEX.ISBN.13) & !is.na(x)
+  if(any(where.bad)){
     if(!errors.as.false) stop("Illegal input")
   }
-  check.digit <- substr(x, 13, 13)
+  check.digit <- stringr::str_sub(x, -1)
   should.be <- get_isbn_13_check_digit(x, errors.as.nas = errors.as.false)
   ret <- ifelse(should.be==check.digit, TRUE, FALSE)
   ret[where.bad] <- FALSE
@@ -373,8 +380,8 @@ is_valid_isbn_13 <- function(x, allow.hyphens=TRUE){
     stop("Input must be a character string")
   }
   if(allow.hyphens)
-    x <- gsub("-", "", x)
-  where.bad <- !grepl(REGEX.ISBN.13, x, perl=TRUE) & !is.na(x)
+    x <- stringr::str_replace_all(x, stringr::fixed("-"), "")
+  where.bad <- !stringr::str_detect(x, REGEX.ISBN.13) & !is.na(x)
   x[where.bad] <- NA
   ret <- ifelse(check_isbn_13_check_digit(x, errors.as.false=TRUE), TRUE, FALSE)
   ret[is.na(x)] <- NA
@@ -411,9 +418,9 @@ convert_to_isbn_13 <- function(x, skip.validity.check=FALSE,
   if(class(x)!="character"){
     stop("Input must be a character string")
   }
-  x <- toupper(x)
-  x <- gsub("[^\\d|X]", "", x, perl=TRUE)
-  x <- gsub("X(.+$)", "\\1", x, perl=TRUE)
+  x <- stringr::str_to_upper(x)
+  x <- stringr::str_replace_all(x, "[^\\d|X]", "")
+  x <- stringr::str_replace_all(x, "X(.+$)", "\\1")
   if(!skip.validity.check){
     where.bad <- !is_valid_isbn_10(x) & !is.na(x)
     if(any(where.bad) & !errors.as.nas) stop("Invalid ISBN 10 detected")
@@ -474,11 +481,11 @@ normalize_isbn_13 <- function(x, aggressive=TRUE, pretty=FALSE){
   if(all(is.na(x))) return(as.character(x))
   if(class(x)!="character")
     x <- as.character(x)
-  x <- gsub("\\D", "", x, perl=TRUE)
+  x <- stringr::str_replace_all(x, "\\D", "")
   is.all.valid <- all(is_valid_isbn_13(x), na.rm=TRUE)
   if(aggressive && !is.all.valid){
     will_the_first_13_do <- function(x){
-      ifelse(nchar(x)>13 & is_valid_isbn_13(substr(x, 1, 13)), TRUE, FALSE)
+      nchar(x)>13 & is_valid_isbn_13(substr(x, 1, 13))
     }
     thebig <- x[nchar(x)>13 & !is.na(x)]
     if(length(thebig)){
@@ -572,14 +579,15 @@ normalize_isbn <- function(x, aggressive=TRUE, convert.to.isbn.13=FALSE, pretty=
   if(all(is.na(x))) return(as.character(x))
   if(class(x)!="character")
     x <- as.character(x)
-  x <- toupper(x)
-  x <- gsub("[^\\d|X]", "", x, perl=TRUE)
-  tried13 <- normalize_isbn_13(x, aggressive=aggressive, pretty=pretty)
-  tried10 <- normalize_isbn_10(x, aggressive=aggressive,
+
+  x <- stringr::str_replace_all(x, "[^\\d|X]", "")
+
+  tried <- normalize_isbn_13(x, aggressive=aggressive, pretty=pretty)
+  where.na <- is.na(tried)
+  tried[where.na] <- normalize_isbn_10(x[where.na], aggressive=aggressive,
                                convert.to.isbn.13=convert.to.isbn.13, pretty=pretty)
-  ret <- ifelse(!is.na(tried13), tried13, ifelse(!is.na(tried10), tried10, FALSE))
-  ret <- ifelse(!is.na(tried13), tried13, tried10)
-  return(ret)
+
+  return(tried)
 }
 
 
@@ -624,19 +632,25 @@ get_issn_check_digit <- function(x, allow.hyphens=FALSE, errors.as.nas=FALSE){
   if(class(x)!="character")
     stop("Input must be a character string")
   if(allow.hyphens)
-    x <- gsub("-", "", x)
-  if(sum(!(nchar(x[!is.na(x)]) %in% c(7, 8)))>0){
+    x <- stringr::str_replace_all(x, stringr::fixed("-"), "")
+  if(any(!(nchar(x[!is.na(x)]) %in% c(7, 8))>0)){
     if(!errors.as.nas) stop("Input must be either 7 or 8 characters")
   }
-  where.bad <- !grepl(REGEX.ISSN.8.7, x, perl=TRUE) & !is.na(x)
-  if(sum(where.bad)>0){
+  where.bad <- !stringr::str_detect(x, REGEX.ISSN.8.7) & !is.na(x)
+  if(any(where.bad)){
     if(!errors.as.nas) stop("Illegal input")
     x[where.bad] <- NA
   }
-  first7 <- lapply(strsplit(substr(x, 1, 7), ""), as.numeric)
-  rem <- unlist(lapply(lapply(first7, function(x) x*(8:2)), sum))
-  should.be <- (11 - (rem %% 11)) %% 11
-  ifelse(should.be==10, "X", as.character(should.be))
+
+  if(any(!where.bad)){
+    first7 <- stringr::str_split(stringr::str_sub(x[!where.bad], 1, 7), "", simplify=TRUE)
+    class(first7) <- "numeric"
+    first7 <- as.numeric(first7 %*% matrix(8:2))
+    should.be <- (11 - (first7 %% 11)) %% 11
+    ret <- ifelse(should.be==10, "X", as.character(should.be))
+    x[!where.bad] <- ret
+  }
+  x
 }
 
 
@@ -669,16 +683,16 @@ check_issn_check_digit <- function(x, allow.hyphens=TRUE, errors.as.false=FALSE)
       return(rep(FALSE, length(x)))
     stop("Input must be a character string")
   }
-  x <- toupper(x)
+  x <- stringr::str_to_upper(x)
   if(allow.hyphens)
-    x <- gsub("-", "", x)
-  where.bad <- (!grepl(REGEX.ISSN, x, perl=TRUE) & !is.na(x))
-  if(sum(where.bad)>0){
+    x <- stringr::str_replace_all(x, stringr::fixed("-"), "")
+  where.bad <- !stringr::str_detect(x, REGEX.ISSN) & !is.na(x)
+  if(any(where.bad>0)){
     if(!errors.as.false) stop("Illegal input")
   }
-  check.digit <- substr(x, 8, 8)
+  check.digit <- stringr::str_sub(x, -1)
   should.be <- get_issn_check_digit(x, allow.hyphens=allow.hyphens, errors.as.nas=errors.as.false)
-  ret <- ifelse(should.be==toupper(check.digit), TRUE, FALSE)
+  ret <- ifelse(should.be==check.digit, TRUE, FALSE)
   ret[where.bad] <- FALSE
   return(ret)
 }
@@ -716,10 +730,10 @@ is_valid_issn <- function(x, allow.hyphens=TRUE, lower.x.allowed=TRUE){
     stop("Input must be a character string")
   }
   if(allow.hyphens)
-    x <- gsub("-", "", x)
+    x <- stringr::str_replace_all(x, stringr::fixed("-"), "")
   if(lower.x.allowed)
-    x <- toupper(x)
-  where.bad <- !grepl(REGEX.ISSN, x, perl=TRUE) & !is.na(x)
+    x <- stringr::str_to_upper(x)
+  where.bad <- !stringr::str_detect(x, REGEX.ISSN) & !is.na(x)
   x[where.bad] <- NA
   ret <- ifelse(check_issn_check_digit(x, errors.as.false=TRUE), TRUE, FALSE)
   ret[is.na(x)] <- NA
@@ -772,10 +786,10 @@ normalize_issn <- function(x, aggressive=TRUE, pretty=FALSE){
   if(all(is.na(x))) return(as.character(x))
   if(class(x)!="character")
     x <- as.character(x)
-  x <- toupper(x)
-  x <- gsub("[^\\d|X]", "", x, perl=TRUE)
+  x <- stringr::str_to_upper(x)
+  x <- stringr::str_replace_all(x, "[^\\d|X]", "")
   y <- x
-  x <- gsub("X(.+$)", "\\1", x, perl=TRUE)
+  x <- stringr::str_replace_all(x, "X(.+$)", "\\1")
   is.all.valid <- all(is_valid_issn(x))
   if(aggressive && !is.all.valid){
     will_padding_zeros_fix_it <- function(x){
@@ -788,8 +802,8 @@ normalize_issn <- function(x, aggressive=TRUE, pretty=FALSE){
       ifelse(nchar(x)>8 & is_valid_issn(substr(x, 1, 8)), TRUE, FALSE)
     }
     will_the_hiddens_do <- function(x){
-      ifelse(nchar(x)>8 & is_valid_issn(gsub("^.*?(\\d{7}X).*$", "\\1",
-                                             x, perl=TRUE)), TRUE, FALSE)
+      ifelse(nchar(x)>8 & is_valid_issn(stringr::str_replace_all(x,
+                                        "^.*?(\\d{7}X).*$", "\\1")), TRUE, FALSE)
     }
     thesevens <- x[nchar(x)==7 & !is.na(x)]
     if(length(thesevens)>0){
@@ -809,11 +823,11 @@ normalize_issn <- function(x, aggressive=TRUE, pretty=FALSE){
                                           substr(thebig, 1, 8),
                                           thebig)
     }
-    loghidden <- grepl("\\d{7}X", y, perl=TRUE) & !is.na(x)
+    loghidden <- stringr::str_detect(y, "\\d{7}X") & !is.na(x)
     if(any(loghidden)){
       loghidden[loghidden] <- will_the_hiddens_do(y[loghidden])
       thehiddens <- y[loghidden]
-      x[loghidden] <- gsub("^.*?(\\d{7}X).*$", "\\1", thehiddens, perl=TRUE)
+      x[loghidden] <- stringr::str_replace_all(thehiddens, "^.*?(\\d{7}X).*$", "\\1")
     }
 
   }
@@ -862,9 +876,9 @@ normalize_lccn <- function(x, year.cutoff=NA, include.revisions=FALSE, pad.char=
     }
   }
 
-  prefix <- function(x){ gsub("^([a-zA-Z]*?)\\s*\\d+\\D*.*$", "\\1", x, perl=TRUE) }
-  middle <- function(x){ gsub("^[A-Za-z]*?\\s*(\\d+)\\D*.*$", "\\1", x, perl=TRUE) }
-  postfix <- function(x){ gsub("^[A-Za-z]*?\\s*\\d+\\s*(\\D*.*)$", "\\1", x, perl=TRUE) }
+  prefix  <- function(x){ stringr::str_replace(x, "^([a-zA-Z]*?)\\s*\\d+\\D*.*$", "\\1") }
+  middle  <- function(x){ stringr::str_replace(x, "^[A-Za-z]*?\\s*(\\d+)\\D*.*$", "\\1") }
+  postfix <- function(x){ stringr::str_replace(x, "^[A-Za-z]*?\\s*\\d+\\s*(\\D*.*)$", "\\1") }
 
   dprefix       <- prefix(x)
   dprenc        <- nchar(dprefix)
@@ -887,7 +901,7 @@ normalize_lccn <- function(x, year.cutoff=NA, include.revisions=FALSE, pad.char=
 
   wherebad <- wherebad | ifelse(IS.STUCTURE.B & nchar(dprefix)> 2, TRUE, FALSE)
 
-  dyear         <- ifelse(IS.STUCTURE.B, substr(dmiddle, 1, 4), substr(dmiddle, 1, 2))
+  dyear         <- ifelse(IS.STUCTURE.B, substr(dmiddle, 1, 4),  substr(dmiddle, 1, 2))
   dserial       <- ifelse(IS.STUCTURE.B, substr(dmiddle, 5, 10), substr(dmiddle, 3, 8))
 
   dwhole <- ifelse(IS.STUCTURE.B,
