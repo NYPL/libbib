@@ -2,6 +2,7 @@ libbib
 ===
 
 ![libbib logo](http://statethatiamin.onlythisrose.com/libbibsmall.png)
+[![Build Status](http://travis-ci.org/NYPL/libbib.svg?branch=master)](https://travis-ci.org/NYPL/libbib)
 
 ## Description
 An R package providing functions for validating and normalizing
