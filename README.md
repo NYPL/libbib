@@ -13,8 +13,8 @@ Speed of execution and robustness are priorities in this package.
 To the end of optimizing speed and efficiency, careful consideration
 is taken to exploit vectorized functions in the code.
 
-On a (real life) example of **4 million** very messy ISBN 10s and 13s,
-aggressive ISBN normalization took _3.5 minutes_ (commodity hardware).
+On a (real life) example of **3 million** very messy ISBN 10s and 13s,
+aggressive ISBN normalization took  _less than 1 minute_ (commodity hardware).
 It salvaged almost half a million previously unusable ISBNs, bringing
 the number of usable ISBNs (for matching, cataloging, etc...) from
 less than 90% to 99.6%!
