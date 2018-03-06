@@ -581,7 +581,7 @@ normalize_isbn <- function(x, aggressive=TRUE, convert.to.isbn.13=FALSE, pretty=
   if(class(x)!="character")
     x <- as.character(x)
 
-  x <- gsub("[^\\d|X]", "", x, perl=TRUE)
+  x <- gsub("[^\\d|X|x]", "", x, perl=TRUE)
 
   tried <- normalize_isbn_13(x, aggressive=aggressive, pretty=pretty)
   where.na <- is.na(tried)
