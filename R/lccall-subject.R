@@ -56,7 +56,7 @@ get_lc_call_subject <- function(x, second.level=FALSE, aggressive=FALSE){
 
   if(second.level){
     theinput$thekey <- stringr::str_extract(theinput[, usersupplied],
-                                            "^[A-Z]{1,3}(?=[^A-Z])")
+                                            "^[A-Z]{1,3}$|^[A-Z]{1,3}(?=[^A-Z])")
   } else{
     theinput$thekey <- stringr::str_extract(theinput[, usersupplied],
                                             "^[A-Z]{1}")
