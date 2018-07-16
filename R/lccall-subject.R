@@ -15,12 +15,12 @@
 #' @param second.level A logical indicating whether the letters of
 #'     call number past the first should be used to match to
 #'     a subject
-#' @param aggressive Attempts to make out a legitimate LC call number
-#'
+#' @param already.parsed Skips the extraction of the subject letters
+#'        and jumps to the subject matching
 #'
 #' @return Returns either the broad (top-level) subject description
 #'     or the second level subject description. Returns "NA" if
-#'     no subject could not be matched
+#'     no subject could not be matched or call number is invalid
 #' @examples
 #'
 #' get_lc_call_subject("ND 237.S18 $b S87 1997")
@@ -32,34 +32,36 @@
 #' get_lc_call_subject("PQ2246.M3")
 #' # Language and Literature
 #'
-#' get_lc_call_subject(c("ND 237", "\\\\$a ND 2", "PQ2246.M3"),
-#'                     second.level=TRUE, aggressive=FALSE)
-#' # c("Painting", NA, "French, Italian, Spanish, and Portuguese literature")
+#' get_lc_call_subject("PQ2246.M3")
+#' # "French, Italian, Spanish, and Portuguese literature"
+#'
+#' get_lc_call_subject("PQ2246.M3", already.parsed=TRUE)
+#' # NA
+#'
+#' get_lc_call_subject("PQ", already.parsed=TRUE)
+#' # "French, Italian, Spanish, and Portuguese literature"
 #'
 #' get_lc_call_subject(c("ND 237", "\\\\$a ND 2", "PQ2246.M3"),
-#'                     second.level=TRUE, aggressive=TRUE)
-#' # c("Painting", "Painting", "French, Italian, Spanish, and Portuguese literature")
+#'                     second.level=TRUE)
+#' # c("Painting", NA, "French, Italian, Spanish, and Portuguese literature")
 #'
 #'
 #' @export
-get_lc_call_subject <- function(x, second.level=FALSE, aggressive=FALSE){
+get_lc_call_subject <- function(x, second.level=FALSE, already.parsed=FALSE){
   if(all(is.na(x))) return(as.character(x))
   if(class(x)!="character")
     stop("Input must be a character string")
 
   theinput <- data.table::data.table(usersupplied=x)
 
-  SUBREGEX <- "\\s*([A-Za-z]{1,3}).*"
-  if(aggressive){
-    theinput$usersupplied <- stringr::str_replace(theinput[, usersupplied], SUBREGEX, "$1")
-  }
-
-  if(second.level){
-    theinput$thekey <- stringr::str_extract(theinput[, usersupplied],
-                                            "^[A-Z]{1,3}$|^[A-Z]{1,3}(?=[^A-Z])")
+  if(already.parsed){
+    theinput[, thekey:=usersupplied]
   } else{
-    theinput$thekey <- stringr::str_extract(theinput[, usersupplied],
-                                            "^[A-Z]{1}")
+    if(second.level){
+      theinput[, thekey:=get_lc_subject_letters(usersupplied)]
+    } else{
+      theinput[, thekey:=get_lc_broad_letter(usersupplied)]
+    }
   }
 
   data.table::setindex(theinput, thekey)
@@ -71,5 +73,104 @@ get_lc_call_subject <- function(x, second.level=FALSE, aggressive=FALSE){
   }
 
   return(result[, description])
+}
+
+
+#' Check if LC Call Number is valid
+#'
+#' Takes a string representation of a Library of Congress
+#' call number and returns either TRUE or FALSE based on
+#' whether or not the input fits the canonical LC Call
+#' Number pattern
+#'
+#' @param x A Library of Congress call number (string)
+#'
+#' @return Returns either TRUE or FALSE based on whether the
+#'         call number is valid
+#' @examples
+#'
+#' is_valid_lc_call("Q172.5.E77")
+#' # TRUE
+#' is_valid_lc_call("AF172.5.E77")
+#' # FALSE
+#
+#' is_valid_lc_call(c("Q 172.5", "AF172", "PR6023.A93"))
+#' # TRUE FALSE TRUE
+#'
+#' @export
+is_valid_lc_call <- function(x){
+  rg <- data.table::copy(second_level)
+  rg[, ncs:=nchar(thekey)]
+  setorder(rg, -ncs)
+
+  VALIDLCCALL <- sprintf("^(%s)\\s*[1-9]", paste(rg[, thekey], collapse="|"))
+
+  stringr::str_detect(x, VALIDLCCALL)
+}
+
+#' Get the first letter of LC Call Number
+#'
+#' Takes a string representation of a Library of Congress
+#' call number and returns the first letter if and only if
+#' the LC Call Number is valid
+#'
+#' @param x A Library of Congress call number (string)
+#'
+#' @return Returns first letter or NA if invalid
+#' @examples
+#'
+#' get_lc_broad_letter("Q172.5.E77")
+#' # Q
+#' get_lc_broad_letter("AF172.5.E77")
+#' # NA
+#
+#' get_lc_broad_letter(c("Q 172.5", "AF172", "PR6023.A93"))
+#' # Q NA P
+#'
+#' @export
+get_lc_broad_letter <- function(x){
+  if(all(is.na(x))) return(as.character(x))
+  if(class(x)!="character")
+    stop("Input must be a character string")
+
+  theinput <- data.table::data.table(usersupplied=x)
+
+  THESEAREVALID <- theinput[, is_valid_lc_call(usersupplied)]
+  theinput[THESEAREVALID, thekey:=stringr::str_sub(usersupplied, 1, 1)]
+  theinput[!THESEAREVALID, thekey:=NA]
+  return(theinput[, thekey])
+}
+
+#' Get all subject letters of LC Call Number
+#'
+#' Takes a string representation of a Library of Congress
+#' call number and returns all the subject letters if and only if
+#' the LC Call Number is valid
+#'
+#' @param x A Library of Congress call number (string)
+#'
+#' @return Returns all the subject letters or NA if invalid
+#' @examples
+#'
+#' get_lc_subject_letters("Q172.5.E77")
+#' # Q
+#' get_lc_subject_letters("AF172.5.E77")
+#' # NA
+#
+#' get_lc_subject_letters(c("Q 172.5", "AF172", "PR6023.A93"))
+#' # Q NA PR
+#'
+#' @export
+get_lc_subject_letters <- function(x){
+  if(all(is.na(x))) return(as.character(x))
+  if(class(x)!="character")
+    stop("Input must be a character string")
+
+  theinput <- data.table::data.table(usersupplied=x)
+
+  THESEAREVALID <- theinput[, is_valid_lc_call(usersupplied)]
+  theinput[THESEAREVALID, thekey:=stringr::str_extract(usersupplied, "^[A-Z]+")]
+  theinput[!THESEAREVALID, thekey:=NA]
+  return(theinput[, thekey])
 }
 

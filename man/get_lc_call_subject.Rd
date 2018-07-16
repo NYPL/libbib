@@ -4,7 +4,7 @@
 \alias{get_lc_call_subject}
 \title{Conversion from Library of Congress Call number to subject}
 \usage{
-get_lc_call_subject(x, second.level = FALSE, aggressive = FALSE)
+get_lc_call_subject(x, second.level = FALSE, already.parsed = FALSE)
 }
 \arguments{
 \item{x}{A Library of Congress call number (string)}
@@ -13,12 +13,13 @@ get_lc_call_subject(x, second.level = FALSE, aggressive = FALSE)
 call number past the first should be used to match to
 a subject}
 
-\item{aggressive}{Attempts to make out a legitimate LC call number}
+\item{already.parsed}{Skips the extraction of the subject letters
+and jumps to the subject matching}
 }
 \value{
 Returns either the broad (top-level) subject description
     or the second level subject description. Returns "NA" if
-    no subject could not be matched
+    no subject could not be matched or call number is invalid
 }
 \description{
 Takes a string representation of a Library of Congress
@@ -37,13 +38,18 @@ get_lc_call_subject("ND 237.S18 $b S87 1997")
 get_lc_call_subject("PQ2246.M3")
 # Language and Literature
 
-get_lc_call_subject(c("ND 237", "\\\\\\\\$a ND 2", "PQ2246.M3"),
-                    second.level=TRUE, aggressive=FALSE)
-# c("Painting", NA, "French, Italian, Spanish, and Portuguese literature")
+get_lc_call_subject("PQ2246.M3")
+# "French, Italian, Spanish, and Portuguese literature"
+
+get_lc_call_subject("PQ2246.M3", already.parsed=TRUE)
+# NA
+
+get_lc_call_subject("PQ", already.parsed=TRUE)
+# "French, Italian, Spanish, and Portuguese literature"
 
 get_lc_call_subject(c("ND 237", "\\\\\\\\$a ND 2", "PQ2246.M3"),
-                    second.level=TRUE, aggressive=TRUE)
-# c("Painting", "Painting", "French, Italian, Spanish, and Portuguese literature")
+                    second.level=TRUE)
+# c("Painting", NA, "French, Italian, Spanish, and Portuguese literature")
 
 
 }
