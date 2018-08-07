@@ -26,7 +26,7 @@
 #' get_lc_call_subject("ND 237.S18 $b S87 1997")
 #' # Fine Arts
 #'
-#' #' get_lc_call_subject("ND 237.S18 $b S87 1997", second.level=TRUE)
+#' get_lc_call_subject("ND 237.S18 $b S87 1997", second.level=TRUE)
 #' # Painting
 #'
 #' get_lc_call_subject("PQ2246.M3")
@@ -67,9 +67,11 @@ get_lc_call_subject <- function(x, second.level=FALSE, already.parsed=FALSE){
   data.table::setindex(theinput, thekey)
 
   if(second.level){
-    result <- second_level[theinput, on="thekey"]
+    # result <- second_level[theinput, on="thekey"]
+    result <- second_level[theinput]
   } else{
-    result <- broad[theinput, on="thekey"]
+    # result <- broad[theinput, on="thekey"]
+    result <- broad[theinput]
   }
 
   return(result[, description])

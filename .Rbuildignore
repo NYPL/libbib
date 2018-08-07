@@ -6,3 +6,4 @@
 ^appveyor.yml$
 cran-comments.md
 ^codemeta\.json$
+^cran-comments\.md$
