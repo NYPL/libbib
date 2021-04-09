@@ -10,5 +10,7 @@
 #' @format An object of class \code{"data.table"};
 #'
 #' @keywords datasets
+
+#' @source \url{https://www.loc.gov/marc/languages/language_code.html}
 #'
 "langxwalk"

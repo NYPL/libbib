@@ -11,4 +11,6 @@
 #'
 #' @keywords datasets
 #'
+#' @source \url{https://www.loc.gov/marc/countries/countries_code.html}
+#'
 "countryxwalk"

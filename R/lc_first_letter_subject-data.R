@@ -11,4 +11,6 @@
 #'
 #' @keywords datasets
 #'
+#' @source \url{https://www.loc.gov/catdir/cpso/lcco/}
+#'
 "lc_first_letter_subject"
