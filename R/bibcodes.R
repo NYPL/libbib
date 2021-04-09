@@ -170,8 +170,6 @@ attr(is_valid_isbn_10, "assertr_vectorized") <- TRUE
 #'                      into a valid form. See "Details" for more info
 #' @param convert.to.isbn.13 A logical indicating whether the ISBN 10
 #'                           should be converted into an ISBN 13
-#' @param pretty A logical indicating whether the ISBN should be
-#'               prettily hyphenated
 #'
 #' @details If \code{aggressive} is TRUE, aggressive measures are taken to
 #' try to salvage the malformed ISBN 10 string. If the ISBN 10, for example,
@@ -185,17 +183,14 @@ attr(is_valid_isbn_10, "assertr_vectorized") <- TRUE
 #'
 #' normalize_isbn_10("012491540x")                    # "012491540X"
 #' normalize_isbn_10("012491540x xe32ea")             # "012491540X"
-#' normalize_isbn_10("012491540x", pretty=TRUE)       # "0-124-91540-X"
 #' normalize_isbn_10("012491540x", convert.to.isbn.13=TRUE)
 #' # "9780124915404"
-#' normalize_isbn_10("012491540x", convert.to.isbn.13=TRUE, pretty=TRUE)
-#' # "978-0-12-491540-4"
 #' normalize_isbn_10("513213012491540x")              # "012491540X"
 #'
 #' @seealso \code{\link{normalize_isbn}} \code{\link{normalize_isbn_13}}
 #'
 #' @export
-normalize_isbn_10 <- function(x, aggressive=TRUE, convert.to.isbn.13=FALSE, pretty=FALSE){
+normalize_isbn_10 <- function(x, aggressive=TRUE, convert.to.isbn.13=FALSE){
   if(all(is.na(x))) return(as.character(x))
   if(class(x)!="character")
     x <- as.character(x)
@@ -247,10 +242,7 @@ normalize_isbn_10 <- function(x, aggressive=TRUE, convert.to.isbn.13=FALSE, pret
   # maybe shouldn't return NA if couldn't be salvaged?
   ret <- ifelse(is_valid_isbn_10(x), x, NA)
   if(convert.to.isbn.13)
-    return(convert_to_isbn_13(ret, pretty=pretty, skip.validity.check=TRUE))
-  if(pretty){
-    ret <- prettify_isbn_10(ret)
-  }
+    return(convert_to_isbn_13(ret, skip.validity.check=TRUE))
   return(ret)
 }
 
@@ -398,22 +390,19 @@ attr(is_valid_isbn_13, "assertr_vectorized") <- TRUE
 #' @param x A string of 10 digits or 9 digits with terminal "X"
 #' @param skip.validity.check Skip the checking for whether the ISBN 10 is valid
 #' @param errors.as.nas return NA if error instead of throwing error
-#' @param pretty A logical indicating whether the ISBN 13 should be
-#'               prettily hyphenated
 #'
 #' @return Returns ISBN 13 as a string
 #' @examples
 #'
 #' convert_to_isbn_13("012491540X")                # 9780124915404
-#' convert_to_isbn_13("012491540X", pretty=TRUE)   # 978-0-12-491540-4
 #'
 #' # vectorized
-#' convert_to_isbn_13(c("012491540X", "9004037810"), pretty=TRUE)
-#' # "978-0-12-491540-4" "978-9-00-403781-6"
+#' convert_to_isbn_13(c("012491540X", "9004037810"))
+#' # "9780124915404" "9789004037816"
 #'
 #' @export
 convert_to_isbn_13 <- function(x, skip.validity.check=FALSE,
-                               errors.as.nas=FALSE, pretty=FALSE){
+                               errors.as.nas=FALSE){
   if(all(is.na(x))) return(as.character(x))
   if(class(x)!="character"){
     stop("Input must be a character string")
@@ -430,19 +419,12 @@ convert_to_isbn_13 <- function(x, skip.validity.check=FALSE,
   first12 <- ifelse(!is.na(first9), sprintf("978%s", first9), NA)
   newcheckdigit <- get_isbn_13_check_digit(as.character(first12))
   newisbn13 <- ifelse(!is.na(first12), sprintf("%s%s", first12, newcheckdigit), NA)
-  if(pretty){
-    nonnas <- !is.na(newisbn13)
-    these <- newisbn13[nonnas]
-    newisbn13[nonnas] <- sprintf("%s-%s-%s-%s-%s", substr(these, 1, 3),
-                                 substr(these, 4, 4), substr(these, 5, 6),
-                                 substr(these, 7, 12), substr(these, 13, 13))
-  }
   return(newisbn13)
 }
 
+# TODO
 # make sure that in normalize isbn 10 (if convert is TRUE)
-# that the validity check is skipped, and that
-# pretty is propagated
+# that the validity check is skipped
 
 
 
@@ -457,8 +439,6 @@ convert_to_isbn_13 <- function(x, skip.validity.check=FALSE,
 #' @param aggressive A logical indicating whether aggressive measures
 #'                   should be taken to try to get the "ISBN 13"
 #'                   into a valid form. See "Details" for more info
-#' @param pretty A logical indicating whether the ISBN should be
-#'               prettily hyphenated
 #'
 #' @details If \code{aggressive} is TRUE, aggressive measures are taken to
 #' try to salvage the malformed ISBN 13 string. If the ISBN 13, for example,
@@ -477,7 +457,7 @@ convert_to_isbn_13 <- function(x, skip.validity.check=FALSE,
 #' @seealso \code{\link{normalize_isbn}} \code{\link{normalize_isbn_10}}
 #'
 #' @export
-normalize_isbn_13 <- function(x, aggressive=TRUE, pretty=FALSE){
+normalize_isbn_13 <- function(x, aggressive=TRUE){
   if(all(is.na(x))) return(as.character(x))
   if(class(x)!="character")
     x <- as.character(x)
@@ -497,41 +477,11 @@ normalize_isbn_13 <- function(x, aggressive=TRUE, pretty=FALSE){
   }
   # maybe shouldn't return NA if couldn't be salvaged?
   ret <- ifelse(is_valid_isbn_13(x), x, NA)
-  if(pretty){
-    ret <- prettify_isbn_13(ret)
-  }
   return(ret)
 }
 
 
 # ------------------------------------------ #
-
-
-##############################################
-###             GENERAL ISBN               ###
-##############################################
-
-# these are wrong
-prettify_isbn_10 <- function(x){
-  nonnas <- !is.na(x)
-  these <- x[nonnas]
-  x[nonnas] <- sprintf("%s-%s-%s-%s", substr(these, 1, 1),
-                       substr(these, 2, 4), substr(these, 5, 9),
-                       substr(these, 10, 10))
-  return(x)
-}
-
-# these are wrong
-prettify_isbn_13 <- function(x){
-  nonnas <- !is.na(x)
-  these <- x[nonnas]
-  x[nonnas] <- sprintf("%s-%s-%s-%s-%s", substr(these, 1, 3),
-                       substr(these, 4, 4), substr(these, 5, 6),
-                       substr(these, 7, 12), substr(these, 13, 13))
-
-  return(x)
-}
-
 
 
 #' Attempt to enforce validity and canonical form to an ISBN
@@ -548,8 +498,6 @@ prettify_isbn_13 <- function(x){
 #'                      into a valid form. See "Details" for more info
 #' @param convert.to.isbn.13 A logical indicating whether the ISBN 10
 #'                           should be converted into an ISBN 13
-#' @param pretty A logical indicating whether the ISBN should be
-#'               prettily hyphenated
 #'
 #' @details If \code{aggressive} is TRUE, aggressive measures are taken to
 #' try to salvage the malformed ISBN string. Since this function attempts
@@ -564,8 +512,6 @@ prettify_isbn_13 <- function(x){
 #' normalize_isbn("012491540x", convert.to.isbn.13=TRUE)
 #' "9780124915404"
 #'
-#' normalize_isbn("012491540x xe32ea", pretty=TRUE)       # "0-124-91540-X"
-#'
 #' # vectorized
 #' normalize_isbn(c("513213012491540x245",
 #'                  "978966819^*!X7918",
@@ -576,17 +522,17 @@ prettify_isbn_13 <- function(x){
 #' @seealso \code{\link{normalize_isbn_10}} \code{\link{normalize_isbn_13}}
 #'
 #' @export
-normalize_isbn <- function(x, aggressive=TRUE, convert.to.isbn.13=FALSE, pretty=FALSE){
+normalize_isbn <- function(x, aggressive=TRUE, convert.to.isbn.13=FALSE){
   if(all(is.na(x))) return(as.character(x))
   if(class(x)!="character")
     x <- as.character(x)
 
   x <- gsub("[^\\d|X|x]", "", x, perl=TRUE)
 
-  tried <- normalize_isbn_13(x, aggressive=aggressive, pretty=pretty)
+  tried <- normalize_isbn_13(x, aggressive=aggressive)
   where.na <- is.na(tried)
   tried[where.na] <- normalize_isbn_10(x[where.na], aggressive=aggressive,
-                               convert.to.isbn.13=convert.to.isbn.13, pretty=pretty)
+                               convert.to.isbn.13=convert.to.isbn.13)
 
   return(tried)
 }
@@ -773,6 +719,8 @@ attr(is_valid_issn, "assertr_vectorized") <- TRUE
 #' normalize_issn("3785955")                          # "03785955"
 #'
 #' # adds X to 7 digit ISSN if valid
+#' normalize_issn("2434561")                          # "2434561X"
+#'
 #' normalize_issn("2434561", pretty=TRUE)             # "2434-561X"
 #'
 #' # finds correct sequence
@@ -834,9 +782,8 @@ normalize_issn <- function(x, aggressive=TRUE, pretty=FALSE){
   }
   # maybe shouldn't return NA if couldn't be salvaged?
   ret <- ifelse(is_valid_issn(x), x, NA)
-  if(pretty){
+  if(pretty)
     ret <- sprintf("%s-%s", substr(x, 1, 4), substr(x, 5, 8))
-  }
   return(ret)
 }
 
