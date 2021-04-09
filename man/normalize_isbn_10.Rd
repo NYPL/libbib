@@ -4,8 +4,12 @@
 \alias{normalize_isbn_10}
 \title{Attempt to enforce validity and canonical form to ISBN 10}
 \usage{
-normalize_isbn_10(x, aggressive = TRUE, convert.to.isbn.13 = FALSE,
-  pretty = FALSE)
+normalize_isbn_10(
+  x,
+  aggressive = TRUE,
+  convert.to.isbn.13 = FALSE,
+  pretty = FALSE
+)
 }
 \arguments{
 \item{x}{A string}

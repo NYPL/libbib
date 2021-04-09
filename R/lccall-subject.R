@@ -1,5 +1,6 @@
 
 
+
 ###################################################
 ###     Conversion from LC Calls to subject     ###
 ###################################################
@@ -9,7 +10,9 @@
 #' Takes a string representation of a Library of Congress
 #' call number and returns either the broad subject description
 #' (default) based on the first letter, or a second level
-#' description based on the
+#' description based on the first two letters
+#'
+#' @import data.table
 #'
 #' @param x A Library of Congress call number (string)
 #' @param second.level A logical indicating whether the letters of
@@ -67,11 +70,11 @@ get_lc_call_subject <- function(x, second.level=FALSE, already.parsed=FALSE){
   data.table::setindex(theinput, thekey)
 
   if(second.level){
-    # result <- second_level[theinput, on="thekey"]
-    result <- second_level[theinput]
+    data("lc_two_letter_subject", envir = environment())
+    result <- lc_two_letter_subject[theinput, on="thekey"]
   } else{
-    # result <- broad[theinput, on="thekey"]
-    result <- broad[theinput]
+    data("lc_first_letter_subject", envir = environment())
+    result <- lc_first_letter_subject[theinput, on="thekey"]
   }
 
   return(result[, description])
@@ -84,6 +87,8 @@ get_lc_call_subject <- function(x, second.level=FALSE, already.parsed=FALSE){
 #' call number and returns either TRUE or FALSE based on
 #' whether or not the input fits the canonical LC Call
 #' Number pattern
+#'
+#' @import data.table
 #'
 #' @param x A Library of Congress call number (string)
 #'
@@ -101,7 +106,8 @@ get_lc_call_subject <- function(x, second.level=FALSE, already.parsed=FALSE){
 #'
 #' @export
 is_valid_lc_call <- function(x){
-  rg <- data.table::copy(second_level)
+  data("lc_two_letter_subject", envir = environment())
+  rg <- data.table::copy(lc_two_letter_subject)
   rg[, ncs:=nchar(thekey)]
   setorder(rg, -ncs)
 
@@ -115,6 +121,8 @@ is_valid_lc_call <- function(x){
 #' Takes a string representation of a Library of Congress
 #' call number and returns the first letter if and only if
 #' the LC Call Number is valid
+#'
+#' @import data.table
 #'
 #' @param x A Library of Congress call number (string)
 #'
@@ -148,6 +156,9 @@ get_lc_broad_letter <- function(x){
 #' Takes a string representation of a Library of Congress
 #' call number and returns all the subject letters if and only if
 #' the LC Call Number is valid
+#'
+#' @import data.table
+#' @import utils
 #'
 #' @param x A Library of Congress call number (string)
 #'

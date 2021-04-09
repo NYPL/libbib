@@ -4,8 +4,7 @@
 \alias{normalize_lccn}
 \title{Attempt to enforce validity and canonical form to LCCN}
 \usage{
-normalize_lccn(x, year.cutoff = NA, include.revisions = FALSE,
-  pad.char = "#")
+normalize_lccn(x, year.cutoff = NA, include.revisions = FALSE, pad.char = "#")
 }
 \arguments{
 \item{x}{A string}

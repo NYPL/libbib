@@ -4,8 +4,12 @@
 \alias{convert_to_isbn_13}
 \title{Convert ISBN 10 to ISBN 13}
 \usage{
-convert_to_isbn_13(x, skip.validity.check = FALSE, errors.as.nas = FALSE,
-  pretty = FALSE)
+convert_to_isbn_13(
+  x,
+  skip.validity.check = FALSE,
+  errors.as.nas = FALSE,
+  pretty = FALSE
+)
 }
 \arguments{
 \item{x}{A string of 10 digits or 9 digits with terminal "X"}

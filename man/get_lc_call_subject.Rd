@@ -25,14 +25,14 @@ Returns either the broad (top-level) subject description
 Takes a string representation of a Library of Congress
 call number and returns either the broad subject description
 (default) based on the first letter, or a second level
-description based on the
+description based on the first two letters
 }
 \examples{
 
 get_lc_call_subject("ND 237.S18 $b S87 1997")
 # Fine Arts
 
-#' get_lc_call_subject("ND 237.S18 $b S87 1997", second.level=TRUE)
+get_lc_call_subject("ND 237.S18 $b S87 1997", second.level=TRUE)
 # Painting
 
 get_lc_call_subject("PQ2246.M3")
