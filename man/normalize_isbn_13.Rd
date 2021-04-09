@@ -4,7 +4,7 @@
 \alias{normalize_isbn_13}
 \title{Attempt to enforce validity and canonical form to ISBN 13}
 \usage{
-normalize_isbn_13(x, aggressive = TRUE, pretty = FALSE)
+normalize_isbn_13(x, aggressive = TRUE)
 }
 \arguments{
 \item{x}{A string}
@@ -12,9 +12,6 @@ normalize_isbn_13(x, aggressive = TRUE, pretty = FALSE)
 \item{aggressive}{A logical indicating whether aggressive measures
 should be taken to try to get the "ISBN 13"
 into a valid form. See "Details" for more info}
-
-\item{pretty}{A logical indicating whether the ISBN should be
-prettily hyphenated}
 }
 \value{
 Returns valid ISBN 13 if possible, NA if not

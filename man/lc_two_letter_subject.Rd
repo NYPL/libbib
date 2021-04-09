@@ -7,6 +7,9 @@
 \format{
 An object of class \code{"data.table"};
 }
+\source{
+\url{https://www.loc.gov/catdir/cpso/lcco/}
+}
 \usage{
 data(lc_two_letter_subject)
 }

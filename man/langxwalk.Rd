@@ -7,6 +7,9 @@
 \format{
 An object of class \code{"data.table"};
 }
+\source{
+\url{https://www.loc.gov/marc/languages/language_code.html}
+}
 \usage{
 data(langxwalk)
 }

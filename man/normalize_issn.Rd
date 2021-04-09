@@ -39,6 +39,8 @@ it will return the salvaged ISSN.
 normalize_issn("3785955")                          # "03785955"
 
 # adds X to 7 digit ISSN if valid
+normalize_issn("2434561")                          # "2434561X"
+
 normalize_issn("2434561", pretty=TRUE)             # "2434-561X"
 
 # finds correct sequence

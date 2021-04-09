@@ -4,12 +4,7 @@
 \alias{normalize_isbn}
 \title{Attempt to enforce validity and canonical form to an ISBN}
 \usage{
-normalize_isbn(
-  x,
-  aggressive = TRUE,
-  convert.to.isbn.13 = FALSE,
-  pretty = FALSE
-)
+normalize_isbn(x, aggressive = TRUE, convert.to.isbn.13 = FALSE)
 }
 \arguments{
 \item{x}{A string}
@@ -20,9 +15,6 @@ into a valid form. See "Details" for more info}
 
 \item{convert.to.isbn.13}{A logical indicating whether the ISBN 10
 should be converted into an ISBN 13}
-
-\item{pretty}{A logical indicating whether the ISBN should be
-prettily hyphenated}
 }
 \value{
 Returns valid ISBN if possible, NA if not
@@ -46,8 +38,6 @@ aggressive methods, see \code{\link{normalize_isbn_10}} and
 normalize_isbn("012491540x")                           # "012491540X"
 normalize_isbn("012491540x", convert.to.isbn.13=TRUE)
 "9780124915404"
-
-normalize_isbn("012491540x xe32ea", pretty=TRUE)       # "0-124-91540-X"
 
 # vectorized
 normalize_isbn(c("513213012491540x245",

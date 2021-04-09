@@ -7,6 +7,9 @@
 \format{
 An object of class \code{"data.table"};
 }
+\source{
+\url{https://www.loc.gov/marc/countries/countries_code.html}
+}
 \usage{
 data(countryxwalk)
 }

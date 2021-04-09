@@ -4,12 +4,7 @@
 \alias{convert_to_isbn_13}
 \title{Convert ISBN 10 to ISBN 13}
 \usage{
-convert_to_isbn_13(
-  x,
-  skip.validity.check = FALSE,
-  errors.as.nas = FALSE,
-  pretty = FALSE
-)
+convert_to_isbn_13(x, skip.validity.check = FALSE, errors.as.nas = FALSE)
 }
 \arguments{
 \item{x}{A string of 10 digits or 9 digits with terminal "X"}
@@ -17,9 +12,6 @@ convert_to_isbn_13(
 \item{skip.validity.check}{Skip the checking for whether the ISBN 10 is valid}
 
 \item{errors.as.nas}{return NA if error instead of throwing error}
-
-\item{pretty}{A logical indicating whether the ISBN 13 should be
-prettily hyphenated}
 }
 \value{
 Returns ISBN 13 as a string
@@ -30,10 +22,9 @@ Takes a string representation of an ISBN 10 and converts it to an ISBN 13.
 \examples{
 
 convert_to_isbn_13("012491540X")                # 9780124915404
-convert_to_isbn_13("012491540X", pretty=TRUE)   # 978-0-12-491540-4
 
 # vectorized
-convert_to_isbn_13(c("012491540X", "9004037810"), pretty=TRUE)
-# "978-0-12-491540-4" "978-9-00-403781-6"
+convert_to_isbn_13(c("012491540X", "9004037810"))
+# "9780124915404" "9789004037816"
 
 }
