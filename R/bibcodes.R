@@ -1,5 +1,6 @@
 
 
+# regular expression patterns
 REGEX.ISBN.10.9 <- "^(\\d{9,10}|\\d{9}[xX])$"
 REGEX.ISBN.10.flex <- "^\\d{9}(x|X|\\d)$"
 REGEX.ISBN.10 <- "^\\d{9}(X|\\d)$"
@@ -422,10 +423,6 @@ convert_to_isbn_13 <- function(x, skip.validity.check=FALSE,
   return(newisbn13)
 }
 
-# TODO
-# make sure that in normalize isbn 10 (if convert is TRUE)
-# that the validity check is skipped
-
 
 
 #' Attempt to enforce validity and canonical form to ISBN 13
@@ -798,10 +795,10 @@ normalize_issn <- function(x, aggressive=TRUE, pretty=FALSE){
 
 #' Attempt to enforce validity and canonical form to LCCN
 #'
-#' Takes a string representation of an LCCN. THIS IS A STUB
+#' Takes a string representation of an LCCN. Returns a standardized one
 #'
-#' @param x A string
-#' @param year.cutoff STUB
+#' @param x A string (or vector of strings) of LCCNs
+#' @param year.cutoff If LCCN year is more recent than this year, returns NA
 #' @param include.revisions STUB
 #' @param pad.char STUB
 #'
@@ -810,8 +807,13 @@ normalize_issn <- function(x, aggressive=TRUE, pretty=FALSE){
 #' @return Returns valid LCCN if possible, NA if not
 #' @examples
 #'
-#' # THIS IS A STUB
-#' print("hi")
+#' normalize_lccn("75425165")                   # "###75425165#"
+#'
+#' normalize_lccn("2004392586")
+#'
+#' # vectorized
+#' normalize_lccn(c("75425165", "2004392586"))
+#' # "###75425165#" "##2004392586"
 #'
 #' @export
 normalize_lccn <- function(x, year.cutoff=NA, include.revisions=FALSE, pad.char="#"){

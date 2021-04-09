@@ -7,9 +7,9 @@
 normalize_lccn(x, year.cutoff = NA, include.revisions = FALSE, pad.char = "#")
 }
 \arguments{
-\item{x}{A string}
+\item{x}{A string (or vector of strings) of LCCNs}
 
-\item{year.cutoff}{STUB}
+\item{year.cutoff}{If LCCN year is more recent than this year, returns NA}
 
 \item{include.revisions}{STUB}
 
@@ -19,14 +19,19 @@ normalize_lccn(x, year.cutoff = NA, include.revisions = FALSE, pad.char = "#")
 Returns valid LCCN if possible, NA if not
 }
 \description{
-Takes a string representation of an LCCN. THIS IS A STUB
+Takes a string representation of an LCCN. Returns a standardized one
 }
 \details{
 THIS IS A STUB
 }
 \examples{
 
-# THIS IS A STUB
-print("hi")
+normalize_lccn("75425165")                   # "###75425165#"
+
+normalize_lccn("2004392586")
+
+# vectorized
+normalize_lccn(c("75425165", "2004392586"))
+# "###75425165#" "##2004392586"
 
 }
