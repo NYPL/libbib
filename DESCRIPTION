@@ -10,7 +10,7 @@ Author: Tony Fischetti
 Maintainer: Tony Fischetti <tony.fischetti@gmail.com>
 Description: Provides functions for validating and normalizing bibliographic
    codes such as ISBN, ISSN, LCCN, and OCLC.
-License: MIT + file LICENSE
+License: GPL 3 + file LICENSE
 Depends:
     R (>= 3.1.0),
     data.table,
