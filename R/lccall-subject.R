@@ -55,6 +55,9 @@ get_lc_call_subject <- function(x, second.level=FALSE, already.parsed=FALSE){
   if(class(x)!="character")
     stop("Input must be a character string")
 
+  thekey <- usersupplied <- description <- NULL
+  lc_two_letter_subject <- lc_first_letter_subject <- NULL
+
   theinput <- data.table::data.table(usersupplied=x)
 
   if(already.parsed){
@@ -106,6 +109,8 @@ get_lc_call_subject <- function(x, second.level=FALSE, already.parsed=FALSE){
 #'
 #' @export
 is_valid_lc_call <- function(x){
+  ncs <- thekey <- lc_two_letter_subject <- NULL
+
   data("lc_two_letter_subject", envir = environment())
   rg <- data.table::copy(lc_two_letter_subject)
   rg[, ncs:=nchar(thekey)]
@@ -143,6 +148,8 @@ get_lc_broad_letter <- function(x){
   if(class(x)!="character")
     stop("Input must be a character string")
 
+  thekey <- usersupplied <- NULL
+
   theinput <- data.table::data.table(usersupplied=x)
 
   THESEAREVALID <- theinput[, is_valid_lc_call(usersupplied)]
@@ -178,6 +185,8 @@ get_lc_subject_letters <- function(x){
   if(all(is.na(x))) return(as.character(x))
   if(class(x)!="character")
     stop("Input must be a character string")
+
+  description <- usersupplied <- thekey <- lc_first_letter_subject <- NULL
 
   theinput <- data.table::data.table(usersupplied=x)
 
