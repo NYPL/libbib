@@ -1,83 +1,90 @@
 
 
 
-###################################################
-###     Conversion from LC Calls to subject     ###
-###################################################
+##################################################################
+###     Conversion from LC Calls to subject classification     ###
+##################################################################
 
 #' Conversion from Library of Congress Call number to subject
+#' classification
 #'
 #' Takes a string representation of a Library of Congress
-#' call number and returns either the broad subject description
-#' (default) based on the first letter, or a second level
-#' description based on the first two letters
+#' call number and returns either the broad subject
+#' classification description (default) based on the first
+#' letter, or a second-level subclassification
+#' description based on the all the letters
 #'
 #' @import data.table
 #'
 #' @param x A Library of Congress call number (string)
-#' @param second.level A logical indicating whether the letters of
-#'     call number past the first should be used to match to
-#'     a subject
+#' @param subclassification A logical indicating whether the letters of
+#'        call number past the first should be used to match to
+#'        a subject subclassification
 #' @param already.parsed Skips the extraction of the subject letters
 #'        and jumps to the subject matching
 #'
-#' @return Returns either the broad (top-level) subject description
-#'     or the second level subject description. Returns "NA" if
-#'     no subject could not be matched or call number is invalid
+#' @return Returns either the broad (top-level) subject classification
+#'         description or the second level subject subclassification
+#'         description. Returns "NA" if no subject could not be matched
+#'         or call number is invalid
 #' @examples
 #'
-#' get_lc_call_subject("ND 237.S18 $b S87 1997")
+#' get_lc_call_subject_classification("ND 237.S18 $b S87 1997")
 #' # Fine Arts
 #'
-#' get_lc_call_subject("ND 237.S18 $b S87 1997", second.level=TRUE)
+#' get_lc_call_subject_classification("ND 237.S18 $b S87 1997",
+#'                                    subclassification=TRUE)
 #' # Painting
 #'
-#' get_lc_call_subject("PQ2246.M3")
+#' get_lc_call_subject_classification("PQ2246.M3")
 #' # Language and Literature
 #'
-#' get_lc_call_subject("PQ2246.M3")
+#' get_lc_call_subject_classification("PQ2246.M3",
+#'                                    subclassification=TRUE)
 #' # "French, Italian, Spanish, and Portuguese literature"
 #'
-#' get_lc_call_subject("PQ2246.M3", already.parsed=TRUE)
+#' get_lc_call_subject_classification("PQ2246.M3", already.parsed=TRUE)
 #' # NA
 #'
-#' get_lc_call_subject("PQ", already.parsed=TRUE)
+#' get_lc_call_subject_classification("PQ", already.parsed=TRUE,
+#'                                    subclassification=TRUE)
 #' # "French, Italian, Spanish, and Portuguese literature"
 #'
-#' get_lc_call_subject(c("ND 237", "\\\\$a ND 2", "PQ2246.M3"),
-#'                     second.level=TRUE)
+#' # vectorized
+#' get_lc_call_subject_classification(c("ND 237", "\\\\$a ND 2", "PQ2246.M3"),
+#'                                    subclassification=TRUE)
 #' # c("Painting", NA, "French, Italian, Spanish, and Portuguese literature")
 #'
 #'
 #' @export
-get_lc_call_subject <- function(x, second.level=FALSE, already.parsed=FALSE){
+get_lc_call_subject_classification <- function(x, subclassification=FALSE, already.parsed=FALSE){
   if(all(is.na(x))) return(as.character(x))
   if(class(x)!="character")
     stop("Input must be a character string")
 
   thekey <- usersupplied <- description <- NULL
-  lc_two_letter_subject <- lc_first_letter_subject <- NULL
+  lc_subject_classification <- lc_subject_subclassification <- NULL
 
   theinput <- data.table::data.table(usersupplied=x)
 
   if(already.parsed){
     theinput[, thekey:=usersupplied]
   } else{
-    if(second.level){
-      theinput[, thekey:=get_lc_subject_letters(usersupplied)]
+    if(subclassification){
+      theinput[, thekey:=get_all_lc_call_subject_letters(usersupplied)]
     } else{
-      theinput[, thekey:=get_lc_broad_letter(usersupplied)]
+      theinput[, thekey:=get_lc_call_first_letter(usersupplied)]
     }
   }
 
   data.table::setindex(theinput, thekey)
 
-  if(second.level){
-    data("lc_two_letter_subject", envir = environment())
-    result <- lc_two_letter_subject[theinput, on="thekey"]
+  if(subclassification){
+    data("lc_subject_subclassification", envir = environment())
+    result <- lc_subject_subclassification[theinput, on="thekey"]
   } else{
-    data("lc_first_letter_subject", envir = environment())
-    result <- lc_first_letter_subject[theinput, on="thekey"]
+    data("lc_subject_classification", envir = environment())
+    result <- lc_subject_classification[theinput, on="thekey"]
   }
 
   return(result[, description])
@@ -103,16 +110,17 @@ get_lc_call_subject <- function(x, second.level=FALSE, already.parsed=FALSE){
 #' # TRUE
 #' is_valid_lc_call("AF172.5.E77")
 #' # FALSE
-#
+#'
+#' # vectorized
 #' is_valid_lc_call(c("Q 172.5", "AF172", "PR6023.A93"))
 #' # TRUE FALSE TRUE
 #'
 #' @export
 is_valid_lc_call <- function(x){
-  ncs <- thekey <- lc_two_letter_subject <- NULL
+  ncs <- thekey <- lc_subject_subclassification <- NULL
 
-  data("lc_two_letter_subject", envir = environment())
-  rg <- data.table::copy(lc_two_letter_subject)
+  data("lc_subject_subclassification", envir = environment())
+  rg <- data.table::copy(lc_subject_subclassification)
   rg[, ncs:=nchar(thekey)]
   setorder(rg, -ncs)
 
@@ -134,16 +142,17 @@ is_valid_lc_call <- function(x){
 #' @return Returns first letter or NA if invalid
 #' @examples
 #'
-#' get_lc_broad_letter("Q172.5.E77")
+#' get_lc_call_first_letter("Q172.5.E77")
 #' # Q
-#' get_lc_broad_letter("AF172.5.E77")
+#' get_lc_call_first_letter("AF172.5.E77")
 #' # NA
-#
-#' get_lc_broad_letter(c("Q 172.5", "AF172", "PR6023.A93"))
+#'
+#' # vectorized
+#' get_lc_call_first_letter(c("Q 172.5", "AF172", "PR6023.A93"))
 #' # Q NA P
 #'
 #' @export
-get_lc_broad_letter <- function(x){
+get_lc_call_first_letter <- function(x){
   if(all(is.na(x))) return(as.character(x))
   if(class(x)!="character")
     stop("Input must be a character string")
@@ -172,16 +181,17 @@ get_lc_broad_letter <- function(x){
 #' @return Returns all the subject letters or NA if invalid
 #' @examples
 #'
-#' get_lc_subject_letters("Q172.5.E77")
+#' get_all_lc_call_subject_letters("Q172.5.E77")
 #' # Q
-#' get_lc_subject_letters("AF172.5.E77")
+#' get_all_lc_call_subject_letters("AF172.5.E77")
 #' # NA
-#
-#' get_lc_subject_letters(c("Q 172.5", "AF172", "PR6023.A93"))
+#'
+#' # vectorized
+#' get_all_lc_call_subject_letters(c("Q 172.5", "AF172", "PR6023.A93"))
 #' # Q NA PR
 #'
 #' @export
-get_lc_subject_letters <- function(x){
+get_all_lc_call_subject_letters <- function(x){
   if(all(is.na(x))) return(as.character(x))
   if(class(x)!="character")
     stop("Input must be a character string")

@@ -5,7 +5,7 @@
 #'
 #' @docType data
 #'
-#' @usage data(countryxwalk)
+#' @usage data(country_code_crosswalk)
 #'
 #' @format An object of class \code{"data.table"};
 #'
@@ -13,4 +13,4 @@
 #'
 #' @source \url{https://www.loc.gov/marc/countries/countries_code.html}
 #'
-"countryxwalk"
+"country_code_crosswalk"

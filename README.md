@@ -49,9 +49,9 @@ automated tests, at time of writing
 - `normalize_lccn`
 ### Library of Congress Call Numbers
 - `is_valid_lc_call`
+- `get_lc_first_letter`
+- `get_all_lc_subject_letters`
 - `get_lc_broad_letter`
-- `get_lc_subject_letters`
-- `get_lc_subject_letters`
 - `get_lc_call_subject`
 
 

@@ -25,6 +25,8 @@ is_valid_lc_call("Q172.5.E77")
 # TRUE
 is_valid_lc_call("AF172.5.E77")
 # FALSE
+
+# vectorized
 is_valid_lc_call(c("Q 172.5", "AF172", "PR6023.A93"))
 # TRUE FALSE TRUE
 

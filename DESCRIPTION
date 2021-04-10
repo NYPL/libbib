@@ -1,15 +1,16 @@
 Package: libbib
 Type: Package
 Title: Various utilies for library science and cataloging 
-Version: 0.5.2
+Version: 0.5.5
 Authors@R: person("Tony", "Fischetti",
              email="tony.fischetti@gmail.com",
              role=c("aut", "cre"))
 Author: Tony Fischetti
 Maintainer: Tony Fischetti <tony.fischetti@gmail.com>
 Description: Provides functions for validating and normalizing bibliographic
-   codes such as ISBN, ISSN, LCCN, and OCLC. Also provides function to
-   extract LC Call number subject from an LC Call Number.
+   codes such as ISBN, ISSN, and LCCN. Also provides functions to
+   translate LC Call numbers to their subject classifications or
+   subclassifications.
 License: GPL-3 + file LICENSE
 Depends:
     R (>= 3.5.0),

@@ -5,7 +5,7 @@
 #'
 #' @docType data
 #'
-#' @usage data(langxwalk)
+#' @usage data(language_code_crosswalk)
 #'
 #' @format An object of class \code{"data.table"};
 #'
@@ -13,4 +13,4 @@
 
 #' @source \url{https://www.loc.gov/marc/languages/language_code.html}
 #'
-"langxwalk"
+"language_code_crosswalk"
