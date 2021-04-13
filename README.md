@@ -62,6 +62,28 @@ automated tests, at time of writing
 > is_valid_isbn_10(c("012491540X", "9004037812"))
 [1] TRUE FALSE
 
+> data("dewey_subject_crosswalk")
+> dewey_subject_crosswalk
+Key: <thekey>
+     thekey                                           description
+     <char>                                                <char>
+  1:    000               Computer science, knowledge and systems
+  2:    001                                             Knowledge
+  ...
+990:    998                         Arctic islands and Antarctica
+991:    999                               Extraterrestrial worlds
+
+> data("lc_subject_subclassification")
+> lc_subject_subclassification
+Key: <thekey>
+     thekey                                           description
+     <char>                                                <char>
+  1:     AC                  Collections. Series. Collected works
+  2:     AE                                         Encyclopedias
+  ...
+227:      Z Books (General). Writing. Paleography. Book indust...
+228:     ZA                       Information resources/materials
+
 ```
 
 
