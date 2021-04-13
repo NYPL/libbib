@@ -57,10 +57,39 @@ automated tests, at time of writing
 - `get_lc_call_first_letter`
 - `get_all_lc_call_subject_letters`
 
+### Dewey Decimal (DCC) Call Numbers
+- `get_dewey_decimal_subject_class`
+- `get_dewey_decimal_subject_division`
+- `get_dewey_decimal_subject_section`
+
 ### Interfacing with the web
 - `loc_permalink_from_lccn`
 - `worldcat_permalink_from_issn`
 - `worldcat_permalink_from_isbn`
 - `worldcat_permalink_from_oclc_number`
 
+
+## Included data files (loadable with `data(datafile)`)
+- `language_code_crosswalk`
+  (https://www.loc.gov/marc/languages/language_code.html)
+- `country_code_crosswalk`
+  (https://www.loc.gov/marc/countries/countries_code.html)
+- `lc_subject_classification`
+  (https://www.loc.gov/catdir/cpso/lcco/)
+- `lc_subject_subclassification`
+  (https://www.loc.gov/catdir/cpso/lcco/)
+- `dewey_subject_crosswalk`
+  (https://www.oclc.org/content/dam/oclc/dewey/ddc23-summaries.pdf)
+- `books_and_serials_sample`
+  A very small sample of books, monographs, and serials and their
+  information including title, control numbers, call numbers, and
+  call number subject classifications. Mainly for testing.
+  Will be expanded in future versions.
+
+
+## sample examples
+
+```
+this
+```
 

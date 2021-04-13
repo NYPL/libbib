@@ -1,15 +1,17 @@
 Package: libbib
 Type: Package
 Title: Various Utilities for Library Science/Assessment and Cataloging
-Version: 1.0
+Version: 1.0.1
 Authors@R: person("Tony", "Fischetti",
              email="tony.fischetti@gmail.com",
              role=c("aut", "cre"))
 Maintainer: Tony Fischetti <tony.fischetti@gmail.com>
 Description: Provides functions for validating and normalizing bibliographic
-   codes such as ISBN, ISSN, and LCCN. Also provides functions to
-   translate LC Call numbers to their subject classifications or
-   subclassifications.
+   codes such as ISBN, ISSN, and LCCN. Includes functions to
+   translate Call numbers (Library of Congress and Dewey Decimal) to their
+   subject classifications or subclassifications. Also provides various
+   loadable data files such call number / subject crosswalks and code
+   tables.
 License: GPL-3
 Depends:
     R (>= 3.5.0),
