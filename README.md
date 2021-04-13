@@ -7,9 +7,13 @@ libbib
 
 [![](http://www.r-pkg.org/badges/version/libbib)](https://cran.r-project.org/package=libbib)
 
+
 ## Description
-An R package providing functions for validating and normalizing
-bibliographic codes such as ISBN, ISSN, LCCN, and OCLC.
+An R package providing functions for for validating and normalizing
+bibliographic codes such as ISBN, ISSN, and LCCN. Includes functions to
+translate Call numbers (Library of Congress and Dewey Decimal) to their
+subject classifications or subclassifications. Also provides various
+loadable data files such call number / subject crosswalks and code
 
 Speed of execution and robustness are priorities in this package.
 To the end of optimizing speed and efficiency, careful consideration
