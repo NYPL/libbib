@@ -27,7 +27,7 @@ REGEX.ISSN <- "^\\d{7}(X|\\d)$"
 #'
 #' @param x A string of 9 or 10 digits
 #' @param allow.hyphens A logical indicating whether the hyphen
-#'     separator should be allowed
+#'                      separator should be allowed
 #' @param errors.as.nas return NA if error instead of throwing error
 #'
 #' @return Returns the character check digit that satifies the
@@ -78,10 +78,11 @@ get_isbn_10_check_digit <- function(x, allow.hyphens=FALSE, errors.as.nas=FALSE)
 #'
 #' @param x A string of 10 digits or 9 digits with terminal "X"
 #' @param allow.hyphens A logical indicating whether the hyphen
-#'     separator should be allowed
+#'                      separator should be allowed
 #' @param errors.as.false return false if error instead of throwing error
 #'
 #' @return Returns TRUE if check passes, FALSE if not, and NA if NA
+#'
 #' @examples
 #'
 #' check_isbn_10_check_digit("012491540X")      # TRUE
@@ -121,7 +122,7 @@ check_isbn_10_check_digit <- function(x, allow.hyphens=TRUE, errors.as.false=TRU
 #'
 #' @param x A string of 10 digits or 9 digits with terminal "X"
 #' @param allow.hyphens A logical indicating whether the hyphen
-#'     separator should be allowed
+#'                      separator should be allowed
 #' @param lower.x.allowed A logical indicating whether ISBN 10s with
 #'                        a check digit with a lower-case "x" should
 #'                        be treated as valid
@@ -167,8 +168,8 @@ attr(is_valid_isbn_10, "assertr_vectorized") <- TRUE
 #'
 #' @param x A string
 #' @param aggressive A logical indicating whether aggressive measures
-#'                      should be taken to try to get the "ISBN 10"
-#'                      into a valid form. See "Details" for more info
+#'                   should be taken to try to get the "ISBN 10"
+#'                   into a valid form. See "Details" for more info
 #' @param convert.to.isbn.13 A logical indicating whether the ISBN 10
 #'                           should be converted into an ISBN 13
 #'
@@ -263,11 +264,12 @@ normalize_isbn_10 <- function(x, aggressive=TRUE, convert.to.isbn.13=FALSE){
 #'
 #' @param x A string of 12 or 13 digits
 #' @param allow.hyphens A logical indicating whether the hyphen
-#'     separator should be allowed
+#'                      separator should be allowed
 #' @param errors.as.nas return NA if error instead of throwing error
 #'
 #' @return Returns the character check digit that satifies the
 #'         mod 10 condition. Returns NA if input is NA
+#'
 #' @examples
 #'
 #' get_isbn_13_check_digit("9780306406157")
@@ -301,7 +303,7 @@ get_isbn_13_check_digit <- function(x, allow.hyphens=FALSE, errors.as.nas=FALSE)
     should.be <- (10 - (first12 %% 10)) %% 10
     x[!where.bad] <- as.character(should.be)
   }
-  x
+  return(x)
 }
 
 
@@ -313,7 +315,7 @@ get_isbn_13_check_digit <- function(x, allow.hyphens=FALSE, errors.as.nas=FALSE)
 #'
 #' @param x A string of 13 digits
 #' @param allow.hyphens A logical indicating whether the hyphen
-#'     separator should be allowed
+#'                      separator should be allowed
 #' @param errors.as.false return false if error instead of throwing error
 #'
 #' @return Returns TRUE if check passes, FALSE if not, and NA if NA
@@ -353,7 +355,7 @@ check_isbn_13_check_digit <- function(x, allow.hyphens=TRUE, errors.as.false=TRU
 #'
 #' @param x A string of 13
 #' @param allow.hyphens A logical indicating whether the hyphen
-#'     separator should be allowed
+#'                      separator should be allowed
 #'
 #' @return Returns TRUE if checks pass, FALSE if not, and NA if NA
 #' @examples
@@ -393,6 +395,7 @@ attr(is_valid_isbn_13, "assertr_vectorized") <- TRUE
 #' @param errors.as.nas return NA if error instead of throwing error
 #'
 #' @return Returns ISBN 13 as a string
+#'
 #' @examples
 #'
 #' convert_to_isbn_13("012491540X")                # 9780124915404
@@ -543,7 +546,6 @@ normalize_isbn <- function(x, aggressive=TRUE, convert.to.isbn.13=FALSE){
 ###                 ISSN                   ###
 ##############################################
 
-
 #' Get ISSN check digit
 #'
 #' Takes a string representation of an ISSN
@@ -553,7 +555,7 @@ normalize_isbn <- function(x, aggressive=TRUE, convert.to.isbn.13=FALSE){
 #'
 #' @param x A string of 7 or 8 digits
 #' @param allow.hyphens A logical indicating whether the hyphen
-#'     separator should be allowed
+#'                      separator should be allowed
 #' @param errors.as.nas return NA if error instead of throwing error
 #'
 #' @return Returns the character check digit that satifies the
@@ -605,10 +607,11 @@ get_issn_check_digit <- function(x, allow.hyphens=FALSE, errors.as.nas=FALSE){
 #'
 #' @param x A string of 8 digits or 7 digits with terminal "X"
 #' @param allow.hyphens A logical indicating whether the hyphen
-#'     separator should be allowed
+#'                      separator should be allowed
 #' @param errors.as.false return false if error instead of throwing error
 #'
 #' @return Returns TRUE if check passes, FALSE if not, and NA if NA
+#'
 #' @examples
 #'
 #' check_issn_check_digit("2434561X")   # TRUE
@@ -736,7 +739,7 @@ normalize_issn <- function(x, aggressive=TRUE, pretty=FALSE){
   x <- gsub("[^\\d|X]", "", x, perl=TRUE)
   y <- x
   x <- gsub("X(.+$)", "\\1", x, perl=TRUE)
-  is.all.valid <- all(is_valid_issn(x))
+  is.all.valid <- all(is_valid_issn(x), na.rm=TRUE)
   if(aggressive && !is.all.valid){
     will_padding_zeros_fix_it <- function(x){
       ifelse(nchar(x)==7 & is_valid_issn(stringr::str_pad(x, 8, "left", "0")), TRUE, FALSE)
@@ -792,87 +795,78 @@ normalize_issn <- function(x, aggressive=TRUE, pretty=FALSE){
 ###                 LCCN                   ###
 ##############################################
 
-
-#' Attempt to enforce validity and canonical form to LCCN
+#' Attempt to enforce validity of LCCN and convert to normalized form
 #'
-#' Takes a string representation of an LCCN. Returns a standardized one
+#' Takes a string representation of an LCCN. Returns a normalized one
 #'
-#' @param x A string (or vector of strings) of LCCNs
-#' @param year.cutoff If LCCN year is more recent than this year, returns NA
-#' @param include.revisions STUB
-#' @param pad.char STUB
+#' @param userlccns A string (or vector of strings) of LCCNs
+#' @param allow.hyphens a logical indicating whether hyphens separating
+#'                      the year and serial should be handled. Adds
+#'                      complexity and time to the function.
+#'                      (default = TRUE)
 #'
-#' @details THIS IS A STUB
+#' @details Normalization procedure is documented here:
+#' https://www.loc.gov/marc/lccn-namespace.html
+#'
+#' This does not include revisions or use "#" as a padding character
+#' The normalized LCCN is not always the same number of characters
 #'
 #' @return Returns valid LCCN if possible, NA if not
+#'
 #' @examples
 #'
-#' normalize_lccn("75425165")                   # "###75425165#"
+#' normalize_lccn("n 78890351 ")                  # "n78890351"
 #'
-#' normalize_lccn("2004392586")
+#' normalize_lccn("###78890351#")                 # "78890351"
+#'
+#' normalize_lccn(" 79139101 /AC/r932")           #  "79139101"
+#'
+#' normalize_lccn("85-2 ")                        #  "85000002"
+#' normalize_lccn("85-2 ", allow.hyphens=FALSE)   #  NA
 #'
 #' # vectorized
-#' normalize_lccn(c("75425165", "2004392586"))
-#' # "###75425165#" "##2004392586"
+#' normalize_lccn(c("85-2 ", " 79139101 /AC/r932", "n 78890351 "))
+#' # c("85000002", "79139101", "n78890351"))
 #'
 #' @export
-normalize_lccn <- function(x, year.cutoff=NA, include.revisions=FALSE, pad.char="#"){
-  ## CHECKS
-  ## like check if pad char is nchar > 1
-  padit <- function(x, len){ x }
-  if(!is.na(pad.char)){
-    padit <- function(x, len){
-      stringr::str_pad(x, len, side="left", pad=pad.char)
+normalize_lccn <- function(userlccns, allow.hyphens=TRUE){
+  if(all(is.na(userlccns))) return(as.character(userlccns))
+  if(class(userlccns)!="character")
+    stop("Input must be a character string")
+
+  userlccns <- stringr::str_replace_all(userlccns, "\\s", "")
+  userlccns <- stringr::str_replace_all(userlccns, "#", "")
+  userlccns <- stringr::str_replace(userlccns, "/.+$", "")
+
+  where.bad <- !stringr::str_detect(userlccns, "\\d")
+  userlccns[where.bad] <- NA
+
+  where.bad <- stringr::str_detect(userlccns, "[a-z]{4,}")
+  userlccns[where.bad] <- NA
+
+  if(allow.hyphens){
+    where.bad <- stringr::str_detect(userlccns, "[^a-z\\d-]")
+    userlccns[where.bad] <- NA
+
+    pieces <- stringr::str_split(userlccns, "-")
+
+    process_pieces <- function(pieces){
+      ifelse(length(pieces)>2, NA_character_,
+             ifelse(length(pieces)==1, pieces,
+                    ifelse(nchar(pieces[2])>6, NA_character_,
+                      sprintf("%s%s", pieces[1],
+                              stringr::str_pad(pieces[2], width=6, pad="0")))))
     }
+    userlccns <- unlist(lapply(pieces, process_pieces))
+  } else{
+    where.bad <- stringr::str_detect(userlccns, "[^a-z\\d]")
+    userlccns[where.bad] <- NA
   }
 
-  prefix  <- function(x){ gsub("^([a-zA-Z]*?)\\s*\\d+\\D*.*$", "\\1", x, perl=TRUE) }
-  middle  <- function(x){ gsub("^[A-Za-z]*?\\s*(\\d+)\\D*.*$", "\\1", x, perl=TRUE) }
-  postfix <- function(x){ gsub("^[A-Za-z]*?\\s*\\d+\\s*(\\D*.*)$", "\\1", x, perl=TRUE) }
+  where.bad <- nchar(userlccns)<8 | nchar(userlccns)>12
+  userlccns[where.bad] <- NA
 
-  dprefix       <- prefix(x)
-  dprenc        <- nchar(dprefix)
-  dmiddle       <- middle(x)
-  dmnc          <- nchar(dmiddle)
-  dpostfix      <- postfix(x)
-  dpostnc       <- nchar(dpostfix)
-
-  wherebad <- ifelse(dmnc %in% c(8, 10), FALSE, TRUE)
-  wherebad <- wherebad | ifelse(dprenc>3, TRUE, FALSE)
-  x[wherebad]             <- NA
-  dprefix[wherebad]       <- NA
-  dprenc[wherebad]        <- NA
-  dmiddle[wherebad]       <- NA
-  dmnc[wherebad]          <- NA
-  dpostfix[wherebad]      <- NA
-  dpostnc[wherebad]       <- NA
-
-  IS.STUCTURE.B <- ifelse(dmnc==10 & as.numeric(substr(dmiddle, 1, 4))>2000, TRUE, FALSE)
-
-  wherebad <- wherebad | ifelse(IS.STUCTURE.B & nchar(dprefix)> 2, TRUE, FALSE)
-
-  dyear         <- ifelse(IS.STUCTURE.B, substr(dmiddle, 1, 4),  substr(dmiddle, 1, 2))
-  dserial       <- ifelse(IS.STUCTURE.B, substr(dmiddle, 5, 10), substr(dmiddle, 3, 8))
-
-  dwhole <- ifelse(IS.STUCTURE.B,
-                   # struct b
-                   sprintf("%s%s%s", padit(tolower(dprefix), 2),
-                           dyear, stringr::str_pad(dserial, 6, side="left", pad="0")),
-                   # struct a
-                   sprintf("%s%s%s", padit(tolower(dprefix), 3),
-                           dyear, stringr::str_pad(dserial, 6, side="left", pad="0")))
-  dwhole <- ifelse((!(IS.STUCTURE.B)) & !is.na(pad.char), sprintf("%s%s", dwhole, pad.char), dwhole)
-
-  if(!is.na(year.cutoff))
-    wherebad <- wherebad | ifelse(as.numeric(dyear)>year.cutoff, TRUE, FALSE)
-
-  dwhole[wherebad] <- NA
-
-  if(include.revisions)
-    dwhole <- ifelse(IS.STUCTURE.B, dwhole, sprintf("%s%s", dwhole, dpostfix))
-
-  return(dwhole)
+  return(userlccns)
 }
-
 
 

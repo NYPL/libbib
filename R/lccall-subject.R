@@ -32,8 +32,7 @@
 #' get_lc_call_subject_classification("ND 237.S18 $b S87 1997")
 #' # Fine Arts
 #'
-#' get_lc_call_subject_classification("ND 237.S18 $b S87 1997",
-#'                                    subclassification=TRUE)
+#' get_lc_call_subject_classification("ND 237.S18 $b S87 1997", subclassification=TRUE)
 #' # Painting
 #'
 #' get_lc_call_subject_classification("PQ2246.M3")
@@ -129,6 +128,7 @@ is_valid_lc_call <- function(x){
   stringr::str_detect(x, VALIDLCCALL)
 }
 
+
 #' Get the first letter of LC Call Number
 #'
 #' Takes a string representation of a Library of Congress
@@ -166,6 +166,7 @@ get_lc_call_first_letter <- function(x){
   theinput[!THESEAREVALID, thekey:=NA]
   return(theinput[, thekey])
 }
+
 
 #' Get all subject letters of LC Call Number
 #'

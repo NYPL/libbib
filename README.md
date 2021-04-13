@@ -29,6 +29,7 @@ As for robustness, this package is well tested, with over 100
 automated tests, at time of writing
 
 ## Functions
+
 ### ISBNs
 - `get_isbn_10_check_digit`
 - `check_isbn_10_check_digit`
@@ -40,21 +41,26 @@ automated tests, at time of writing
 - `convert_to_isbn_13`
 - `normalize_isbn_13`
 - `normalize_isbn`
+
 ### ISSN
-- `check_issn_check_digit`
 - `get_issn_check_digit`
+- `check_issn_check_digit`
 - `is_valid_issn`
 - `normalize_issn`
+
 ### LCCN
 - `normalize_lccn`
+
 ### Library of Congress Call Numbers
+- `get_lc_call_subject_classification`
 - `is_valid_lc_call`
-- `get_lc_first_letter`
-- `get_all_lc_subject_letters`
-- `get_lc_broad_letter`
-- `get_lc_call_subject`
+- `get_lc_call_first_letter`
+- `get_all_lc_call_subject_letters`
+
+### Interfacing with the web
+- `loc_permalink_from_lccn`
+- `worldcat_permalink_from_issn`
+- `worldcat_permalink_from_isbn`
+- `worldcat_permalink_from_oclc_number`
 
 
----
-
-## THIS IS A STUB. IN EARLY ACTIVE DEVELOPMENT

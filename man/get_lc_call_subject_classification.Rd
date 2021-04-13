@@ -39,8 +39,7 @@ description based on the all the letters
 get_lc_call_subject_classification("ND 237.S18 $b S87 1997")
 # Fine Arts
 
-get_lc_call_subject_classification("ND 237.S18 $b S87 1997",
-                                   subclassification=TRUE)
+get_lc_call_subject_classification("ND 237.S18 $b S87 1997", subclassification=TRUE)
 # Painting
 
 get_lc_call_subject_classification("PQ2246.M3")

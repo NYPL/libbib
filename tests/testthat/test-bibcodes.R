@@ -15,7 +15,6 @@ EX.hairy.isbn.10s <- c("01249-^@^1540X",         # has nonsense but good
                        "898477250",              # good if x added
                        "900403781",              # too short and bad
                        "1249-^@^1540X",          # good if leading 0 is added
-                       # OMG BOTH SIDES ARE DIFFERENT
                        "95700683539570068361",   # good if divided in half
                        "95700683539570068361",   # good if divided in half
                        NA,                       # NA (obviously)
@@ -156,11 +155,6 @@ test_that("normalize_isbn_10() succeeds properly", {
   expect_equal(normalize_isbn_10(NA), as.character(NA))
 })
 
-# this can't really fail
-# test_that("normalize_isbn_10 fails properly", {
-#
-# })
-
 # ------------------------------------------ #
 
 ##############################################
@@ -194,7 +188,7 @@ test_that("get_isbn_13_check_digit() fails properly", {
 
 
 # check_isbn_13_check_digit succeeds properly
-test_that("get_isbn_13_check_digit() succeeds properly", {
+test_that("check_isbn_13_check_digit() succeeds properly", {
   expect_equal(check_isbn_13_check_digit(EX.valid.13.digit.isbns[1]),
                TRUE)
   expect_equal(check_isbn_13_check_digit(EX.valid.13.digit.isbns),
@@ -311,10 +305,6 @@ test_that("normalize_isbn() succeeds properly", {
                    "012491540X"),
                  c("9789668197918", "9789668197918", NA, "9770800783",
                    "9781572411579", NA, NA)))
-
-
-  #expect_equal(normalize_isbn(c(EX.hairy.isbn.10s, EX.hairy.isbn.13s), aggressive=FALSE),
-  #             c("9789668197918", "9789668197918", NA, NA, NA, NA, NA))
   expect_equal(normalize_isbn(NA), as.character(NA))
 })
 
@@ -347,7 +337,6 @@ test_that("get_issn_check_digit() fails properly", {
 })
 
 
-
 # check_issn_check_digit succeeds properly
 test_that("get_issn_check_digit() succeeds properly", {
   expect_equal(check_issn_check_digit(c("03785955", "2434561X", NA)),
@@ -369,6 +358,64 @@ test_that("get_issn_check_digit() fails properly", {
                "Illegal input")
 })
 
+# is_valid_issn
+test_that("is_valid_issn() works", {
+  expect_equal(is_valid_issn("2434561X"), TRUE)
+  expect_equal(is_valid_issn("2434-561X"), TRUE)
+  expect_equal(is_valid_issn(c("2434-561X", "2434-5611", "0378-5955", NA)),
+               c(TRUE, FALSE, TRUE, NA))
+})
+
+# normalize_issn
+test_that("normalize_issn() works", {
+  expect_equal(normalize_issn(c("__2434__561X", NA, "2434561",
+                                "21335212434561X")),
+               c("2434561X", NA, "2434561X", "2434561X"))
+  expect_equal(normalize_issn(3785955), "03785955")
+})
+
 # ------------------------------------------ #
+
+
+##############################################
+###                 LCCN                   ###
+##############################################
+
+test_that("normalize_lccn() succeeds properly", {
+  expect_equal(normalize_lccn("n 78890351 "), "n78890351")
+  expect_equal(normalize_lccn(" 85000002 "), "85000002")
+  expect_equal(normalize_lccn(" 79139101 /AC/r932"), "79139101")
+  expect_equal(normalize_lccn("1‡a   2014356397"), NA_character_)
+  expect_equal(normalize_lccn("A   2014356397"), NA_character_)
+  expect_equal(normalize_lccn("98114143 /MN"), "98114143")
+  expect_equal(normalize_lccn("sa 65001662"), "sa65001662")
+  expect_equal(normalize_lccn("2003306761"), "2003306761")
+  expect_equal(normalize_lccn("###78890351#"), "78890351")
+  expect_equal(normalize_lccn("i was happy for a day in 1975"), NA_character_)
+
+  # hyphen fails
+  expect_equal(normalize_lccn("n78-890351"), "n78890351")
+  expect_equal(normalize_lccn("n78-89035"), "n78089035")
+  expect_equal(normalize_lccn("85-2 "), "85000002")
+  expect_equal(normalize_lccn("2001-000002"), "2001000002")
+  expect_equal(normalize_lccn("75-425165//r75"), "75425165")
+  expect_equal(normalize_lccn("75-425165//r75", allow.hyphens = FALSE),
+               NA_character_)
+
+  expect_error(normalize_lccn(8675309), "Input must be a character string")
+  expect_equal(normalize_lccn(NA), NA_character_)
+
+  # test vectorized
+  expect_equal(normalize_lccn(c("1‡a   2014356397", "n 78890351 ")),
+               c(NA_character_, "n78890351"))
+  expect_equal(normalize_lccn(c("85-2 ", " 79139101 /AC/r932", "n 78890351 ")),
+               c("85000002", "79139101", "n78890351"))
+  expect_equal(normalize_lccn(c("85-2 ", " 79139101 /AC/r932", "n 78890351 "),
+                              allow.hyphens=FALSE),
+               c(NA_character_, "79139101", "n78890351"))
+  expect_equal(normalize_lccn(c("85-8675309 ", " 79139101 /AC/r932", "n 78890351 ")),
+               c(NA_character_, "79139101", "n78890351"))
+
+})
 
 

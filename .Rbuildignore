@@ -7,3 +7,6 @@
 cran-comments.md
 ^codemeta\.json$
 ^cran-comments\.md$
+^LICENSE\.md$
+^LICENSE$
+^CRAN-RELEASE$

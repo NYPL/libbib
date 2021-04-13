@@ -2,36 +2,44 @@
 % Please edit documentation in R/bibcodes.R
 \name{normalize_lccn}
 \alias{normalize_lccn}
-\title{Attempt to enforce validity and canonical form to LCCN}
+\title{Attempt to enforce validity of LCCN and convert to normalized form}
 \usage{
-normalize_lccn(x, year.cutoff = NA, include.revisions = FALSE, pad.char = "#")
+normalize_lccn(userlccns, allow.hyphens = TRUE)
 }
 \arguments{
-\item{x}{A string (or vector of strings) of LCCNs}
+\item{userlccns}{A string (or vector of strings) of LCCNs}
 
-\item{year.cutoff}{If LCCN year is more recent than this year, returns NA}
-
-\item{include.revisions}{STUB}
-
-\item{pad.char}{STUB}
+\item{allow.hyphens}{a logical indicating whether hyphens separating
+the year and serial should be handled. Adds
+complexity and time to the function.
+(default = TRUE)}
 }
 \value{
 Returns valid LCCN if possible, NA if not
 }
 \description{
-Takes a string representation of an LCCN. Returns a standardized one
+Takes a string representation of an LCCN. Returns a normalized one
 }
 \details{
-THIS IS A STUB
+Normalization procedure is documented here:
+https://www.loc.gov/marc/lccn-namespace.html
+
+This does not include revisions or use "#" as a padding character
+The normalized LCCN is not always the same number of characters
 }
 \examples{
 
-normalize_lccn("75425165")                   # "###75425165#"
+normalize_lccn("n 78890351 ")                  # "n78890351"
 
-normalize_lccn("2004392586")
+normalize_lccn("###78890351#")                 # "78890351"
+
+normalize_lccn(" 79139101 /AC/r932")           #  "79139101"
+
+normalize_lccn("85-2 ")                        #  "85000002"
+normalize_lccn("85-2 ", allow.hyphens=FALSE)   #  NA
 
 # vectorized
-normalize_lccn(c("75425165", "2004392586"))
-# "###75425165#" "##2004392586"
+normalize_lccn(c("85-2 ", " 79139101 /AC/r932", "n 78890351 "))
+# c("85000002", "79139101", "n78890351"))
 
 }
