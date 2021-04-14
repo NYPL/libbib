@@ -56,10 +56,13 @@
 #'
 #'
 #' @export
-get_lc_call_subject_classification <- function(x, subclassification=FALSE, already.parsed=FALSE){
+get_lc_call_subject_classification <- function(x, subclassification=FALSE,
+                                               already.parsed=FALSE){
   if(all(is.na(x))) return(as.character(x))
   if(class(x)!="character")
     stop("Input must be a character string")
+
+  x <- stringr::str_to_upper(x)
 
   thekey <- usersupplied <- description <- NULL
   lc_subject_classification <- lc_subject_subclassification <- NULL
@@ -116,6 +119,11 @@ get_lc_call_subject_classification <- function(x, subclassification=FALSE, alrea
 #'
 #' @export
 is_valid_lc_call <- function(x){
+  if(class(x)!="character")
+    stop("Input must be a character string")
+
+  x <- stringr::str_to_upper(x)
+
   ncs <- thekey <- lc_subject_subclassification <- NULL
 
   data("lc_subject_subclassification", envir = environment())
@@ -157,6 +165,8 @@ get_lc_call_first_letter <- function(x){
   if(class(x)!="character")
     stop("Input must be a character string")
 
+  x <- stringr::str_to_upper(x)
+
   thekey <- usersupplied <- NULL
 
   theinput <- data.table::data.table(usersupplied=x)
@@ -196,6 +206,8 @@ get_all_lc_call_subject_letters <- function(x){
   if(all(is.na(x))) return(as.character(x))
   if(class(x)!="character")
     stop("Input must be a character string")
+
+  x <- stringr::str_to_upper(x)
 
   description <- usersupplied <- thekey <- lc_first_letter_subject <- NULL
 
