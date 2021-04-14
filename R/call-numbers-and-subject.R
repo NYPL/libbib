@@ -1,5 +1,13 @@
 
 
+make.valid.lccall.regex <- function(){
+  thekey <- lc_subject_subclassification <- NULL
+  data("lc_subject_subclassification", envir = environment())
+  VALIDLCCALL <- sprintf("^(%s)\\s*[1-9]", paste(lc_subject_subclassification[, thekey], collapse="|"))
+  VALIDLCCALL
+}
+
+REGEX.VALID.LCCALL <- make.valid.lccall.regex()
 
 ##################################################################
 ###     Conversion from LC Calls to subject classification     ###
@@ -127,13 +135,8 @@ is_valid_lc_call <- function(x){
   ncs <- thekey <- lc_subject_subclassification <- NULL
 
   data("lc_subject_subclassification", envir = environment())
-  rg <- data.table::copy(lc_subject_subclassification)
-  rg[, ncs:=nchar(thekey)]
-  setorder(rg, -ncs)
 
-  VALIDLCCALL <- sprintf("^(%s)\\s*[1-9]", paste(rg[, thekey], collapse="|"))
-
-  stringr::str_detect(x, VALIDLCCALL)
+  stringr::str_detect(x, REGEX.VALID.LCCALL)
 }
 
 
