@@ -9,9 +9,11 @@ where the formatting is better.**
 
 1. Implemented Dewey Decimal Code to subject translation
 
+2. Added various helpful utility functions
+
 ## bug fixes
 
-1. Expanded lc call <-> subject crosswalk (mainly for "Law")
+1. Expanded lc call <-> subject crosswalk (mainly for 'Law')
 
 2. Fixed bugs in lc call <-> subject translation mechanism
 

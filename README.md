@@ -148,6 +148,13 @@ Key: <thekey>
   and call number subject classifications. Mainly for testing.
   Will be expanded in future versions.
 
+### miscellaneous utilities
+- `dt_del_cols`
+- `dt_keep_cols`
+- `dt_counts_and_percents`
+- `get_clean_names`
+- `dt_set_clean_names`
+- `dt_percent_not_na`
 
 
 
