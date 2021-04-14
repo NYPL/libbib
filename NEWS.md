@@ -3,13 +3,15 @@
 [latest news on GitHub](https://github.com/NYPL/libbib/blob/dev/NEWS.md)
 where the formatting is better.**
 
-# libbib 1.1 (in development)
+# libbib 2.0 (in development)
 
 ## new features
 
 1. Implemented Dewey Decimal Code to subject translation
 
 2. Added various helpful utility functions
+
+3. Added split_map_filter_reduce and related utilities
 
 ## bug fixes
 

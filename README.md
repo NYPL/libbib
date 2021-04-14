@@ -31,7 +31,7 @@ _Note these timings will change for the better or worse pending_
   - _recognition and handling procedures for other ways in which
    malformed ISBNs can be salvaged_
 
-As for robustness, this package is well tested, with over 100
+As for robustness, this package is well tested, with over 200
 automated tests, at time of writing
 
 ## Some examples
@@ -147,6 +147,12 @@ Key: <thekey>
   serials and their information including title, control numbers, call numbers,
   and call number subject classifications. Mainly for testing.
   Will be expanded in future versions.
+
+### split / map / filter / reduce and related utilies
+- `car`
+- `remove_duplicates_and_nas`
+- `recombine_with_sep_closure`
+- `split_map_filter_reduce`
 
 ### miscellaneous utilities
 - `dt_del_cols`
