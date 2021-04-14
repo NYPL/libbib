@@ -23,18 +23,42 @@ test_that("lc_call_subject_classification() works", {
   expect_equal(get_lc_call_subject_classification(books_and_serials_sample$lccall,
                                                   subclassification=TRUE),
                books_and_serials_sample$lc_subject_subclass)
+  expect_equal(get_lc_call_subject_classification("H29.S75 A38"),
+               "Social Sciences")
+  expect_equal(get_lc_call_subject_classification("H29.S75 A38", subclassification=TRUE),
+               "Social Sciences (General)")
+  expect_equal(get_lc_call_subject_classification("Pk3798.K74 C33 1963"),
+               "Language and Literature")
+  expect_equal(get_lc_call_subject_classification("Pk3798.K74 C33 1963", subclassification=TRUE),
+               "Indo-Iranian languages and literatures")
+  expect_equal(get_lc_call_subject_classification("KKT5674.18 .P75 1986"),
+               "Law")
+  expect_equal(get_lc_call_subject_classification("KKT5674.18 .P75 1986", subclassification=TRUE),
+               "Spain")
+  expect_equal(get_lc_call_subject_classification("KZD1006 .J68", subclassification=TRUE),
+               "Space law. Law of outer space")
+  expect_equal(get_lc_call_subject_classification("KLP13 1919", subclassification=TRUE),
+               "Ukraine (1919-1991) and Zakavkazskaia Sotsialisticheskaia Federativnaia Sovetskaia Respublika (to 1936)")
 })
 
 # is_valid_lc_call
 test_that("is_valid_lc_call() works", {
   expect_equal(is_valid_lc_call(c("Q 172.5", "AF172", "PR6023.A93")),
                c(TRUE, FALSE, TRUE))
+  expect_equal(is_valid_lc_call("H29.S75 A38"), TRUE)
+  expect_equal(is_valid_lc_call("Pk3798.K74 C33 1963"), TRUE)
+  expect_equal(is_valid_lc_call("Rs164 .K894818 1966"), TRUE)
+  expect_equal(is_valid_lc_call("KKT5674.18 .P75 1986"), TRUE)
 })
 
 # get_lc_call_first_letter
 test_that("get_lc_call_first_letter() works", {
   expect_equal(get_lc_call_first_letter(c("Q 172.5", "AF172", NA, "PR6023.A93")),
                c("Q", NA, NA, "P"))
+  expect_equal(get_lc_call_first_letter("H29.S75 A38"), "H")
+  expect_equal(get_lc_call_first_letter("Pk3798.K74 C33 1963"), "P")
+  expect_equal(get_lc_call_first_letter("KKT5674.18 .P75 1986"), "K")
+
 })
 
 # get_all_lc_call_subject_letters
@@ -42,6 +66,8 @@ test_that("get_all_lc_call_subject_letters() works", {
   expect_equal(get_all_lc_call_subject_letters(c("Q 172.5", "AF172", NA,
                                                  "PR6023.A93")),
                c("Q", NA, NA, "PR"))
+  expect_equal(get_all_lc_call_subject_letters("Pk3798.K74 C33 1963"), "PK")
+  expect_equal(get_all_lc_call_subject_letters("KKT5674.18 .P75 1986"), "KKT")
 })
 
 
@@ -68,8 +94,6 @@ test_that("get_dewey_decimal_subject_section() works", {
   expect_equal(get_dewey_decimal_subject_section(c("709.05", "invalid", NA, "823.912")),
                c("History, geographic treatment, biography", NA, NA, "English fiction"))
 })
-
-
 
 
 
