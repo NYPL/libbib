@@ -1,5 +1,13 @@
 
 
+make.valid.lccall.regex <- function(){
+  thekey <- lc_subject_subclassification <- NULL
+  data("lc_subject_subclassification", envir = environment())
+  VALIDLCCALL <- sprintf("^(%s)\\s*[1-9]", paste(lc_subject_subclassification[, thekey], collapse="|"))
+  VALIDLCCALL
+}
+
+REGEX.VALID.LCCALL <- make.valid.lccall.regex()
 
 ##################################################################
 ###     Conversion from LC Calls to subject classification     ###
@@ -56,10 +64,13 @@
 #'
 #'
 #' @export
-get_lc_call_subject_classification <- function(x, subclassification=FALSE, already.parsed=FALSE){
+get_lc_call_subject_classification <- function(x, subclassification=FALSE,
+                                               already.parsed=FALSE){
   if(all(is.na(x))) return(as.character(x))
   if(class(x)!="character")
     stop("Input must be a character string")
+
+  x <- stringr::str_to_upper(x)
 
   thekey <- usersupplied <- description <- NULL
   lc_subject_classification <- lc_subject_subclassification <- NULL
@@ -116,16 +127,16 @@ get_lc_call_subject_classification <- function(x, subclassification=FALSE, alrea
 #'
 #' @export
 is_valid_lc_call <- function(x){
+  if(class(x)!="character")
+    stop("Input must be a character string")
+
+  x <- stringr::str_to_upper(x)
+
   ncs <- thekey <- lc_subject_subclassification <- NULL
 
   data("lc_subject_subclassification", envir = environment())
-  rg <- data.table::copy(lc_subject_subclassification)
-  rg[, ncs:=nchar(thekey)]
-  setorder(rg, -ncs)
 
-  VALIDLCCALL <- sprintf("^(%s)\\s*[1-9]", paste(rg[, thekey], collapse="|"))
-
-  stringr::str_detect(x, VALIDLCCALL)
+  stringr::str_detect(x, REGEX.VALID.LCCALL)
 }
 
 
@@ -156,6 +167,8 @@ get_lc_call_first_letter <- function(x){
   if(all(is.na(x))) return(as.character(x))
   if(class(x)!="character")
     stop("Input must be a character string")
+
+  x <- stringr::str_to_upper(x)
 
   thekey <- usersupplied <- NULL
 
@@ -197,6 +210,8 @@ get_all_lc_call_subject_letters <- function(x){
   if(class(x)!="character")
     stop("Input must be a character string")
 
+  x <- stringr::str_to_upper(x)
+
   description <- usersupplied <- thekey <- lc_first_letter_subject <- NULL
 
   theinput <- data.table::data.table(usersupplied=x)
@@ -206,4 +221,168 @@ get_all_lc_call_subject_letters <- function(x){
   theinput[!THESEAREVALID, thekey:=NA]
   return(theinput[, thekey])
 }
+
+
+
+#########################################################################
+###     Conversion from Dewey Decimals to subject classifications     ###
+#########################################################################
+
+#' Conversion from Dewey Decimal call numbers to first-level subject description
+#'
+#' Takes a string representation of a Dewey Decimal
+#' call number (DCC) and returns it's subject description.
+#' This uses the hundreds place of the DCC number
+#' and returns the most general subject classification.
+#'
+#' @import data.table
+#'
+#' @param x A Dewey Decimal call number
+#'
+#' @return Returns the most general subject classification using the
+#'         hundreds places from the DCC. Returns NA if the DCC looks
+#'         invalid
+#'
+#' @examples
+#'
+#' get_dewey_decimal_subject_class("709.05")     # Arts
+#'
+#' get_dewey_decimal_subject_class("823.912")
+#' # Literature (Belles-lettres) and rhetoric
+#'
+#' # vectorized
+#' get_dewey_decimal_subject_class(c("709.05", "invalid", NA, "823.912"))
+#' # c("Arts", NA, NA, "Literature (Belles-lettres) and rhetoric")
+#'
+#' @export
+get_dewey_decimal_subject_class <- function(x){
+  if(all(is.na(x))) return(as.character(x))
+  if(class(x)!="character")
+    stop("Input must be a character string")
+
+  x <- stringr::str_trim(x)
+
+  where.bad <- !stringr::str_detect(x, "^\\d{3}")
+  x[where.bad] <- NA_character_
+
+  x <- stringr::str_pad(stringr::str_sub(x , 1, 1), width=3, pad="0", side="right")
+
+  thekey <- description <- dewey_subject_crosswalk <- NULL
+
+  theinput <- data.table::data.table(thekey=x)
+  data.table::setindex(theinput, thekey)
+
+  data("dewey_subject_crosswalk", envir = environment())
+
+  result <- dewey_subject_crosswalk[theinput, on="thekey"]
+
+  return(result[, description])
+}
+
+
+#' Conversion from Dewey Decimal call numbers to second-level subject description
+#'
+#' Takes a string representation of a Dewey Decimal
+#' call number (DCC) and returns it's subject description.
+#' This uses the first two digits of the DCC number
+#' and returns the second most general subject classification.
+#'
+#' @import data.table
+#'
+#' @param x A Dewey Decimal call number
+#'
+#' @return Returns the most general subject classification using the
+#'         first two digits from the DCC. Returns NA if the DCC looks
+#'         invalid
+#'
+#' @examples
+#'
+#' get_dewey_decimal_subject_division("709.05")     # Arts
+#'
+#' get_dewey_decimal_subject_division("823.912")
+#' # "English and Old English literatures"
+#'
+#' # vectorized
+#' get_dewey_decimal_subject_division(c("709.05", "invalid", NA, "823.912"))
+#' # c("Arts", NA, NA, "English and Old English literatures")
+#'
+#' @export
+get_dewey_decimal_subject_division <- function(x){
+  if(all(is.na(x))) return(as.character(x))
+  if(class(x)!="character")
+    stop("Input must be a character string")
+
+  x <- stringr::str_trim(x)
+
+  where.bad <- !stringr::str_detect(x, "^\\d{3}")
+  x[where.bad] <- NA_character_
+
+  x <- stringr::str_pad(stringr::str_sub(x , 1, 2), width=3, pad="0", side="right")
+
+  thekey <- description <- dewey_subject_crosswalk <- NULL
+
+  theinput <- data.table::data.table(thekey=x)
+  data.table::setindex(theinput, thekey)
+
+  data("dewey_subject_crosswalk", envir = environment())
+
+  result <- dewey_subject_crosswalk[theinput, on="thekey"]
+
+  return(result[, description])
+}
+
+
+#' Conversion from Dewey Decimal call numbers to third-level subject description
+#'
+#' Takes a string representation of a Dewey Decimal
+#' call number (DCC) and returns it's subject description.
+#' This uses the first three digits of the DCC number
+#' and returns the third most general subject classification.
+#'
+#' @import data.table
+#'
+#' @param x A Dewey Decimal call number
+#'
+#' @return Returns the most general subject sectionification using the
+#'         first three digits from the DCC. Returns NA if the DCC looks
+#'         invalid
+#'
+#' @examples
+#'
+#' get_dewey_decimal_subject_section("709.05")
+#' # "History, geographic treatment, biography"
+#'
+#' get_dewey_decimal_subject_section("823.912")
+#' # "English fiction"
+#'
+#' # vectorized
+#' get_dewey_decimal_subject_section(c("709.05", "invalid", NA, "823.912"))
+#' # c("History, geographic treatment, biography", NA, NA,
+#' #   "English fiction")
+#'
+#' @export
+get_dewey_decimal_subject_section <- function(x){
+  if(all(is.na(x))) return(as.character(x))
+  if(class(x)!="character")
+    stop("Input must be a character string")
+
+  x <- stringr::str_trim(x)
+
+  where.bad <- !stringr::str_detect(x, "^\\d{3}")
+  x[where.bad] <- NA_character_
+
+  x <- stringr::str_sub(x , 1, 3)
+
+  thekey <- description <- dewey_subject_crosswalk <- NULL
+
+  theinput <- data.table::data.table(thekey=x)
+  data.table::setindex(theinput, thekey)
+
+  data("dewey_subject_crosswalk", envir = environment())
+
+  result <- dewey_subject_crosswalk[theinput, on="thekey"]
+
+  return(result[, description])
+}
+
 
