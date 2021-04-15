@@ -1,11 +1,10 @@
-libbib
+libbib <img src="http://statethatiamin.com/media/libbibsmall.png" align="right" height="126"/>
 ===
 
-![libbib logo](http://statethatiamin.com/media/libbibsmall.png)
-
+<!-- badges: start -->
+[![Cran Version](http://www.r-pkg.org/badges/version/libbib)](https://cran.r-project.org/package=libbib)
 [![Build Status](http://travis-ci.org/NYPL/libbib.svg?branch=master)](https://travis-ci.org/NYPL/libbib)
-
-[![](http://www.r-pkg.org/badges/version/libbib)](https://cran.r-project.org/package=libbib)
+<!-- badges: end -->
 
 
 ## Description
