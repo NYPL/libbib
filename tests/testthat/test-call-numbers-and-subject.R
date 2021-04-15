@@ -47,6 +47,14 @@ test_that("lc_call_subject_classification() works", {
                NA_character_)
   expect_equal(get_lc_call_subject_classification("K"), "Law")
   expect_equal(get_lc_call_subject_classification("K", allow.bare=FALSE), NA_character_)
+  expect_equal(get_lc_call_subject_classification("C13.2:R 31/7"),
+               "Auxiliary Sciences of History")
+  expect_equal(get_lc_call_subject_classification("C13.2:R 31/7", subclassification=TRUE),
+               "Auxiliary Sciences of History (General)")
+  expect_equal(get_lc_call_subject_classification("A11.K5"),
+               "General Works")
+  expect_equal(get_lc_call_subject_classification("A11.K5", subclassification=TRUE),
+               "General Works")
 })
 
 # is_valid_lc_call
