@@ -4,10 +4,14 @@
 \alias{is_valid_lc_call}
 \title{Check if LC Call Number is valid}
 \usage{
-is_valid_lc_call(x)
+is_valid_lc_call(x, allow.bare = FALSE)
 }
 \arguments{
 \item{x}{A Library of Congress call number (string)}
+
+\item{allow.bare}{A logical indicating whether an LC Call with only
+the letters should be considered valid
+(default FALSE)}
 }
 \value{
 Returns either TRUE or FALSE based on whether the

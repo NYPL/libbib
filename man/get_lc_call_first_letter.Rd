@@ -4,10 +4,14 @@
 \alias{get_lc_call_first_letter}
 \title{Get the first letter of LC Call Number}
 \usage{
-get_lc_call_first_letter(x)
+get_lc_call_first_letter(x, allow.bare = FALSE)
 }
 \arguments{
 \item{x}{A Library of Congress call number (string)}
+
+\item{allow.bare}{A logical indicating whether an LC Call with only
+the letters should be considered valid
+(default FALSE)}
 }
 \value{
 Returns first letter or NA if invalid

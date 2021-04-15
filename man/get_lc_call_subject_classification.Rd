@@ -8,7 +8,8 @@ classification}
 get_lc_call_subject_classification(
   x,
   subclassification = FALSE,
-  already.parsed = FALSE
+  already.parsed = FALSE,
+  allow.bare = TRUE
 )
 }
 \arguments{
@@ -20,6 +21,10 @@ a subject subclassification}
 
 \item{already.parsed}{Skips the extraction of the subject letters
 and jumps to the subject matching}
+
+\item{allow.bare}{A logical indicating whether an LC Call with only
+the letters should be considered valid
+(default TRUE)}
 }
 \value{
 Returns either the broad (top-level) subject classification

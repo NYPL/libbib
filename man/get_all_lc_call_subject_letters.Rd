@@ -4,10 +4,14 @@
 \alias{get_all_lc_call_subject_letters}
 \title{Get all subject letters of LC Call Number}
 \usage{
-get_all_lc_call_subject_letters(x)
+get_all_lc_call_subject_letters(x, allow.bare = FALSE)
 }
 \arguments{
 \item{x}{A Library of Congress call number (string)}
+
+\item{allow.bare}{A logical indicating whether an LC Call with only
+the letters should be considered valid
+(default FALSE)}
 }
 \value{
 Returns all the subject letters or NA if invalid

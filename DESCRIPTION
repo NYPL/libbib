@@ -1,7 +1,7 @@
 Package: libbib
 Type: Package
 Title: Various Utilities for Library Science/Assessment and Cataloging
-Version: 1.3
+Version: 1.3.1
 Authors@R: person("Tony", "Fischetti",
              email="tony.fischetti@gmail.com",
              role=c("aut", "cre"))

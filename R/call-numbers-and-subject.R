@@ -1,13 +1,17 @@
 
 
-make.valid.lccall.regex <- function(){
+make.valid.lccall.regex <- function(allow.bare=FALSE){
   thekey <- lc_subject_subclassification <- NULL
   data("lc_subject_subclassification", envir = environment())
-  VALIDLCCALL <- sprintf("^(%s)\\s*[1-9]", paste(lc_subject_subclassification[, thekey], collapse="|"))
+  if(allow.bare)
+    VALIDLCCALL <- sprintf("^(%s)", paste(lc_subject_subclassification[, thekey], collapse="|"))
+  else
+    VALIDLCCALL <- sprintf("^(%s)\\s*[0-9]", paste(lc_subject_subclassification[, thekey], collapse="|"))
   VALIDLCCALL
 }
 
 REGEX.VALID.LCCALL <- make.valid.lccall.regex()
+REGEX.VALID.LCCALL.BARE <- make.valid.lccall.regex(allow.bare=TRUE)
 
 ##################################################################
 ###     Conversion from LC Calls to subject classification     ###
@@ -30,6 +34,9 @@ REGEX.VALID.LCCALL <- make.valid.lccall.regex()
 #'        a subject subclassification
 #' @param already.parsed Skips the extraction of the subject letters
 #'        and jumps to the subject matching
+#' @param allow.bare A logical indicating whether an LC Call with only
+#'                   the letters should be considered valid
+#'                   (default TRUE)
 #'
 #' @return Returns either the broad (top-level) subject classification
 #'         description or the second level subject subclassification
@@ -65,7 +72,8 @@ REGEX.VALID.LCCALL <- make.valid.lccall.regex()
 #'
 #' @export
 get_lc_call_subject_classification <- function(x, subclassification=FALSE,
-                                               already.parsed=FALSE){
+                                               already.parsed=FALSE,
+                                               allow.bare=TRUE){
   if(all(is.na(x))) return(as.character(x))
   if(class(x)!="character")
     stop("Input must be a character string")
@@ -81,9 +89,9 @@ get_lc_call_subject_classification <- function(x, subclassification=FALSE,
     theinput[, thekey:=usersupplied]
   } else{
     if(subclassification){
-      theinput[, thekey:=get_all_lc_call_subject_letters(usersupplied)]
+      theinput[, thekey:=get_all_lc_call_subject_letters(usersupplied, allow.bare=allow.bare)]
     } else{
-      theinput[, thekey:=get_lc_call_first_letter(usersupplied)]
+      theinput[, thekey:=get_lc_call_first_letter(usersupplied, allow.bare=allow.bare)]
     }
   }
 
@@ -111,6 +119,9 @@ get_lc_call_subject_classification <- function(x, subclassification=FALSE,
 #' @import data.table
 #'
 #' @param x A Library of Congress call number (string)
+#' @param allow.bare A logical indicating whether an LC Call with only
+#'                   the letters should be considered valid
+#'                   (default FALSE)
 #'
 #' @return Returns either TRUE or FALSE based on whether the
 #'         call number is valid
@@ -126,7 +137,7 @@ get_lc_call_subject_classification <- function(x, subclassification=FALSE,
 #' # TRUE FALSE TRUE
 #'
 #' @export
-is_valid_lc_call <- function(x){
+is_valid_lc_call <- function(x, allow.bare=FALSE){
   if(class(x)!="character")
     stop("Input must be a character string")
 
@@ -136,7 +147,9 @@ is_valid_lc_call <- function(x){
 
   data("lc_subject_subclassification", envir = environment())
 
-  stringr::str_detect(x, REGEX.VALID.LCCALL)
+  theregex <- ifelse(allow.bare, REGEX.VALID.LCCALL.BARE, REGEX.VALID.LCCALL)
+
+  stringr::str_detect(x, theregex)
 }
 
 
@@ -149,6 +162,9 @@ is_valid_lc_call <- function(x){
 #' @import data.table
 #'
 #' @param x A Library of Congress call number (string)
+#' @param allow.bare A logical indicating whether an LC Call with only
+#'                   the letters should be considered valid
+#'                   (default FALSE)
 #'
 #' @return Returns first letter or NA if invalid
 #' @examples
@@ -163,7 +179,7 @@ is_valid_lc_call <- function(x){
 #' # Q NA P
 #'
 #' @export
-get_lc_call_first_letter <- function(x){
+get_lc_call_first_letter <- function(x, allow.bare=FALSE){
   if(all(is.na(x))) return(as.character(x))
   if(class(x)!="character")
     stop("Input must be a character string")
@@ -174,7 +190,7 @@ get_lc_call_first_letter <- function(x){
 
   theinput <- data.table::data.table(usersupplied=x)
 
-  THESEAREVALID <- theinput[, is_valid_lc_call(usersupplied)]
+  THESEAREVALID <- theinput[, is_valid_lc_call(usersupplied, allow.bare=allow.bare)]
   theinput[THESEAREVALID, thekey:=stringr::str_sub(usersupplied, 1, 1)]
   theinput[!THESEAREVALID, thekey:=NA]
   return(theinput[, thekey])
@@ -191,6 +207,9 @@ get_lc_call_first_letter <- function(x){
 #' @import utils
 #'
 #' @param x A Library of Congress call number (string)
+#' @param allow.bare A logical indicating whether an LC Call with only
+#'                   the letters should be considered valid
+#'                   (default FALSE)
 #'
 #' @return Returns all the subject letters or NA if invalid
 #' @examples
@@ -205,7 +224,7 @@ get_lc_call_first_letter <- function(x){
 #' # Q NA PR
 #'
 #' @export
-get_all_lc_call_subject_letters <- function(x){
+get_all_lc_call_subject_letters <- function(x, allow.bare=FALSE){
   if(all(is.na(x))) return(as.character(x))
   if(class(x)!="character")
     stop("Input must be a character string")
@@ -216,7 +235,7 @@ get_all_lc_call_subject_letters <- function(x){
 
   theinput <- data.table::data.table(usersupplied=x)
 
-  THESEAREVALID <- theinput[, is_valid_lc_call(usersupplied)]
+  THESEAREVALID <- theinput[, is_valid_lc_call(usersupplied, allow.bare=allow.bare)]
   theinput[THESEAREVALID, thekey:=stringr::str_extract(usersupplied, "^[A-Z]+")]
   theinput[!THESEAREVALID, thekey:=NA]
   return(theinput[, thekey])

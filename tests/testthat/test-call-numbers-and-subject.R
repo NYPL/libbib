@@ -39,6 +39,14 @@ test_that("lc_call_subject_classification() works", {
                "Space law. Law of outer space")
   expect_equal(get_lc_call_subject_classification("KLP13 1919", subclassification=TRUE),
                "Ukraine (1919-1991) and Zakavkazskaia Sotsialisticheskaia Federativnaia Sovetskaia Respublika (to 1936)")
+  expect_equal(get_lc_call_subject_classification("KDC296.A75", subclassification=TRUE),
+               "Scotland")
+  expect_equal(get_lc_call_subject_classification("KDC", subclassification=TRUE),
+               "Scotland")
+  expect_equal(get_lc_call_subject_classification("KDC", allow.bare=FALSE, subclassification=TRUE),
+               NA_character_)
+  expect_equal(get_lc_call_subject_classification("K"), "Law")
+  expect_equal(get_lc_call_subject_classification("K", allow.bare=FALSE), NA_character_)
 })
 
 # is_valid_lc_call
@@ -49,6 +57,10 @@ test_that("is_valid_lc_call() works", {
   expect_equal(is_valid_lc_call("Pk3798.K74 C33 1963"), TRUE)
   expect_equal(is_valid_lc_call("Rs164 .K894818 1966"), TRUE)
   expect_equal(is_valid_lc_call("KKT5674.18 .P75 1986"), TRUE)
+  expect_equal(is_valid_lc_call("KDC"), FALSE)
+  expect_equal(is_valid_lc_call("KDC", allow.bare=TRUE), TRUE)
+  expect_equal(is_valid_lc_call("K"), FALSE)
+  expect_equal(is_valid_lc_call("K", allow.bare=TRUE), TRUE)
 })
 
 # get_lc_call_first_letter
@@ -58,7 +70,10 @@ test_that("get_lc_call_first_letter() works", {
   expect_equal(get_lc_call_first_letter("H29.S75 A38"), "H")
   expect_equal(get_lc_call_first_letter("Pk3798.K74 C33 1963"), "P")
   expect_equal(get_lc_call_first_letter("KKT5674.18 .P75 1986"), "K")
-
+  expect_equal(get_lc_call_first_letter("KDC"), NA)
+  expect_equal(get_lc_call_first_letter("KDC", allow.bare=TRUE), "K")
+  expect_equal(get_lc_call_first_letter("K"), NA)
+  expect_equal(get_lc_call_first_letter("K", allow.bare=TRUE), "K")
 })
 
 # get_all_lc_call_subject_letters
@@ -68,6 +83,8 @@ test_that("get_all_lc_call_subject_letters() works", {
                c("Q", NA, NA, "PR"))
   expect_equal(get_all_lc_call_subject_letters("Pk3798.K74 C33 1963"), "PK")
   expect_equal(get_all_lc_call_subject_letters("KKT5674.18 .P75 1986"), "KKT")
+  expect_equal(get_all_lc_call_subject_letters("KDC"), NA)
+  expect_equal(get_all_lc_call_subject_letters("KDC", allow.bare=TRUE), "KDC")
 })
 
 
