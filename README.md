@@ -87,6 +87,21 @@ Key: <thekey>
 227:      Z Books (General). Writing. Paleography. Book indust...
 228:     ZA                       Information resources/materials
 
+> get_language_from_code(c("yor", "spa"))
+[1] "Yoruba"  "Spanish"
+
+> get_country_from_code(c("ck", " NYA"))
+[1] "Colombia"         "New York (State)"
+
+> someisbns <- c("9782711875177;garbage-isbn;2711875172;2844268900",
++                "1861897952; 978-1-86189-795-4")
+> split_map_filter_reduce(someisbns,
++                         mapfun=
++                           function(x){normalize_isbn(x, convert.to.isbn.13=TRUE)},
++                         filterfun=remove_duplicates_and_nas,
++                         reduxfun=recombine_with_sep_closure())
+[1] "9782711875177;9782844268907" "9781861897954"
+
 ```
 
 
@@ -130,7 +145,6 @@ Key: <thekey>
 - `worldcat_permalink_from_isbn`
 - `worldcat_permalink_from_oclc_number`
 
-
 ## Included data files (loadable with `data(datafile)`)
 - `language_code_crosswalk`
   (from https://www.loc.gov/marc/languages/language_code.html)
@@ -146,6 +160,10 @@ Key: <thekey>
   serials and their information including title, control numbers, call numbers,
   and call number subject classifications. Mainly for testing.
   Will be expanded in future versions.
+
+### other Marc code translations
+- `get_language_from_code`
+- `get_country_from_code`
 
 ### split / map / filter / reduce and related utilies
 - `car`

@@ -13,6 +13,9 @@ where the formatting is better.**
 
 3. Added split_map_filter_reduce and related utilities
 
+4. Addeed functions to get language and country names from
+   corresponding Marc codes
+
 ## bug fixes
 
 1. Expanded lc call <-> subject crosswalk (mainly for 'Law')
@@ -21,5 +24,5 @@ where the formatting is better.**
 
 ## improvements
 
-1. performance of `is_valid_lccall` improved
+1. performance of `is_valid_lc_call` improved
 
