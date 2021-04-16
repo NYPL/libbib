@@ -1,6 +1,6 @@
 
 **If you are viewing this file on CRAN, please check
-[latest news on GitHub](https://github.com/NYPL/libbib/blob/dev/NEWS.md)
+[latest news on GitHub](https://github.com/NYPL/libbib/blob/master/NEWS.md)
 where the formatting is better.**
 
 # libbib 2.0 (in development)
