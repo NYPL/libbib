@@ -3,10 +3,12 @@
 make.valid.lccall.regex <- function(allow.bare=FALSE){
   thekey <- lc_subject_subclassification <- NULL
   data("lc_subject_subclassification", envir = environment())
+  tmp <- copy(lc_subject_subclassification)
+  tmp <- tmp[order(-nchar(thekey))]
   if(allow.bare)
-    VALIDLCCALL <- sprintf("^(%s)", paste(lc_subject_subclassification[, thekey], collapse="|"))
+    VALIDLCCALL <- sprintf("^(%s)$", paste(tmp[, thekey], collapse="|"))
   else
-    VALIDLCCALL <- sprintf("^(%s)\\s*[0-9]", paste(lc_subject_subclassification[, thekey], collapse="|"))
+    VALIDLCCALL <- sprintf("^(%s)\\s*[0-9]", paste(tmp[, thekey], collapse="|"))
   VALIDLCCALL
 }
 
@@ -143,13 +145,13 @@ is_valid_lc_call <- function(x, allow.bare=FALSE){
 
   x <- stringr::str_to_upper(x)
 
-  ncs <- thekey <- lc_subject_subclassification <- NULL
+  if(allow.bare)
+    ret <- (stringr::str_detect(x, REGEX.VALID.LCCALL.BARE) |
+              stringr::str_detect(x, REGEX.VALID.LCCALL))
+  else
+    ret <- stringr::str_detect(x, REGEX.VALID.LCCALL)
 
-  data("lc_subject_subclassification", envir = environment())
-
-  theregex <- ifelse(allow.bare, REGEX.VALID.LCCALL.BARE, REGEX.VALID.LCCALL)
-
-  stringr::str_detect(x, theregex)
+  return(ret)
 }
 
 
