@@ -145,7 +145,7 @@ worldcat_permalink_from_oclc_number <- function(x){
   if(all(is.na(x))) return(as.character(x))
   if(class(x)!="character")
     stop("Input must be a character string")
-
+  x <- stringr::str_replace_all(x, "\\s", "")
   ifelse(is.na(x), NA_character_,
          sprintf("http://www.worldcat.org/oclc/%s", x))
 }
@@ -186,11 +186,14 @@ oclc_classify_link_from_standard_num <- function(x){
   if(all(is.na(x))) return(as.character(x))
   if(class(x)!="character")
     stop("Input must be a character string")
-
+  x <- stringr::str_replace_all(x, "\\s", "")
   part1 <- "http://classify.oclc.org/classify2/ClassifyDemo?search-standnum-txt="
   part2 <- "&startRec=0"
   ret <- sprintf("%s%s%s", part1, x, part2)
   ret[is.na(x)] <- NA_character_
   return(ret)
 }
+
+
+
 

@@ -13,7 +13,8 @@ data(books_and_serials_sample)
 \description{
 A very small sample of books, monographs, and serials and their
 information including title, control numbers, call numbers, and
-call number subject classifications. Mainly for testing.
+call number subject classifications. Somewhat messy/inconsistent
+(deliberately) and mainly for testing.
 Will be expanded in future versions.
 }
 \keyword{datasets}

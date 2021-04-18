@@ -59,7 +59,8 @@ test_that("worldcat_permalink_from_oclc_number() works", {
                                                      "1005106045")),
                c("http://www.worldcat.org/oclc/1049727704", NA,
                  "http://www.worldcat.org/oclc/1005106045"))
-
+  expect_equal(worldcat_permalink_from_oclc_number("733889
+  7"), "http://www.worldcat.org/oclc/7338897")
   expect_error(worldcat_permalink_from_oclc_number(123456789),
                "Input must be a character string")
 })
@@ -72,6 +73,8 @@ test_that("oclc_classify_link_from_standard_num() works", {
   expect_equal(oclc_classify_link_from_standard_num(c("039333712X", NA, "629725006")),
                c("http://classify.oclc.org/classify2/ClassifyDemo?search-standnum-txt=039333712X&startRec=0",
                  NA, "http://classify.oclc.org/classify2/ClassifyDemo?search-standnum-txt=629725006&startRec=0"))
+  expect_equal(oclc_classify_link_from_standard_num("733889
+  7"), "http://classify.oclc.org/classify2/ClassifyDemo?search-standnum-txt=7338897&startRec=0")
   expect_equal(oclc_classify_link_from_standard_num(NA),
                NA_character_)
   expect_error(oclc_classify_link_from_standard_num(1),
