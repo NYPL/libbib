@@ -11,10 +11,12 @@ normalize_isbn(x, aggressive = TRUE, convert.to.isbn.13 = FALSE)
 
 \item{aggressive}{A logical indicating whether aggressive measures
 should be taken to try to get the "ISBN 10"
-into a valid form. See "Details" for more info}
+into a valid form. See "Details" for more info
+(default is \code{TRUE})}
 
 \item{convert.to.isbn.13}{A logical indicating whether the ISBN 10
-should be converted into an ISBN 13}
+should be converted into an ISBN 13
+(default is \code{FALSE})}
 }
 \value{
 Returns valid ISBN if possible, NA if not

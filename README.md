@@ -144,6 +144,7 @@ Key: <thekey>
 - `worldcat_permalink_from_issn`
 - `worldcat_permalink_from_isbn`
 - `worldcat_permalink_from_oclc_number`
+- `oclc_classify_link_from_standard_num`
 
 ## Included data files (loadable with `data(datafile)`)
 - `language_code_crosswalk`

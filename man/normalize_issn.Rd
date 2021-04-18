@@ -11,10 +11,12 @@ normalize_issn(x, aggressive = TRUE, pretty = FALSE)
 
 \item{aggressive}{A logical indicating whether aggressive measures
 should be taken to try to get the "ISSN"
-into a valid form. See "Details" for more info}
+into a valid form. See "Details" for more info
+(default is \code{TRUE})}
 
 \item{pretty}{A logical indicating whether the ISSN should be
-prettily hyphenated}
+prettily hyphenated
+(default is \code{FALSE})}
 }
 \value{
 Returns valid ISSN if possible, NA if not

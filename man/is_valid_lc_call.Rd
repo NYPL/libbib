@@ -11,7 +11,7 @@ is_valid_lc_call(x, allow.bare = FALSE)
 
 \item{allow.bare}{A logical indicating whether an LC Call with only
 the letters should be considered valid
-(default FALSE)}
+(default is \code{FALSE})}
 }
 \value{
 Returns either TRUE or FALSE based on whether the

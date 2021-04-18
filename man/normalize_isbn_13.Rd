@@ -11,7 +11,8 @@ normalize_isbn_13(x, aggressive = TRUE)
 
 \item{aggressive}{A logical indicating whether aggressive measures
 should be taken to try to get the "ISBN 13"
-into a valid form. See "Details" for more info}
+into a valid form. See "Details" for more info
+(default is \code{TRUE})}
 }
 \value{
 Returns valid ISBN 13 if possible, NA if not

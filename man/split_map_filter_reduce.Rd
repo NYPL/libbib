@@ -19,27 +19,27 @@ split_map_filter_reduce(
 
 \item{sep}{A character to use containing a character, string, or
 regular expression pattern to split each element by.
-If 'fixed=TRUE', the separator will be used exactly;
+If \code{fixed=TRUE}, the separator will be used exactly;
 If not, a Perl-compatible regular expression can be used
 (default is ";")}
 
 \item{fixed}{Should it be split by a fixed string/character or
-a regular expression (default is TRUE)}
+a regular expression (default is \code{TRUE})}
 
 \item{mapfun}{A vectorized function that will be applied to the
 sub-elements (after splitting) of each element in x
-(default is `identity` which would leave the sub-elements
-unchanged)}
+(default is \code{identity} which would leave the
+sub-elements unchanged)}
 
 \item{filterfun}{A vectorized function that, when given a vector
 returns the same vector with un-wanted elements
 removed
-(default is `identity` which would not remove
+(default is \code{identity} which would not remove
 any sub-elements)}
 
 \item{reduxfun}{A vectorized function that, when given a vector,
 will combine all of it's elements into one value
-(default is `car`, which would return the first
+(default is \code{car}, which would return the first
 element only)}
 
 \item{cl}{An integer to indicate the number of child processes

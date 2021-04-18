@@ -11,7 +11,7 @@ loc_permalink_from_lccn(x, normalize = TRUE)
 
 \item{normalize}{a logical indicating whether the LCCN should be
 normalized prior to creating the permalink
-(default = TRUE)}
+(default is \code{TRUE})}
 }
 \value{
 Library of Congress permalinks using LCCNs.

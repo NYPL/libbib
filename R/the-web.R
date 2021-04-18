@@ -7,7 +7,7 @@
 #' @param x A string (or vector of strings) of LCCNs
 #' @param normalize a logical indicating whether the LCCN should be
 #'                  normalized prior to creating the permalink
-#'                  (default = TRUE)
+#'                  (default is \code{TRUE})
 #'
 #' @details
 #' If normalize=TRUE and the LCCN is invalid, the permalink is NA.
@@ -45,7 +45,7 @@ loc_permalink_from_lccn <- function(x, normalize=TRUE){
 #' @param x A string (or vector of strings) of ISSNs
 #' @param normalize a logical indicating whether the ISSNs should be
 #'                  normalized prior to creating the permalink
-#'                  (default = TRUE)
+#'                  (default is \code{TRUE})
 #'
 #' @details
 #' If normalize=TRUE and the ISSN is invalid, the permalink is NA.
@@ -83,7 +83,7 @@ worldcat_permalink_from_issn <- function(x, normalize=TRUE){
 #' @param x A string (or vector of strings) of ISBNs
 #' @param normalize a logical indicating whether the ISBNs should be
 #'                  normalized prior to creating the permalink
-#'                  (default = TRUE)
+#'                  (default is \code{TRUE})
 #'
 #' @details
 #' If normalize=TRUE and the ISBN is invalid, the permalink is NA.

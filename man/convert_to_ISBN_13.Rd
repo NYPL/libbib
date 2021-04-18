@@ -9,9 +9,11 @@ convert_to_isbn_13(x, skip.validity.check = FALSE, errors.as.nas = FALSE)
 \arguments{
 \item{x}{A string of 10 digits or 9 digits with terminal "X"}
 
-\item{skip.validity.check}{Skip the checking for whether the ISBN 10 is valid}
+\item{skip.validity.check}{Skip the checking for whether the ISBN 10 is valid
+(default is \code{FALSE})}
 
-\item{errors.as.nas}{return NA if error instead of throwing error}
+\item{errors.as.nas}{return NA if error instead of throwing error
+(default is \code{FALSE})}
 }
 \value{
 Returns ISBN 13 as a string

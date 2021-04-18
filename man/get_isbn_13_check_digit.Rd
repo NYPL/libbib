@@ -10,9 +10,11 @@ get_isbn_13_check_digit(x, allow.hyphens = FALSE, errors.as.nas = FALSE)
 \item{x}{A string of 12 or 13 digits}
 
 \item{allow.hyphens}{A logical indicating whether the hyphen
-separator should be allowed}
+separator should be allowed
+(default is \code{FALSE})}
 
-\item{errors.as.nas}{return NA if error instead of throwing error}
+\item{errors.as.nas}{return NA if error instead of throwing error
+(default is \code{FALSE})}
 }
 \value{
 Returns the character check digit that satifies the

@@ -33,12 +33,12 @@ REGEX.VALID.LCCALL.BARE <- make.valid.lccall.regex(allow.bare=TRUE)
 #' @param x A Library of Congress call number (string)
 #' @param subclassification A logical indicating whether the letters of
 #'        call number past the first should be used to match to
-#'        a subject subclassification
+#'        a subject subclassification (default is \code{FALSE})
 #' @param already.parsed Skips the extraction of the subject letters
-#'        and jumps to the subject matching
+#'        and jumps to the subject matching (default is \code{FALSE})
 #' @param allow.bare A logical indicating whether an LC Call with only
 #'                   the letters should be considered valid
-#'                   (default TRUE)
+#'                   (default is \code{TRUE})
 #'
 #' @return Returns either the broad (top-level) subject classification
 #'         description or the second level subject subclassification
@@ -123,7 +123,7 @@ get_lc_call_subject_classification <- function(x, subclassification=FALSE,
 #' @param x A Library of Congress call number (string)
 #' @param allow.bare A logical indicating whether an LC Call with only
 #'                   the letters should be considered valid
-#'                   (default FALSE)
+#'                   (default is \code{FALSE})
 #'
 #' @return Returns either TRUE or FALSE based on whether the
 #'         call number is valid
@@ -153,6 +153,7 @@ is_valid_lc_call <- function(x, allow.bare=FALSE){
 
   return(ret)
 }
+attr(is_valid_lc_call, "assertr_vectorized") <- TRUE
 
 
 #' Get the first letter of LC Call Number
@@ -166,7 +167,7 @@ is_valid_lc_call <- function(x, allow.bare=FALSE){
 #' @param x A Library of Congress call number (string)
 #' @param allow.bare A logical indicating whether an LC Call with only
 #'                   the letters should be considered valid
-#'                   (default FALSE)
+#'                   (default is \code{FALSE})
 #'
 #' @return Returns first letter or NA if invalid
 #' @examples
@@ -211,7 +212,7 @@ get_lc_call_first_letter <- function(x, allow.bare=FALSE){
 #' @param x A Library of Congress call number (string)
 #' @param allow.bare A logical indicating whether an LC Call with only
 #'                   the letters should be considered valid
-#'                   (default FALSE)
+#'                   (default is \code{FALSE})
 #'
 #' @return Returns all the subject letters or NA if invalid
 #' @examples

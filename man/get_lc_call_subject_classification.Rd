@@ -17,14 +17,14 @@ get_lc_call_subject_classification(
 
 \item{subclassification}{A logical indicating whether the letters of
 call number past the first should be used to match to
-a subject subclassification}
+a subject subclassification (default is \code{FALSE})}
 
 \item{already.parsed}{Skips the extraction of the subject letters
-and jumps to the subject matching}
+and jumps to the subject matching (default is \code{FALSE})}
 
 \item{allow.bare}{A logical indicating whether an LC Call with only
 the letters should be considered valid
-(default TRUE)}
+(default is \code{TRUE})}
 }
 \value{
 Returns either the broad (top-level) subject classification

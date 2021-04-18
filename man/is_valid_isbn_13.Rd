@@ -10,7 +10,8 @@ is_valid_isbn_13(x, allow.hyphens = TRUE)
 \item{x}{A string of 13}
 
 \item{allow.hyphens}{A logical indicating whether the hyphen
-separator should be allowed}
+separator should be allowed
+(default is \code{TRUE})}
 }
 \value{
 Returns TRUE if checks pass, FALSE if not, and NA if NA

@@ -28,7 +28,9 @@ REGEX.ISSN <- "^\\d{7}(X|\\d)$"
 #' @param x A string of 9 or 10 digits
 #' @param allow.hyphens A logical indicating whether the hyphen
 #'                      separator should be allowed
+#'                      (default is \code{FALSE})
 #' @param errors.as.nas return NA if error instead of throwing error
+#'                      (default is \code{FALSE})
 #'
 #' @return Returns the character check digit that satifies the
 #'         mod 11 condition. Returns "X" if 10. Returns NA if input is NA
@@ -79,7 +81,9 @@ get_isbn_10_check_digit <- function(x, allow.hyphens=FALSE, errors.as.nas=FALSE)
 #' @param x A string of 10 digits or 9 digits with terminal "X"
 #' @param allow.hyphens A logical indicating whether the hyphen
 #'                      separator should be allowed
+#'                      (default is \code{FALSE})
 #' @param errors.as.false return false if error instead of throwing error
+#'                        (default is \code{TRUE})
 #'
 #' @return Returns TRUE if check passes, FALSE if not, and NA if NA
 #'
@@ -123,9 +127,11 @@ check_isbn_10_check_digit <- function(x, allow.hyphens=TRUE, errors.as.false=TRU
 #' @param x A string of 10 digits or 9 digits with terminal "X"
 #' @param allow.hyphens A logical indicating whether the hyphen
 #'                      separator should be allowed
+#'                      (default is \code{TRUE})
 #' @param lower.x.allowed A logical indicating whether ISBN 10s with
 #'                        a check digit with a lower-case "x" should
 #'                        be treated as valid
+#'                        (default is \code{TRUE})
 #'
 #' @return Returns TRUE if checks pass, FALSE if not, and NA if NA
 #' @examples
@@ -170,8 +176,10 @@ attr(is_valid_isbn_10, "assertr_vectorized") <- TRUE
 #' @param aggressive A logical indicating whether aggressive measures
 #'                   should be taken to try to get the "ISBN 10"
 #'                   into a valid form. See "Details" for more info
+#'                   (default is \code{TRUE})
 #' @param convert.to.isbn.13 A logical indicating whether the ISBN 10
 #'                           should be converted into an ISBN 13
+#'                           (default is \code{FALSE})
 #'
 #' @details If \code{aggressive} is TRUE, aggressive measures are taken to
 #' try to salvage the malformed ISBN 10 string. If the ISBN 10, for example,
@@ -265,7 +273,9 @@ normalize_isbn_10 <- function(x, aggressive=TRUE, convert.to.isbn.13=FALSE){
 #' @param x A string of 12 or 13 digits
 #' @param allow.hyphens A logical indicating whether the hyphen
 #'                      separator should be allowed
+#'                      (default is \code{FALSE})
 #' @param errors.as.nas return NA if error instead of throwing error
+#'                      (default is \code{FALSE})
 #'
 #' @return Returns the character check digit that satifies the
 #'         mod 10 condition. Returns NA if input is NA
@@ -316,7 +326,9 @@ get_isbn_13_check_digit <- function(x, allow.hyphens=FALSE, errors.as.nas=FALSE)
 #' @param x A string of 13 digits
 #' @param allow.hyphens A logical indicating whether the hyphen
 #'                      separator should be allowed
+#'                      (default is \code{TRUE})
 #' @param errors.as.false return false if error instead of throwing error
+#'                        (default is \code{TRUE})
 #'
 #' @return Returns TRUE if check passes, FALSE if not, and NA if NA
 #' @examples
@@ -356,6 +368,7 @@ check_isbn_13_check_digit <- function(x, allow.hyphens=TRUE, errors.as.false=TRU
 #' @param x A string of 13
 #' @param allow.hyphens A logical indicating whether the hyphen
 #'                      separator should be allowed
+#'                      (default is \code{TRUE})
 #'
 #' @return Returns TRUE if checks pass, FALSE if not, and NA if NA
 #' @examples
@@ -392,7 +405,9 @@ attr(is_valid_isbn_13, "assertr_vectorized") <- TRUE
 #'
 #' @param x A string of 10 digits or 9 digits with terminal "X"
 #' @param skip.validity.check Skip the checking for whether the ISBN 10 is valid
+#'                            (default is \code{FALSE})
 #' @param errors.as.nas return NA if error instead of throwing error
+#'                      (default is \code{FALSE})
 #'
 #' @return Returns ISBN 13 as a string
 #'
@@ -439,6 +454,7 @@ convert_to_isbn_13 <- function(x, skip.validity.check=FALSE,
 #' @param aggressive A logical indicating whether aggressive measures
 #'                   should be taken to try to get the "ISBN 13"
 #'                   into a valid form. See "Details" for more info
+#'                   (default is \code{TRUE})
 #'
 #' @details If \code{aggressive} is TRUE, aggressive measures are taken to
 #' try to salvage the malformed ISBN 13 string. If the ISBN 13, for example,
@@ -496,8 +512,10 @@ normalize_isbn_13 <- function(x, aggressive=TRUE){
 #' @param aggressive A logical indicating whether aggressive measures
 #'                      should be taken to try to get the "ISBN 10"
 #'                      into a valid form. See "Details" for more info
+#'                      (default is \code{TRUE})
 #' @param convert.to.isbn.13 A logical indicating whether the ISBN 10
 #'                           should be converted into an ISBN 13
+#'                           (default is \code{FALSE})
 #'
 #' @details If \code{aggressive} is TRUE, aggressive measures are taken to
 #' try to salvage the malformed ISBN string. Since this function attempts
@@ -556,7 +574,9 @@ normalize_isbn <- function(x, aggressive=TRUE, convert.to.isbn.13=FALSE){
 #' @param x A string of 7 or 8 digits
 #' @param allow.hyphens A logical indicating whether the hyphen
 #'                      separator should be allowed
+#'                      (default is \code{FALSE})
 #' @param errors.as.nas return NA if error instead of throwing error
+#'                      (default is \code{FALSE})
 #'
 #' @return Returns the character check digit that satifies the
 #'         mod 11 condition. Returns "X" if 10. Returns NA if input is NA
@@ -608,7 +628,9 @@ get_issn_check_digit <- function(x, allow.hyphens=FALSE, errors.as.nas=FALSE){
 #' @param x A string of 8 digits or 7 digits with terminal "X"
 #' @param allow.hyphens A logical indicating whether the hyphen
 #'                      separator should be allowed
+#'                      (default is \code{TRUE})
 #' @param errors.as.false return false if error instead of throwing error
+#'                        (default is \code{FALSE})
 #'
 #' @return Returns TRUE if check passes, FALSE if not, and NA if NA
 #'
@@ -654,10 +676,12 @@ check_issn_check_digit <- function(x, allow.hyphens=TRUE, errors.as.false=FALSE)
 #'
 #' @param x A string of 8 digits or 7 digits with terminal "X"
 #' @param allow.hyphens A logical indicating whether the hyphen
-#'     separator should be allowed
+#'                      separator should be allowed
+#'                      (default is \code{TRUE})
 #' @param lower.x.allowed A logical indicating whether ISSNs with
 #'                        a check digit with a lower-case "x" should
 #'                        be treated as valid
+#'                        (default is \code{TRUE})
 #'
 #' @return Returns TRUE if checks pass, FALSE if not, and NA if NA
 #' @examples
@@ -702,8 +726,10 @@ attr(is_valid_issn, "assertr_vectorized") <- TRUE
 #' @param aggressive A logical indicating whether aggressive measures
 #'                      should be taken to try to get the "ISSN"
 #'                      into a valid form. See "Details" for more info
+#'                      (default is \code{TRUE})
 #' @param pretty A logical indicating whether the ISSN should be
 #'               prettily hyphenated
+#'               (default is \code{FALSE})
 #'
 #' @details If \code{aggressive} is TRUE, aggressive measures are taken to
 #' try to salvage the malformed ISSN string. If the ISSN, for example,
@@ -803,7 +829,7 @@ normalize_issn <- function(x, aggressive=TRUE, pretty=FALSE){
 #' @param allow.hyphens a logical indicating whether hyphens separating
 #'                      the year and serial should be handled. Adds
 #'                      complexity and time to the function.
-#'                      (default = TRUE)
+#'                      (default is \code{TRUE})
 #'
 #' @details Normalization procedure is documented here:
 #' https://www.loc.gov/marc/lccn-namespace.html

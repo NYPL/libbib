@@ -11,7 +11,7 @@ get_lc_call_first_letter(x, allow.bare = FALSE)
 
 \item{allow.bare}{A logical indicating whether an LC Call with only
 the letters should be considered valid
-(default FALSE)}
+(default is \code{FALSE})}
 }
 \value{
 Returns first letter or NA if invalid

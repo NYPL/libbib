@@ -13,7 +13,8 @@ dt_counts_and_percents(DT, group_by_this, percent.cutoff = 0)
 
 \item{percent.cutoff}{A percent (out of 100) such that all
 the count percents lower than this number will be
-grouped into "OTHER" in the returned data.table}
+grouped into "OTHER" in the returned data.table
+(default is 0)}
 }
 \value{
 Returns a data.table with three columns:

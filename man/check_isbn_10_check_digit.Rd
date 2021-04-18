@@ -10,9 +10,11 @@ check_isbn_10_check_digit(x, allow.hyphens = TRUE, errors.as.false = TRUE)
 \item{x}{A string of 10 digits or 9 digits with terminal "X"}
 
 \item{allow.hyphens}{A logical indicating whether the hyphen
-separator should be allowed}
+separator should be allowed
+(default is \code{FALSE})}
 
-\item{errors.as.false}{return false if error instead of throwing error}
+\item{errors.as.false}{return false if error instead of throwing error
+(default is \code{TRUE})}
 }
 \value{
 Returns TRUE if check passes, FALSE if not, and NA if NA

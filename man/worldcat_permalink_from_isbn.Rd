@@ -11,7 +11,7 @@ worldcat_permalink_from_isbn(x, normalize = TRUE)
 
 \item{normalize}{a logical indicating whether the ISBNs should be
 normalized prior to creating the permalink
-(default = TRUE)}
+(default is \code{TRUE})}
 }
 \value{
 Worldcat permalinks using ISBNs.

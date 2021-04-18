@@ -119,23 +119,23 @@ recombine_with_sep_closure <- function(sep=";"){
 #' @param x A vector of strings
 #' @param sep A character to use containing a character, string, or
 #'            regular expression pattern to split each element by.
-#'            If 'fixed=TRUE', the separator will be used exactly;
+#'            If \code{fixed=TRUE}, the separator will be used exactly;
 #'            If not, a Perl-compatible regular expression can be used
 #'            (default is ";")
 #' @param fixed Should it be split by a fixed string/character or
-#'              a regular expression (default is TRUE)
+#'              a regular expression (default is \code{TRUE})
 #' @param mapfun A vectorized function that will be applied to the
 #'               sub-elements (after splitting) of each element in x
-#'               (default is `identity` which would leave the sub-elements
-#'               unchanged)
+#'               (default is \code{identity} which would leave the
+#'               sub-elements unchanged)
 #' @param filterfun A vectorized function that, when given a vector
 #'                  returns the same vector with un-wanted elements
 #'                  removed
-#'                  (default is `identity` which would not remove
+#'                  (default is \code{identity} which would not remove
 #'                  any sub-elements)
 #' @param reduxfun A vectorized function that, when given a vector,
 #'                 will combine all of it's elements into one value
-#'                 (default is `car`, which would return the first
+#'                 (default is \code{car}, which would return the first
 #'                 element only)
 #' @param cl An integer to indicate the number of child processes
 #'           should be used to parallelize the work-load. If 0,

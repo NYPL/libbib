@@ -10,11 +10,13 @@ is_valid_isbn_10(x, allow.hyphens = TRUE, lower.x.allowed = TRUE)
 \item{x}{A string of 10 digits or 9 digits with terminal "X"}
 
 \item{allow.hyphens}{A logical indicating whether the hyphen
-separator should be allowed}
+separator should be allowed
+(default is \code{TRUE})}
 
 \item{lower.x.allowed}{A logical indicating whether ISBN 10s with
 a check digit with a lower-case "x" should
-be treated as valid}
+be treated as valid
+(default is \code{TRUE})}
 }
 \value{
 Returns TRUE if checks pass, FALSE if not, and NA if NA

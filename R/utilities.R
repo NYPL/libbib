@@ -119,6 +119,7 @@ dt_pivot <- function(DT, theby, theexp, percent.cutoff=0, value.name="value",
 #' @param percent.cutoff A percent (out of 100) such that all
 #'        the count percents lower than this number will be
 #'        grouped into "OTHER" in the returned data.table
+#'        (default is 0)
 #'
 #' @return Returns a data.table with three columns:
 #'         the grouped-by column, a count column, and a

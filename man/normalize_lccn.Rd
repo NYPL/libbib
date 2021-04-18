@@ -12,7 +12,7 @@ normalize_lccn(userlccns, allow.hyphens = TRUE)
 \item{allow.hyphens}{a logical indicating whether hyphens separating
 the year and serial should be handled. Adds
 complexity and time to the function.
-(default = TRUE)}
+(default is \code{TRUE})}
 }
 \value{
 Returns valid LCCN if possible, NA if not
