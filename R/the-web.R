@@ -127,7 +127,6 @@ worldcat_permalink_from_isbn <- function(x, normalize=TRUE){
 #' @param x A string (or vector of strings) of OCLC numbers
 #'
 #' @details
-#' If the OCLC number is invalid, the permalink is NA.
 #' No validity check on the URL is performed
 #'
 #' @return Worldcat permalinks using the OCLC numbers
@@ -149,5 +148,49 @@ worldcat_permalink_from_oclc_number <- function(x){
 
   ifelse(is.na(x), NA_character_,
          sprintf("http://www.worldcat.org/oclc/%s", x))
+}
+
+
+
+#' Get OCLC Classify link from a standard number
+#'
+#' Takes a string representation of ISSNs, ISBNs, UPC,
+#' or OCLC numbers.
+#' Returns a link to the OCLC's experimental classify
+#' service which provides the most frequent call numbers,
+#' FAST subject headings, etc...
+#'
+#' @param x A string (or vector of strings) of a standard number.
+#'          Must be an ISSN, ISBN, UPC, and/or OCLC numbers.
+#'
+#' @details
+#' Since this can take a variety of standard numbers, no
+#' normalization can be performed. The numbers much be normalized
+#' before the call to this function.
+#' No validity check on the URL is performed
+#'
+#' @return Links to OCLC's Classify web service
+#'
+#' @examples
+#'
+#' oclc_classify_link_from_standard_num("629725006")
+#' # "http://classify.oclc.org/classify2/ClassifyDemo?search-standnum-txt=629725006&startRec=0"
+#'
+#' oclc_classify_link_from_standard_num(c("039333712X", NA, "629725006"))
+#' # [1] "http://classify.oclc.org/classify2/ClassifyDemo?search-standnum-txt=039333712X&startRec=0"
+#' # [2] NA
+#' # [3] "http://classify.oclc.org/classify2/ClassifyDemo?search-standnum-txt=629725006&startRec=0"
+#'
+#' @export
+oclc_classify_link_from_standard_num <- function(x){
+  if(all(is.na(x))) return(as.character(x))
+  if(class(x)!="character")
+    stop("Input must be a character string")
+
+  part1 <- "http://classify.oclc.org/classify2/ClassifyDemo?search-standnum-txt="
+  part2 <- "&startRec=0"
+  ret <- sprintf("%s%s%s", part1, x, part2)
+  ret[is.na(x)] <- NA_character_
+  return(ret)
 }
 

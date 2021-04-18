@@ -65,5 +65,16 @@ test_that("worldcat_permalink_from_oclc_number() works", {
 })
 
 
-
+# oclc_classify_link_from_standard_num
+test_that("oclc_classify_link_from_standard_num() works", {
+  expect_equal(oclc_classify_link_from_standard_num("629725006"),
+               "http://classify.oclc.org/classify2/ClassifyDemo?search-standnum-txt=629725006&startRec=0")
+  expect_equal(oclc_classify_link_from_standard_num(c("039333712X", NA, "629725006")),
+               c("http://classify.oclc.org/classify2/ClassifyDemo?search-standnum-txt=039333712X&startRec=0",
+                 NA, "http://classify.oclc.org/classify2/ClassifyDemo?search-standnum-txt=629725006&startRec=0"))
+  expect_equal(oclc_classify_link_from_standard_num(NA),
+               NA_character_)
+  expect_error(oclc_classify_link_from_standard_num(1),
+               "Input must be a character string")
+})
 

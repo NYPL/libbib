@@ -17,7 +17,6 @@ Takes a string representation of OCLC numbers. Returns permalinks
 to the WorldCat catalog entries using those OCLC numbers
 }
 \details{
-If the OCLC number is invalid, the permalink is NA.
 No validity check on the URL is performed
 }
 \examples{

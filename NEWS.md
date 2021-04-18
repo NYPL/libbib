@@ -13,8 +13,10 @@ where the formatting is better.**
 
 3. Added split_map_filter_reduce and related utilities
 
-4. Addeed functions to get language and country names from
+4. Added functions to get language and country names from
    corresponding Marc codes
+
+5. Added function to get links to OCLC's classify service
 
 ## bug fixes
 
