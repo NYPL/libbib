@@ -8,6 +8,10 @@
 #' @param normalize a logical indicating whether the LCCN should be
 #'                  normalized prior to creating the permalink
 #'                  (default is \code{TRUE})
+#' @param format One of "", "marcxml", "mods", "mads", or "dublin" to return
+#'               the link to the main permalink page, or the link directly
+#'               to the record's MARCXml, MODS, MADS, or Dublin Core
+#'               representation, respectively.
 #'
 #' @details
 #' If normalize=TRUE and the LCCN is invalid, the permalink is NA.
@@ -24,16 +28,29 @@
 #' # vectorized
 #' loc_permalink_from_lccn(c("###78890351#", NA, "n78-890351"))
 #'
+#' # MARCXML metadata format
+#' loc_permalink_from_lccn("73167510", format="marcxml")
+#' # "https://lccn.loc.gov/73167510/marcxml"
+#'
 #' @export
-loc_permalink_from_lccn <- function(x, normalize=TRUE){
+loc_permalink_from_lccn <- function(x, normalize=TRUE, format=""){
   if(all(is.na(x))) return(as.character(x))
   if(class(x)!="character")
     stop("Input must be a character string")
+
+  postfix <- fcase(format=="",         "",
+                   format=="marcxml",  "/marcxml",
+                   format=="mods",     "/mods",
+                   format=="mads",     "/mads",
+                   format=="dublin",   "/dc",
+                   (!(format %in% c("marcxml", "mods", "mads", "dublin"))),
+                     stop('format must be one of "", "marcxml", "mods", "mads", or "dublin"'))
+
   if(normalize)
     x <- normalize_lccn(x)
 
   ifelse(is.na(x), NA_character_,
-         sprintf("https://lccn.loc.gov/%s", x))
+         sprintf("https://lccn.loc.gov/%s%s", x, postfix))
 }
 
 

@@ -18,6 +18,9 @@ where the formatting is better.**
 
 5. Added function to get links to OCLC's classify service
 
+6. Added ability to link directly  to MARCXML, MODS, MADS, or
+   Dublin Core metadata formats in `loc_permalink_from_lccn`
+
 ## bug fixes
 
 1. Expanded lc call <-> subject crosswalk (mainly for 'Law')

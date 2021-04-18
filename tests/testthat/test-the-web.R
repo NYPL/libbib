@@ -17,6 +17,17 @@ test_that("loc_permalink_from_lccn() works", {
 
   expect_error(loc_permalink_from_lccn(123456789),
                "Input must be a character string")
+
+  expect_equal(loc_permalink_from_lccn("73167510", format="marcxml"),
+               "https://lccn.loc.gov/73167510/marcxml")
+  expect_equal(loc_permalink_from_lccn("73167510", format="mods"),
+               "https://lccn.loc.gov/73167510/mods")
+  expect_equal(loc_permalink_from_lccn("73167510", format="mads"),
+               "https://lccn.loc.gov/73167510/mads")
+  expect_equal(loc_permalink_from_lccn("73167510", format="dublin"),
+               "https://lccn.loc.gov/73167510/dc")
+  expect_error(loc_permalink_from_lccn("73167510", format="nonsense"),
+               'format must be one of "", "marcxml", "mods", "mads", or "dublin"')
 })
 
 

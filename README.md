@@ -53,6 +53,9 @@ automated tests, at time of writing
 > normalize_lccn(" 79139101 /AC/r932")
 [1] "79139101"
 
+> loc_permalink_from_lccn("73167510", format="marcxml")
+[1] https://lccn.loc.gov/73167510/marcxml
+
 > loc_permalink_from_lccn(c("2010292065", "2012451004")
 [1] "https://lccn.loc.gov/2010292065" "https://lccn.loc.gov/2012451004"
 

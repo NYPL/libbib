@@ -4,7 +4,7 @@
 \alias{loc_permalink_from_lccn}
 \title{Get Library of Congress catalog permalinks from LCCNs}
 \usage{
-loc_permalink_from_lccn(x, normalize = TRUE)
+loc_permalink_from_lccn(x, normalize = TRUE, format = "")
 }
 \arguments{
 \item{x}{A string (or vector of strings) of LCCNs}
@@ -12,6 +12,11 @@ loc_permalink_from_lccn(x, normalize = TRUE)
 \item{normalize}{a logical indicating whether the LCCN should be
 normalized prior to creating the permalink
 (default is \code{TRUE})}
+
+\item{format}{One of "", "marcxml", "mods", "mads", or "dublin" to return
+the link to the main permalink page, or the link directly
+to the record's MARCXml, MODS, MADS, or Dublin Core
+representation, respectively.}
 }
 \value{
 Library of Congress permalinks using LCCNs.
@@ -32,5 +37,9 @@ loc_permalink_from_lccn("75-425165//r75")    # "https://lccn.loc.gov/75425165"
 
 # vectorized
 loc_permalink_from_lccn(c("###78890351#", NA, "n78-890351"))
+
+# MARCXML metadata format
+loc_permalink_from_lccn("73167510", format="marcxml")
+# "https://lccn.loc.gov/73167510/marcxml"
 
 }
