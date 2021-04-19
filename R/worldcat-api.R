@@ -21,8 +21,8 @@ worldcat_api_get_http_response <- function(aurl, print.api.responses=FALSE){
 
 # un-exported internal helper function
 worldcat_api_classify <- function(thetype, thenumber, print.api.responses=FALSE){
-  ## TODO: how does it handle NAs if vectorized
-  # if(all(is.na(thenumber))) return(as.character(x))
+  if(length(thenumber)>1) stop("only accepts one standard number at a time")
+  if(is.na(thenumber)) return(NA)
   if(class(thenumber)!="character")
     stop("ISBN, ISSN, or OCLC number must be a string")
 
@@ -57,7 +57,7 @@ worldcat_api_classify <- function(thetype, thenumber, print.api.responses=FALSE)
                                         "//classify/recommendations/ddc/mostPopular")
   dcc_holdings  <- xml2::xml_attr(dcc, "holdings")
   dcc_sfa       <- xml2::xml_attr(dcc, "sfa")
-  dcc_frame     <- data.table(control_number=thenumber,
+  dcc_frame     <- data.table(standard_number=thenumber,
                               call_type="DCC",
                               holdings=dcc_holdings,
                               recommendation=dcc_sfa)
@@ -67,13 +67,13 @@ worldcat_api_classify <- function(thetype, thenumber, print.api.responses=FALSE)
                                         "//classify/recommendations/lcc/mostPopular")
   lcc_holdings  <- xml2::xml_attr(lcc, "holdings")
   lcc_sfa       <- xml2::xml_attr(lcc, "sfa")
-  lcc_frame     <- data.table(control_number=thenumber,
+  lcc_frame     <- data.table(standard_number=thenumber,
                               call_type="LCC",
                               holdings=lcc_holdings,
                               recommendation=lcc_sfa)
 
   retframe <- rbindlist(list(dcc_frame, lcc_frame))
-  setnames(retframe, "control_number", thetype)
+  setnames(retframe, "standard_number", thetype)
   retframe[, `:=`(classify_response_code=resp_code,
                   http_status_code=http_status_code,
                   title=work_title, author=work_author,
@@ -111,13 +111,13 @@ worldcat_api_classify <- function(thetype, thenumber, print.api.responses=FALSE)
 #'
 #' The API can be persnickety, and there are many things that can go
 #' wrong. For example, the API can respond with multiple works for a
-#' single control number (ISBN 9780900565748, for example). If this happens,
+#' single standard number (ISBN 9780900565748, for example). If this happens,
 #' no attempt is made to follow one of the results, and the returned
 #' \code{data.table} will return no useful information.
 #'
 #' If the \code{http_status_code} is 200 and the \code{classify_response_code}
 #' is 0, you've received good results.
-#' If the \code{classify_response_code} is 4, the control number may have
+#' If the \code{classify_response_code} is 4, the standard number may have
 #' returned multiple works.
 #'
 #' The \code{http_status_code} should never not be 200.
@@ -126,6 +126,11 @@ worldcat_api_classify <- function(thetype, thenumber, print.api.responses=FALSE)
 #' 200 and 0, respectively), you may want to re-run the function call with
 #' \code{print.api.responses} set to \code{TRUE}. This will print the
 #' HTTP status code and the raw XML text response from the API.
+#'
+#' As with all API access functions in this package, it's up to the
+#' user to limit their API usage so as to not get blocked. These
+#' functions are deliberately not vectorized for this reason; they
+#' only accept one standard number at a time.
 #'
 #' @param x A string representation of an OCLC number
 #' @param print.api.responses A logical indicating whether the HTTP and
@@ -150,6 +155,8 @@ worldcat_api_classify <- function(thetype, thenumber, print.api.responses=FALSE)
 #' }
 #'
 #' @name worldcat_api_classify_by
+
+
 
 #' @rdname worldcat_api_classify_by
 #' @export
