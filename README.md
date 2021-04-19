@@ -53,6 +53,16 @@ automated tests, at time of writing
 > normalize_lccn(" 79139101 /AC/r932")
 [1] "79139101"
 
+> worldcat_api_classify_by_oclc("877749545")
+        oclc                 title               author total_holdings total_eholdings
+      <char>                <char>               <char>          <int>           <int>
+1: 877749545 Max Ernst's 'Celebes' Penrose, Roland, Sir              8               0
+2: 877749545 Max Ernst's 'Celebes' Penrose, Roland, Sir              8               0
+   call_type recommendation holdings http_status_code classify_response_code
+      <char>         <char>   <char>            <int>                  <int>
+1:       DCC          759.4        6              200                      0
+2:       LCC       ND588.E7        6              200                      0
+
 > loc_permalink_from_lccn("73167510", format="marcxml")
 [1] https://lccn.loc.gov/73167510/marcxml
 
@@ -141,6 +151,11 @@ Key: <thekey>
 - `get_dewey_decimal_subject_class`
 - `get_dewey_decimal_subject_division`
 - `get_dewey_decimal_subject_section`
+
+### WorldCat API
+- `worldcat_api_classify_by_oclc`
+- `worldcat_api_classify_by_isbn`
+- `worldcat_api_classify_by_issn`
 
 ### Interfacing with the web
 - `loc_permalink_from_lccn`
