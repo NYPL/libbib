@@ -330,6 +330,12 @@ worldcat_api_bib_read_info_by_something <- function(x,
 worldcat_api_bib_read_info_by_oclc <- function(x,
                                                wskey=getOption("libbib.wskey", ""),
                                                debug=FALSE){
+  # error checking
+  if(length(x)>1) stop("only accepts one standard number at a time")
+  if(is.na(x)) return(NA)
+  if(class(x)!="character")
+    stop("x must be a string or NULL")
+
   oclc <- NULL
   ret <- worldcat_api_bib_read_info_by_something(x, type_std_num="oclc",
                                                  wskey=wskey, debug=debug)
@@ -342,6 +348,12 @@ worldcat_api_bib_read_info_by_oclc <- function(x,
 worldcat_api_bib_read_info_by_isbn <- function(x,
                                                wskey=getOption("libbib.wskey", ""),
                                                debug=FALSE){
+  # error checking
+  if(length(x)>1) stop("only accepts one standard number at a time")
+  if(is.na(x)) return(NA)
+  if(class(x)!="character")
+    stop("x must be a string or NULL")
+
   isbn <- NULL
   ret <- worldcat_api_bib_read_info_by_something(x, type_std_num="isbn",
                                                  wskey=wskey, debug=debug)
@@ -354,6 +366,12 @@ worldcat_api_bib_read_info_by_isbn <- function(x,
 worldcat_api_bib_read_info_by_issn <- function(x,
                                                wskey=getOption("libbib.wskey", ""),
                                                debug=FALSE){
+  # error checking
+  if(length(x)>1) stop("only accepts one standard number at a time")
+  if(is.na(x)) return(NA)
+  if(class(x)!="character")
+    stop("x must be a string or NULL")
+
   issn <- NULL
   ret <- worldcat_api_bib_read_info_by_something(x, type_std_num="issn",
                                                  wskey=wskey, debug=debug)
@@ -501,6 +519,12 @@ worldcat_api_locations_by_something <- function(x,
                                                wskey=getOption("libbib.wskey", ""),
                                                print.progress=TRUE,
                                                debug=FALSE){
+  # error checking
+  if(length(x)>1) stop("only accepts one standard number at a time")
+  if(is.na(x)) return(NA)
+  if(class(x)!="character")
+    stop("x must be a string or NULL")
+
   # debug implies print progress
   if(debug) print.progress=TRUE
 
