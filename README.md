@@ -30,7 +30,7 @@ _Note these timings will change for the better or worse pending_
   - _recognition and handling procedures for other ways in which
    malformed ISBNs can be salvaged_
 
-As for robustness, this package is well tested, with over 200
+As for robustness, this package is well tested, with over 300
 automated tests, at time of writing
 
 ## Some examples
@@ -53,6 +53,17 @@ automated tests, at time of writing
 > normalize_lccn(" 79139101 /AC/r932")
 [1] "79139101"
 
+> worldcat_api_bib_read_info_by_isbn("9780984201006")
+        oclc          isbn   issn                        title
+      <char>        <char> <char>                       <char>
+1: 462894360 9780984201006   <NA> The Great Debate about Art /
+         author                   leader
+         <char>                   <char>
+1: Harris, Roy, 00000cam a2200000 a 4500
+                                       oh08
+                                     <char>
+1: 091031s2010    ilua     b    000 0 eng c
+
 > worldcat_api_classify_by_oclc("877749545")
         oclc                 title               author total_holdings total_eholdings
       <char>                <char>               <char>          <int>           <int>
@@ -62,6 +73,25 @@ automated tests, at time of writing
       <char>         <char>   <char>            <int>                  <int>
 1:       DCC          759.4        6              200                      0
 2:       LCC       ND588.E7        6              200                      0
+
+> worldcat_api_locations_by_oclc("877749545", max_libraries=10,
++                                include.bib.info=FALSE)
+        oclc institution_identifier
+      <char>                 <char>
+1: 877749545                    NLE
+2: 877749545                    NLW
+3: 877749545                    EUM
+4: 877749545                    LTU
+5: 877749545                    ELU
+6: 877749545                  UKUAL
+                                institution_name copies
+                                          <char> <char>
+1:                  National Library of Scotland      1
+2:                     National Library of Wales      1
+3:              University of Manchester Library      1
+4: University of Leicester, David Wilson Library      1
+5:     University of London Senate House Library      1
+6:                 University of the Arts London      1
 
 > loc_permalink_from_lccn("73167510", format="marcxml")
 [1] https://lccn.loc.gov/73167510/marcxml
@@ -156,6 +186,12 @@ Key: <thekey>
 - `worldcat_api_classify_by_oclc`
 - `worldcat_api_classify_by_isbn`
 - `worldcat_api_classify_by_issn`
+- `worldcat_api_bib_read_info_by_oclc`
+- `worldcat_api_bib_read_info_by_isbn`
+- `worldcat_api_bib_read_info_by_issn`
+- `worldcat_api_locations_by_oclc`
+- `worldcat_api_locations_by_isbn`
+- `worldcat_api_locations_by_issn`
 
 ### Interfacing with the web
 - `loc_permalink_from_lccn`
@@ -175,7 +211,7 @@ Key: <thekey>
   (from https://www.loc.gov/catdir/cpso/lcco/)
 - `dewey_subject_crosswalk`
   (from https://www.oclc.org/content/dam/oclc/dewey/ddc23-summaries.pdf)
-- `books_and_serials_sample` -A very small sample of books, monographs, and
+- `books_and_serials_sample` - A very small sample of books, monographs, and
   serials and their information including title, control numbers, call numbers,
   and call number subject classifications. Mainly for testing.
   Will be expanded in future versions.

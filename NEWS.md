@@ -21,6 +21,17 @@ where the formatting is better.**
 6. Added ability to link directly  to MARCXML, MODS, MADS, or
    Dublin Core metadata formats in `loc_permalink_from_lccn`
 
+7. Added functions to use the WorldCat Bib Read API,
+   read/parse the returned MARCXml, and return a `data.table`
+   containing the most pertinent information.
+
+8. Added functions to use the WorldCat Classify API and return a
+   `data.table` containing the most popular Dewey and LC call numbers.
+
+9. Added functions to use the WorldCat Location API and return a
+   `data.table` containing (optionally, all) of the holding libraries
+   for that standard number.
+
 ## bug fixes
 
 1. Expanded lc call <-> subject crosswalk (mainly for 'Law')

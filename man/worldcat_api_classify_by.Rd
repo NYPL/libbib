@@ -14,7 +14,8 @@ worldcat_api_classify_by_isbn(x, print.api.responses = FALSE)
 worldcat_api_classify_by_issn(x, print.api.responses = FALSE)
 }
 \arguments{
-\item{x}{A string representation of an OCLC number}
+\item{x}{A string representation of the standard number that the function
+chosen accepts.}
 
 \item{print.api.responses}{A logical indicating whether the HTTP and
 classify API responses should be printed
@@ -51,9 +52,8 @@ no attempt is made to follow one of the results, and the returned
 \code{data.table} will return no useful information.
 
 If the \code{http_status_code} is 200 and the \code{classify_response_code}
-is 0, you've received good results.
-If the \code{classify_response_code} is 4, the standard number may have
-returned multiple works.
+is 0, you've received good results.If the \code{classify_response_code} is
+4, the standard number may have returned multiple works.
 
 The \code{http_status_code} should never not be 200.
 
@@ -66,6 +66,10 @@ As with all API access functions in this package, it's up to the
 user to limit their API usage so as to not get blocked. These
 functions are deliberately not vectorized for this reason; they
 only accept one standard number at a time.
+
+Final note: all of these API functions seem to work better with
+OCLC numbers than any other standard number. If multiple standard
+numbers are available, using the OCLC number is always preferred.
 }
 \examples{
 
@@ -79,6 +83,7 @@ only accept one standard number at a time.
    #            <char>   <char>            <int>                  <int>
    # 1:        641.395      767              200                      0
    # 2:      QL444.M33      318              200                      0
+
 }
 
 }
