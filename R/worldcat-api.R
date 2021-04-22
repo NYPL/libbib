@@ -205,6 +205,8 @@ worldcat_api_bib_read_info_by_something <- function(x,
   if(!(type_std_num %chin% c("oclc", "isbn", "issn")))
     stop('type of standard number must be "oclc", "isbn", or "issn"')
 
+  publisher <- NULL
+
   template <- "http://www.worldcat.org/webservices/catalog/content/%s%s?wskey=%s"
   fullurl <- sprintf(template,
                      fcase(type_std_num=="oclc", "",
@@ -303,6 +305,9 @@ worldcat_api_bib_read_info_by_something <- function(x,
 #' @param x A string representation of the standard number that the function
 #'          chosen accepts.
 #' @param wskey A WorldCat API key (default is \code{getOption("libbib.wskey")})
+#' @param more A logical indicating whether more infomation from the MARCXML
+#'             should be returned (publisher, etc....) In the interest of
+#'             memory consumption, the default is \code{FALSE}
 #' @param debug A logical indicating whether the HTTP and bib read API
 #'              responses should be printed (for debugging)
 #'              (default is \code{FALSE})

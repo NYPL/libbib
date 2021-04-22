@@ -34,6 +34,10 @@ chosen accepts.}
 
 \item{wskey}{A WorldCat API key (default is \code{getOption("libbib.wskey")})}
 
+\item{more}{A logical indicating whether more infomation from the MARCXML
+should be returned (publisher, etc....) In the interest of
+memory consumption, the default is \code{FALSE}}
+
 \item{debug}{A logical indicating whether the HTTP and bib read API
 responses should be printed (for debugging)
 (default is \code{FALSE})}

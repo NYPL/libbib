@@ -1,7 +1,7 @@
 context("checking functions in call-numbers-and-subject.R")
 
 
-data("books_and_serials_sample")
+data("books_serials_etc_sample")
 
 # get_lc_call_subject_classification
 test_that("lc_call_subject_classification() works", {
@@ -18,11 +18,11 @@ test_that("lc_call_subject_classification() works", {
                                                   subclassification=TRUE),
                c("Painting", NA, NA,
                  "French, Italian, Spanish, and Portuguese literature"))
-  expect_equal(get_lc_call_subject_classification(books_and_serials_sample$lccall),
-               books_and_serials_sample$lc_subject_class)
-  expect_equal(get_lc_call_subject_classification(books_and_serials_sample$lccall,
+  expect_equal(get_lc_call_subject_classification(books_serials_etc_sample$lccall),
+               books_serials_etc_sample$lc_subject_class)
+  expect_equal(get_lc_call_subject_classification(books_serials_etc_sample$lccall,
                                                   subclassification=TRUE),
-               books_and_serials_sample$lc_subject_subclass)
+               books_serials_etc_sample$lc_subject_subclass)
   expect_equal(get_lc_call_subject_classification("H29.S75 A38"),
                "Social Sciences")
   expect_equal(get_lc_call_subject_classification("H29.S75 A38", subclassification=TRUE),
@@ -145,24 +145,24 @@ test_that("get_all_lc_call_subject_letters() works", {
 
 # get_dewey_decimal_subject_class
 test_that("get_dewey_decimal_subject_class() works", {
-  expect_equal(get_dewey_decimal_subject_class(books_and_serials_sample$dewey),
-               books_and_serials_sample$dewey_subject_class)
+  expect_equal(get_dewey_decimal_subject_class(books_serials_etc_sample$dewey),
+               books_serials_etc_sample$dewey_subject_class)
   expect_equal(get_dewey_decimal_subject_class(c("709.05", "invalid", NA, "823.912")),
                c("Arts", NA, NA, "Literature (Belles-lettres) and rhetoric"))
 })
 
 # get_dewey_decimal_subject_division
 test_that("get_dewey_decimal_subject_division() works", {
-  expect_equal(get_dewey_decimal_subject_division(books_and_serials_sample$dewey),
-               books_and_serials_sample$dewey_subject_division)
+  expect_equal(get_dewey_decimal_subject_division(books_serials_etc_sample$dewey),
+               books_serials_etc_sample$dewey_subject_division)
   expect_equal(get_dewey_decimal_subject_division(c("709.05", "invalid", NA, "823.912")),
                c("Arts", NA, NA, "English and Old English literatures"))
 })
 
 # get_dewey_decimal_subject_section
 test_that("get_dewey_decimal_subject_section() works", {
-  expect_equal(get_dewey_decimal_subject_section(books_and_serials_sample$dewey),
-               books_and_serials_sample$dewey_subject_section)
+  expect_equal(get_dewey_decimal_subject_section(books_serials_etc_sample$dewey),
+               books_serials_etc_sample$dewey_subject_section)
   expect_equal(get_dewey_decimal_subject_section(c("709.05", "invalid", NA, "823.912")),
                c("History, geographic treatment, biography", NA, NA, "English fiction"))
 })

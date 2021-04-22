@@ -1,7 +1,7 @@
 #' Small sample of books, monographs, and serials and their information
 #'
-#' A very small sample of books, monographs, and serials and their
-#' information including title, control numbers, call numbers, and
+#' A very small sample of books, serials, VHSs, CDs, and Computer files
+#' and some information including title, control numbers, call numbers, and
 #' call number subject classifications. Somewhat messy/inconsistent
 #' (deliberately) and mainly for testing.
 #' Will be expanded in future versions.
@@ -14,4 +14,4 @@
 #'
 #' @keywords datasets
 #'
-"books_and_serials_sample"
+"books_serials_etc_sample"

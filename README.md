@@ -108,6 +108,24 @@ automated tests, at time of writing
 > is_valid_isbn_10(c("012491540X", "9004037812"))
 [1] TRUE FALSE
 
+> marc_leader_get_info("00000cam a22000008i 4500")
+         record_type      bib_level
+              <char>         <char>
+1: Language Material Monograph/Item
+
+# The Brothers Karamazov (1970 reissue but original publication date)
+> marc_008_get_info("950622r19701880ru            000 0 rus d")
+      pub_date pub_place_code lang_code
+         <int>         <char>    <char>
+  1:     1880             ru       rus
+
+# reissue publication date
+> marc_008_get_info("950622r19701880ru            000 0 rus d",
+                    original.pub.date=FALSE)
+      pub_date pub_place_code lang_code
+         <int>         <char>    <char>
+  1:     1970             ru       rus
+
 > data("dewey_subject_crosswalk")
 > dewey_subject_crosswalk
 Key: <thekey>
@@ -211,10 +229,15 @@ Key: <thekey>
   (from https://www.loc.gov/catdir/cpso/lcco/)
 - `dewey_subject_crosswalk`
   (from https://www.oclc.org/content/dam/oclc/dewey/ddc23-summaries.pdf)
-- `books_and_serials_sample` - A very small sample of books, monographs, and
-  serials and their information including title, control numbers, call numbers,
-  and call number subject classifications. Mainly for testing.
-  Will be expanded in future versions.
+- `books_serials_etc_sample` -  A very small sample of books, serials, VHSs,
+  CDs, and Computer files and some information including title, control
+  numbers, call numbers, and call number subject classifications. Somewhat 
+  messy/inconsistent (deliberately) and mainly for testing.
+  Will be expanded in future versions. 
+  
+### Marc field deconstruction
+- `marc_leader_get_info`
+- `marc_008_get_info`
 
 ### other Marc code translations
 - `get_language_from_code`
