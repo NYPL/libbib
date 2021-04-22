@@ -8,24 +8,49 @@ options("libbib.wskey"="test")
 
 # worldcat_api_classify_by_oclc
 test_that("worldcat_api_classify_by_oclc() works", {
-  expect_equal(worldcat_api_classify_by_oclc(NA), NA)
+  expect_null(worldcat_api_classify_by_oclc(NA))
   expect_error(worldcat_api_classify_by_oclc(c("877749545", "939766505")),
                "only accepts one standard number at a time")
 })
 
 # worldcat_api_classify_by_isbn
 test_that("worldcat_api_classify_by_isbn() works", {
-  expect_equal(worldcat_api_classify_by_isbn(NA), NA)
+  expect_null(worldcat_api_classify_by_isbn(NA))
   expect_error(worldcat_api_classify_by_isbn(c("978039333712", "978039333712")),
                "only accepts one standard number at a time")
 })
 
 # worldcat_api_classify_by_issn
 test_that("worldcat_api_classify_by_issn() works", {
-  expect_equal(worldcat_api_classify_by_issn(NA), NA)
+  expect_null(worldcat_api_classify_by_issn(NA))
   expect_error(worldcat_api_classify_by_issn(c("12341234", "12341234")),
                "only accepts one standard number at a time")
 })
+
+
+
+
+# worldcat_api_bib_read_info_by_oclc
+test_that("worldcat_api_bib_read_info_by_oclc() works", {
+  expect_null(worldcat_api_bib_read_info_by_oclc(NA))
+  expect_error(worldcat_api_bib_read_info_by_oclc(c("12341234", "12341234")),
+               "only accepts one standard number at a time")
+})
+
+# worldcat_api_bib_read_info_by_isbn
+test_that("worldcat_api_bib_read_info_by_isbn() works", {
+  expect_null(worldcat_api_bib_read_info_by_isbn(NA))
+  expect_error(worldcat_api_bib_read_info_by_isbn(c("12341234", "12341234")),
+               "only accepts one standard number at a time")
+})
+
+# worldcat_api_bib_read_info_by_issn
+test_that("worldcat_api_bib_read_info_by_issn() works", {
+  expect_null(worldcat_api_bib_read_info_by_issn(NA))
+  expect_error(worldcat_api_bib_read_info_by_issn(c("12341234", "12341234")),
+               "only accepts one standard number at a time")
+})
+
 
 
 
@@ -68,3 +93,29 @@ test_that("construct_wcapiloc_url() works", {
                'start_at must be a number')
 
 })
+
+
+
+
+# worldcat_api_locations_by_oclc
+test_that("worldcat_api_locations_by_oclc() works", {
+  expect_null(worldcat_api_locations_by_oclc(NA))
+  expect_error(worldcat_api_locations_by_oclc(c("12341234", "12341234")),
+               "only accepts one standard number at a time")
+})
+
+# worldcat_api_locations_by_isbn
+test_that("worldcat_api_locations_by_isbn() works", {
+  expect_null(worldcat_api_locations_by_isbn(NA))
+  expect_error(worldcat_api_locations_by_isbn(c("12341234", "12341234")),
+               "only accepts one standard number at a time")
+})
+
+# worldcat_api_locations_by_issn
+test_that("worldcat_api_locations_by_issn() works", {
+  expect_null(worldcat_api_locations_by_issn(NA))
+  expect_error(worldcat_api_locations_by_issn(c("12341234", "12341234")),
+               "only accepts one standard number at a time")
+})
+
+

@@ -26,7 +26,7 @@ worldcat_api_get_http_response <- function(aurl, print.api.responses=FALSE){
 # un-exported internal helper function
 worldcat_api_classify <- function(thetype, thenumber, print.api.responses=FALSE){
   if(length(thenumber)>1) stop("only accepts one standard number at a time")
-  if(is.na(thenumber)) return(NA)
+  if(is.na(thenumber)) return(NULL)
   if(class(thenumber)!="character")
     stop("ISBN, ISSN, or OCLC number must be a string")
 
@@ -195,10 +195,11 @@ worldcat_api_classify_by_issn <- function(x, print.api.responses=FALSE){
 worldcat_api_bib_read_info_by_something <- function(x,
                                                     type_std_num="oclc",
                                                     wskey=getOption("libbib.wskey", ""),
+                                                    more=FALSE,
                                                     debug=FALSE){
   # error checking
   if(length(x)>1) stop("only accepts one standard number at a time")
-  if(is.na(x)) return(NA)
+  if(is.na(x)) return(NULL)
   if(class(x)!="character")
     stop("x must be a string or NULL")
   if(!(type_std_num %chin% c("oclc", "isbn", "issn")))
@@ -234,6 +235,10 @@ worldcat_api_bib_read_info_by_something <- function(x,
   LEADERXPATH   <- "//record/leader"
   OH08XPATH     <- "//record/controlfield[@tag='008']"
 
+  # more
+  PUBLISHXPATH  <- "//record/datafield[@tag='260']/subfield[@code='b']"
+  # TOPICALXPATH  <- "//record/datafield[@tag='650']/subfield[@code='b']/[contains(. 'fast')]"
+
   the_title <- xml2::xml_text(xml2::xml_find_first(exemel, TITLEXPATH))
   the_author <- xml2::xml_text(xml2::xml_find_first(exemel, AUTHORXPATH))
   the_oclc <- xml2::xml_text(xml2::xml_find_first(exemel, OCLCXPATH))
@@ -247,6 +252,13 @@ worldcat_api_bib_read_info_by_something <- function(x,
   final <- data.table(oclc=the_oclc, isbn=the_isbn, issn=the_issn,
                       title=the_title, author=the_author, leader=the_leader,
                       oh08=the_oh08)
+
+  if(more){
+    final[, publisher:=xml2::xml_text(xml2::xml_find_first(exemel, PUBLISHXPATH))]
+    # all_fast_topical_terms <- xml2::xml_text(xml2::xml_find_all(exemel, TOPICALXPATH))
+    # print(all_fast_topical_terms)
+  }
+
   return(final[])
 }
 
@@ -329,16 +341,18 @@ worldcat_api_bib_read_info_by_something <- function(x,
 #' @export
 worldcat_api_bib_read_info_by_oclc <- function(x,
                                                wskey=getOption("libbib.wskey", ""),
+                                               more=FALSE,
                                                debug=FALSE){
   # error checking
   if(length(x)>1) stop("only accepts one standard number at a time")
-  if(is.na(x)) return(NA)
+  if(is.na(x)) return(NULL)
   if(class(x)!="character")
     stop("x must be a string or NULL")
 
   oclc <- NULL
   ret <- worldcat_api_bib_read_info_by_something(x, type_std_num="oclc",
-                                                 wskey=wskey, debug=debug)
+                                                 wskey=wskey, more=more,
+                                                 debug=debug)
   ret[, oclc:=x]
   return(ret[])
 }
@@ -347,16 +361,18 @@ worldcat_api_bib_read_info_by_oclc <- function(x,
 #' @export
 worldcat_api_bib_read_info_by_isbn <- function(x,
                                                wskey=getOption("libbib.wskey", ""),
+                                               more=FALSE,
                                                debug=FALSE){
   # error checking
   if(length(x)>1) stop("only accepts one standard number at a time")
-  if(is.na(x)) return(NA)
+  if(is.na(x)) return(NULL)
   if(class(x)!="character")
     stop("x must be a string or NULL")
 
   isbn <- NULL
   ret <- worldcat_api_bib_read_info_by_something(x, type_std_num="isbn",
-                                                 wskey=wskey, debug=debug)
+                                                 wskey=wskey, more=more,
+                                                 debug=debug)
   ret[, isbn:=x]
   return(ret[])
 }
@@ -365,16 +381,18 @@ worldcat_api_bib_read_info_by_isbn <- function(x,
 #' @export
 worldcat_api_bib_read_info_by_issn <- function(x,
                                                wskey=getOption("libbib.wskey", ""),
+                                               more=FALSE,
                                                debug=FALSE){
   # error checking
   if(length(x)>1) stop("only accepts one standard number at a time")
-  if(is.na(x)) return(NA)
+  if(is.na(x)) return(NULL)
   if(class(x)!="character")
     stop("x must be a string or NULL")
 
   issn <- NULL
   ret <- worldcat_api_bib_read_info_by_something(x, type_std_num="issn",
-                                                 wskey=wskey, debug=debug)
+                                                 wskey=wskey,
+                                                 more=more, debug=debug)
   ret[, issn:=x]
   return(ret[])
 }
@@ -521,7 +539,7 @@ worldcat_api_locations_by_something <- function(x,
                                                debug=FALSE){
   # error checking
   if(length(x)>1) stop("only accepts one standard number at a time")
-  if(is.na(x)) return(NA)
+  if(is.na(x)) return(NULL)
   if(class(x)!="character")
     stop("x must be a string or NULL")
 
