@@ -241,3 +241,79 @@ dt_percent_not_na <- function(DT, acolumn){
 }
 
 
+# --------------------------------------------------------------- #
+
+#' Add string to all column names in a data.table
+#'
+#' Takes a data.table and a string. The supplied string will
+#' be added to end of the each column's name. If \code{prefix}
+#' is \code{TRUE}, the string is added to the beginning, instead.
+#'
+#' @import data.table
+#'
+#' @param DT A data.table
+#' @param astring A string to add to each column name
+#' @param prefix A logical indicating whether the string should be added
+#'               to the beginning of each column name, instead of the end.
+#'               (default is \code{FALSE})
+#' @param exclude A quoted vector or column names to exclude from renaming.
+#'        Cannot co-exist with \code{include}
+#' @param include A quoted vector or column names. Changes names of only
+#'        these columns. Cannot co-exist with \code{exclude}
+#'
+#' @return Returns data.table with string appended or prefixed
+#'
+#' @examples
+#' DT <- as.data.table(iris)
+#'
+#' dt_add_to_col_names(DT, "_post")
+#' names(DT)
+#' # [1] "Sepal.Length_post" "Sepal.Width_post"  "Petal.Length_post"
+#' # [4] "Petal.Width_post"  "Species_post"
+#'
+#'  DT <- as.data.table(iris)
+#' dt_add_to_col_names(DT, "pre_", prefix=TRUE)
+#' names(DT)
+#' # [1] "pre_Sepal.Length" "pre_Sepal.Width"  "pre_Petal.Length" "pre_Petal.Width"
+#' # [5] "pre_Species"
+#'
+#' DT <- as.data.table(iris)
+#' dt_add_to_col_names(DT, "_post", exclude="Species")
+#' names(DT)
+#' # [1] "Sepal.Length_post" "Sepal.Width_post"  "Petal.Length_post"
+#' # [4] "Petal.Width_post"  "Species"
+#'
+#' @export
+dt_add_to_col_names <- function(DT, astring, prefix=FALSE,
+                                exclude=NULL, include=NULL){
+  if(!("data.table" %chin% class(DT)))
+    stop("DT must be a data.table")
+  if(!is.null(exclude) && !is.null(include))
+    stop("cannot have both 'include' and 'exclude' parameters at the same time")
+
+  here <- old_names <- new_names <- NULL
+
+  tmp <- data.table(old_names=names(DT), here=TRUE)
+
+  if(!is.null(exclude) || !is.null(include)){
+    check <- tmp[c(exclude, include), on="old_names"]
+    if(check[is.na(here), .N]>0){
+      missingnames <- check[is.na(here), old_names]
+      missingnames <- paste(sprintf('"%s"', missingnames), collapse=', ')
+      warning(sprintf("Columns (%s) are missing from supplied data.table",
+                      missingnames))
+    }
+  }
+
+  if(prefix)
+    tmp[,new_names:=sprintf("%s%s", astring, old_names)]
+  else
+    tmp[,new_names:=sprintf("%s%s", old_names, astring)]
+
+  if(!is.null(exclude))
+    tmp[old_names %chin% exclude, new_names:=old_names]
+  if(!is.null(include))
+    tmp[!(old_names %chin% include), new_names:=old_names]
+
+  setnames(DT, tmp[,new_names])
+}

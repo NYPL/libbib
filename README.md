@@ -233,6 +233,7 @@ Key: <thekey>
 - `get_clean_names`
 - `dt_set_clean_names`
 - `dt_percent_not_na`
+- `dt_add_to_col_names`
 
 
 
