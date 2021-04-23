@@ -201,15 +201,16 @@ Key: <thekey>
 - `get_dewey_decimal_subject_section`
 
 ### WorldCat API
-- `worldcat_api_classify_by_oclc`
-- `worldcat_api_classify_by_isbn`
-- `worldcat_api_classify_by_issn`
+- `worldcat_api_search`
 - `worldcat_api_bib_read_info_by_oclc`
 - `worldcat_api_bib_read_info_by_isbn`
 - `worldcat_api_bib_read_info_by_issn`
 - `worldcat_api_locations_by_oclc`
 - `worldcat_api_locations_by_isbn`
 - `worldcat_api_locations_by_issn`
+- `worldcat_api_classify_by_oclc`
+- `worldcat_api_classify_by_isbn`
+- `worldcat_api_classify_by_issn`
 
 ### Interfacing with the web
 - `loc_permalink_from_lccn`

@@ -192,6 +192,60 @@ worldcat_api_classify_by_issn <- function(x, print.api.responses=FALSE){
 ###         BIB READ API         ###
 ####################################
 
+read_a_marcxml_record <- function(exemel, more=FALSE){
+
+  if(is.na(exemel))
+    return(NULL)
+  if(is.null(exemel))
+    return(NULL)
+
+  leader <- oh08 <- publisher <- NULL
+
+  xml2::xml_ns_strip(exemel)
+
+  TITLEXPATH    <- "datafield[@tag='245']/subfield[@code='a']"
+  AUTHORXPATH   <- "datafield[@tag='100']/subfield[@code='a']"
+  OCLCXPATH     <- "controlfield[@tag='001']"
+  ISBNXPATH     <- "datafield[@tag='020']/subfield[@code='a']"
+  ISSNXPATH     <- "datafield[@tag='022']/subfield[@code='a']"
+  LEADERXPATH   <- "leader"
+  OH08XPATH     <- "controlfield[@tag='008']"
+
+  # more
+  PUBLISHXPATH  <- "datafield[@tag='260']/subfield[@code='b']"
+  # TOPICALXPATH  <- "datafield[@tag='650']/subfield[@code='b']/[contains(. 'fast')]"
+
+  the_title <- xml2::xml_text(xml2::xml_find_first(exemel, TITLEXPATH))
+  the_author <- xml2::xml_text(xml2::xml_find_first(exemel, AUTHORXPATH))
+  the_oclc <- xml2::xml_text(xml2::xml_find_first(exemel, OCLCXPATH))
+  the_isbn <- xml2::xml_text(xml2::xml_find_first(exemel, ISBNXPATH))
+  the_issn <- xml2::xml_text(xml2::xml_find_first(exemel, ISSNXPATH))
+  the_leader <- xml2::xml_text(xml2::xml_find_first(exemel, LEADERXPATH))
+  the_oh08 <- xml2::xml_text(xml2::xml_find_first(exemel, OH08XPATH))
+  the_isbn <- normalize_isbn(the_isbn, convert.to.isbn.13=TRUE)
+  the_issn <- normalize_issn(the_issn)
+
+  final <- data.table(oclc=the_oclc, isbn=the_isbn, issn=the_issn,
+                      title=the_title, author=the_author, leader=the_leader,
+                      oh08=the_oh08)
+
+  if(more){
+    final[, publisher:=xml2::xml_text(xml2::xml_find_first(exemel, PUBLISHXPATH))]
+    li <- marc_leader_get_info(final[1, leader])
+    oi <- marc_008_get_info(final[1, oh08])
+    final <- cbind(final, li, oi)
+    # all_fast_topical_terms <- xml2::xml_text(xml2::xml_find_all(exemel, TOPICALXPATH))
+    # print(all_fast_topical_terms)
+    # uses original pub date
+    setcolorder(final, c("oclc", "isbn", "issn", "title", "author", "pub_date",
+                         "lang_code", "bib_level", "record_type",
+                         "pub_place_code", "publisher", "leader", "oh08"))
+  }
+
+  final[]
+}
+
+
 worldcat_api_bib_read_info_by_something <- function(x,
                                                     type_std_num="oclc",
                                                     wskey=getOption("libbib.wskey", ""),
@@ -205,7 +259,6 @@ worldcat_api_bib_read_info_by_something <- function(x,
   if(!(type_std_num %chin% c("oclc", "isbn", "issn")))
     stop('type of standard number must be "oclc", "isbn", or "issn"')
 
-  publisher <- NULL
 
   template <- "http://www.worldcat.org/webservices/catalog/content/%s%s?wskey=%s"
   fullurl <- sprintf(template,
@@ -229,37 +282,7 @@ worldcat_api_bib_read_info_by_something <- function(x,
   exemel <- xml2::read_xml(content, options=NULL)
   xml2::xml_ns_strip(exemel)
 
-  TITLEXPATH    <- "//record/datafield[@tag='245']/subfield[@code='a']"
-  AUTHORXPATH   <- "//record/datafield[@tag='100']/subfield[@code='a']"
-  OCLCXPATH     <- "//record/controlfield[@tag='001']"
-  ISBNXPATH     <- "//record/datafield[@tag='020']/subfield[@code='a']"
-  ISSNXPATH     <- "//record/datafield[@tag='022']/subfield[@code='a']"
-  LEADERXPATH   <- "//record/leader"
-  OH08XPATH     <- "//record/controlfield[@tag='008']"
-
-  # more
-  PUBLISHXPATH  <- "//record/datafield[@tag='260']/subfield[@code='b']"
-  # TOPICALXPATH  <- "//record/datafield[@tag='650']/subfield[@code='b']/[contains(. 'fast')]"
-
-  the_title <- xml2::xml_text(xml2::xml_find_first(exemel, TITLEXPATH))
-  the_author <- xml2::xml_text(xml2::xml_find_first(exemel, AUTHORXPATH))
-  the_oclc <- xml2::xml_text(xml2::xml_find_first(exemel, OCLCXPATH))
-  the_isbn <- xml2::xml_text(xml2::xml_find_first(exemel, ISBNXPATH))
-  the_issn <- xml2::xml_text(xml2::xml_find_first(exemel, ISSNXPATH))
-  the_leader <- xml2::xml_text(xml2::xml_find_first(exemel, LEADERXPATH))
-  the_oh08 <- xml2::xml_text(xml2::xml_find_first(exemel, OH08XPATH))
-  the_isbn <- normalize_isbn(the_isbn, convert.to.isbn.13=TRUE)
-  the_issn <- normalize_issn(the_issn)
-
-  final <- data.table(oclc=the_oclc, isbn=the_isbn, issn=the_issn,
-                      title=the_title, author=the_author, leader=the_leader,
-                      oh08=the_oh08)
-
-  if(more){
-    final[, publisher:=xml2::xml_text(xml2::xml_find_first(exemel, PUBLISHXPATH))]
-    # all_fast_topical_terms <- xml2::xml_text(xml2::xml_find_all(exemel, TOPICALXPATH))
-    # print(all_fast_topical_terms)
-  }
+  final <- read_a_marcxml_record(exemel, more=more)
 
   return(final[])
 }
@@ -522,6 +545,9 @@ worldcat_api_locations_helper <- function(x,
   all_locs <- xml2::xml_text(xml2::xml_find_first(all_holdings, "physicalLocation"))
   all_hold <- xml2::xml_text(xml2::xml_find_first(all_holdings, "holdingSimple/copiesSummary/copiesCount"))
 
+  if(length(all_holdings)==0)
+    return(NULL)
+
   final <- data.table(standard_num=x,
                       institution_identifier=all_ident,
                       institution_name=all_locs,
@@ -567,6 +593,8 @@ worldcat_api_locations_by_something <- function(x,
                                       servicelevel=servicelevel,
                                       frbrGrouping=frbrGrouping, libtype=libtype,
                                       start_at=1, wskey=wskey, debug=debug)
+  if(is.null(ret))
+    return(NULL)
 
   bibinfo <- NULL
   if(include.bib.info){
@@ -600,9 +628,13 @@ worldcat_api_locations_by_something <- function(x,
                                         libtype=libtype,
                                         start_at=starting_at,
                                         wskey=wskey, debug=debug)
-    counter <- counter + 1
-    runninglist[[counter]] <- ret
-    last_pull_n_count <- ret[,.N]
+    if(is.null(ret)){
+      last_pull_n_count <- 0
+    } else{
+      counter <- counter + 1
+      runninglist[[counter]] <- ret
+      last_pull_n_count <- ret[,.N]
+    }
   }
 
   final <- rbindlist(runninglist)
@@ -757,6 +789,9 @@ worldcat_api_locations_by_oclc <- function(x,
                                             wskey=wskey,
                                             print.progress=print.progress,
                                             debug=debug)
+  if(is.null(ret))
+    return(NULL)
+
   return(ret[])
 }
 
@@ -783,6 +818,9 @@ worldcat_api_locations_by_isbn <- function(x,
                                             wskey=wskey,
                                             print.progress=print.progress,
                                             debug=debug)
+  if(is.null(ret))
+    return(NULL)
+
   return(ret[])
 }
 
@@ -808,6 +846,188 @@ worldcat_api_locations_by_issn <- function(x,
                                             wskey=wskey,
                                             print.progress=print.progress,
                                             debug=debug)
+  if(is.null(ret))
+    return(NULL)
+
   return(ret[])
 }
 
+
+
+# --------------------------------------------------------------- #
+
+####################################
+###          SEARCH API          ###
+####################################
+
+# un-exported helper function
+construct_wcapi_search_url <- function(sru, max_records=100,
+                                       frbrGrouping="on", start_at=1,
+                                       wskey=getOption("libbib.wskey", "")){
+
+  # error checking
+  if(class(sru)!="character")
+    stop("SRU search must be a string")
+  if(class(max_records)!="numeric")
+    stop("max_records must be a number between 1 and 100")
+  if(max_records < 1 || max_records > 100)
+    stop("max_records must be a number between 1 and 100")
+  if(!(frbrGrouping %chin% c("on", "off")))
+    stop('frfbGrouping must be "on" or "off"')
+  if(class(start_at)!="numeric")
+    stop("start_at must be a number")
+
+  building <- "http://www.worldcat.org/webservices/catalog/search/worldcat/sru"
+
+  # wskey
+  building <- sprintf("%s?wskey=%s", building, wskey)
+
+  # sru query
+  building <- sprintf("%s&query=%s", building, URLencode(sru))
+
+  # max records
+  building <- sprintf("%s&maximumRecords=%s", building, max_records)
+
+  # frbr grouping
+  building <- sprintf("%s&frbrGrouping=%s", building, frbrGrouping)
+
+  # start at
+  building <- sprintf("%s&startRecord=%s", building, start_at)
+
+  # lib type appears not to matter
+
+  # Turns out that service level matters a great deal
+  building <- sprintf("%s&servicelevel=full", building)
+
+  building
+}
+
+
+worldcat_api_search_helper <- function(sru, max_records=100,
+                                       frbrGrouping="on", start_at=1,
+                                       wskey=getOption("libbib.wskey", ""),
+                                       more=TRUE,
+                                       debug=FALSE){
+
+  query <- result_number <- NULL
+
+  fullurl <- construct_wcapi_search_url(sru,
+                                        max_records=max_records,
+                                        frbrGrouping=frbrGrouping,
+                                        start_at=start_at,
+                                        wskey=wskey)
+  if(debug)
+    cat(sprintf("\n\nfull api call url:\n%s\n\n", fullurl))
+
+  resp <- worldcat_api_get_http_response(fullurl, print.api.responses=debug)
+  content <- resp$content
+
+  if(debug){
+    cat("\nSearch API response:\n")
+    cat(content)
+    cat("\nEnd of Search API response\n\n")
+  }
+
+  exemel <- xml2::read_xml(content, options=NULL)
+  xml2::xml_ns_strip(exemel)
+
+  num_results <- xml2::xml_text(xml2::xml_find_first(exemel, "//searchRetrieveResponse/numberOfRecords"))
+  all_records <- xml2::xml_find_all(exemel, "//searchRetrieveResponse/records/record/recordData/record")
+  num_records <- length(all_records)
+  if(num_records==0)
+    return(NULL)
+
+  tmp <- lapply(all_records, function(x){read_a_marcxml_record(x, more=more)})
+  ret <- rbindlist(tmp)
+
+  ret[, num_results:=num_results]
+  ret[, result_number:=seq(start_at, start_at+num_records-1)]
+  ret[, query:=sru]
+  setcolorder(ret, c("num_results", "result_number"))
+  ret[]
+}
+
+
+
+
+#' Use the WorldCat Search API
+#'
+#' STUB
+#'
+#' @param sru STUB
+#' @param max_records STUB
+#' @param frbrGrouping STUB
+#' @param start_at STUB
+#' @param wskey STUB
+#' @param more STUB
+#' @param print.progress STUB
+#' @param debug STUB
+#'
+#' @details
+#' STUB
+#'
+#' @return STUB
+#'
+#' @examples
+#'
+#' # STUB
+#'
+#' @export
+worldcat_api_search <- function(sru, max_records=10,
+                                 frbrGrouping="on", start_at=1,
+                                 wskey=getOption("libbib.wskey", ""),
+                                 more=TRUE, print.progress=TRUE,
+                                 debug=FALSE){
+  # debug implies print progress
+  if(debug) print.progress=TRUE
+
+  all_the_way_p <- FALSE
+  if(is.infinite(max_records)){
+    all_the_way_p <- TRUE
+    max_records <- 100
+  }
+
+  runninglist <- list()
+  counter <- 1
+  starting_at <- 1
+
+  ret <- worldcat_api_search_helper(sru, max_records=max_records,
+                                    frbrGrouping=frbrGrouping,
+                                    start_at=start_at,
+                                    wskey=wskey,
+                                    more=more, debug=debug)
+
+  if(is.null(ret)){
+    print("no results found")
+    return(NULL)
+  }
+
+  if(!all_the_way_p || ret[,.N]<100){
+    return(ret[])
+  }
+
+  runninglist[[counter]] <- ret
+  last_pull_n_count <- 100
+
+  while(last_pull_n_count==100){
+    starting_at <- 1+(100*counter)
+    cat(sprintf("request %s pulled %s rows... repeating, starting at result %s\n",
+                counter, last_pull_n_count, starting_at))
+
+    ret <- worldcat_api_search_helper(sru, max_records=max_records,
+                                      frbrGrouping=frbrGrouping,
+                                      start_at=starting_at,
+                                      wskey=wskey,
+                                      more=more, debug=debug)
+    counter <- counter + 1
+    runninglist[[counter]] <- ret
+    last_pull_n_count <- ret[,.N]
+  }
+
+  final <- rbindlist(runninglist)
+
+  cat(sprintf("request %s pulled %s rows, returning with all data tables with %s rows in total\n\n",
+              counter, last_pull_n_count, final[,.N]))
+
+  return(final[])
+}

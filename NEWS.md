@@ -32,6 +32,11 @@ where the formatting is better.**
    `data.table` containing (optionally, all) of the holding libraries
    for that standard number.
 
+10. Added functions to extract info from MARC leaders and 008 fields
+
+11. Added functions to use the WorldCat SRU search API and return a
+    `data.table` containing (optionally, all) of the results.
+
 ## bug fixes
 
 1. Expanded lc call <-> subject crosswalk (mainly for 'Law')

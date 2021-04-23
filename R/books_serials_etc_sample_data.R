@@ -8,7 +8,7 @@
 #'
 #' @docType data
 #'
-#' @usage data(books_and_serials_sample)
+#' @usage data(books_serials_etc_sample)
 #'
 #' @format An object of class \code{"data.table"};
 #'

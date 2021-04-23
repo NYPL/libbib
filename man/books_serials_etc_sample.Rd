@@ -8,7 +8,7 @@
 An object of class \code{"data.table"};
 }
 \usage{
-data(books_and_serials_sample)
+data(books_serials_etc_sample)
 }
 \description{
 A very small sample of books, serials, VHSs, CDs, and Computer files
