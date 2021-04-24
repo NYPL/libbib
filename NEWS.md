@@ -68,8 +68,6 @@ where the formatting is better.**
 2. WorldCat Search function now tolerant of newlines and multiple
    spaces. Now long queries can be look neat
 
-3. Stable releases will be prime numbers from now on (minus the decimal)
-
 ## small breaking changes
 
 1. `marc_008_get_info` no longer returns the original publication
