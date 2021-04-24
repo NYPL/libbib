@@ -64,7 +64,7 @@ automated tests, at time of writing
 2: 191264919                The economy of human life. /             2        1716
 3:  22571399                                   Solitude:             3        1716
 4:  65250134 The theory of moral sentiments, or, An e...             4        1716
-5:  13106952    Letters on the improvement of the mind :             5        1716 
+5:  13106952    Letters on the improvement of the mind :             5        1716
 
 > worldcat_api_bib_read_info_by_isbn("9780984201006")
         oclc          isbn   issn                        title
@@ -127,14 +127,14 @@ automated tests, at time of writing
 1: Language Material Monograph/Item
 
 # The Brothers Karamazov (1970 reissue but original publication date)
-> marc_008_get_info("950622r19701880ru            000 0 rus d")
+> marc_008_get_info("950622r19701880ru            000 0 rus d",
++                    original.pub.date=TRUE)
       pub_date pub_place_code lang_code
          <int>         <char>    <char>
   1:     1880             ru       rus
 
 # reissue publication date
-> marc_008_get_info("950622r19701880ru            000 0 rus d",
-                    original.pub.date=FALSE)
+> marc_008_get_info("950622r19701880ru            000 0 rus d")
       pub_date pub_place_code lang_code
          <int>         <char>    <char>
   1:     1970             ru       rus
@@ -245,10 +245,10 @@ Key: <thekey>
   (from https://www.oclc.org/content/dam/oclc/dewey/ddc23-summaries.pdf)
 - `books_serials_etc_sample` -  A very small sample of books, serials, VHSs,
   CDs, and Computer files and some information including title, control
-  numbers, call numbers, and call number subject classifications. Somewhat 
+  numbers, call numbers, and call number subject classifications. Somewhat
   messy/inconsistent (deliberately) and mainly for testing.
-  Will be expanded in future versions. 
-  
+  Will be expanded in future versions.
+
 ### Marc field deconstruction
 - `marc_leader_get_info`
 - `marc_008_get_info`
