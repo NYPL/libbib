@@ -8,5 +8,7 @@
 
 When checked with --as-cran and --no-manual
 there were no ERRORs or WARNINGs but 1 NOTE related
-to being a new submission
+to "WorldCat" being a possibly mis-spelled word
+(but it's a valid term in the context of this
+package)
 

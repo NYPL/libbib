@@ -16,33 +16,87 @@ worldcat_api_search(
 )
 }
 \arguments{
-\item{sru}{STUB}
+\item{sru}{The search query (in CQL syntax). See \code{examples} section
+for some examples.}
 
-\item{max_records}{STUB}
+\item{max_records}{The maximum number of search results to return.
+Must be a number between 0 and 100 or \code{Inf}.
+If \code{Inf} (default), the function will
+automatically make all follow-up requests to retrieve
+all search results. For safety, the default is 10.}
 
-\item{frbrGrouping}{STUB}
+\item{frbrGrouping}{With this parameter set to "on" (default),
+an attempt is made by the WorldCat API to group
+together similar editions and present only the top
+held record as the representative record for that group.}
 
-\item{start_at}{STUB}
+\item{start_at}{The search result to start at (default is 1)}
 
-\item{wskey}{STUB}
+\item{wskey}{A WorldCat API key (default is \code{getOption("libbib.wskey")})}
 
-\item{more}{STUB}
+\item{more}{A logical indicating whether more infomation from the MARCXML
+search results should be returned (publisher, bib level, etc....).
+(Default is \code{TRUE})}
 
-\item{print.progress}{STUB}
+\item{print.progress}{A logical indicating whether a message should be
+displayed for each API request. If \code{max_records}
+is \code{TRUE} a message will be displayed for every
+group of 100 search results the function fetches.
+(default is \code{TRUE})}
 
-\item{debug}{STUB}
+\item{debug}{A logical indicating whether the HTTP and API
+responses should be printed (for debugging)
+(default is \code{FALSE})}
 }
 \value{
-STUB
+A \code{data.table} containing the bibliographic metadata of the
+        results, along with the total number of results.
 }
 \description{
-STUB
+Searches WorldCat using a CQL query. Returns a \code{data.table}
+containing the bibliographic metadata of the results, along
+with the total number of results.
 }
 \details{
-STUB
+As with all API access functions in this package, it's up to the
+user to limit their API usage so as to not get blocked. These
+functions are deliberately not vectorized for this reason; they
+only accept one standard number at a time.
+
+This (and other) WorldCat API communication functions require a
+WorldCat API key. The easiest way to use these functions is to
+set a global options with your key:
+\code{options("libbib.wskey"="YOUR KEY HERE")}
 }
 \examples{
 
-# STUB
+\dontrun{
 
+# A title search of "The Brothers Karamazov"
+worldcat_api_search('srw.ti="Brothers Karamazov"')
+
+# Search for title "Madame Bovary" by author "Gustave Flaubert"
+# in language Greek (all results)
+sru <- 'srw.au="Gustave Flaubert" and srw.ti="Madame Bovary" and srw.la=gre'
+worldcat_api_search(sru, max_records=Inf)
+
+# Hip Hop (subject) materials on Cassette, CD, or wax from years 1987 to 1990
+sru <- '((srw.mt=cas or srw.mt=cda or srw.mt=lps) and srw.su="Rap") and srw.yr="1987-1990"'
+worldcat_api_search(sru)
+
+# all materials with keyword "Common Lisp" at The New York Public Library
+sru <- 'srw.kw="common lisp" and srw.li=NYP'
+worldcat_api_search(sru, max_records=Inf)
+
+# 19th century materials on ethics (Dewey code 170s / LC Call prefix BJ)
+sru <- '(srw.dd="17*" or srw.lc="bj*") and srw.yr="18*"'
+worldcat_api_search(sru, max_records=Inf)
+
+# Music (Dewey 780s) materials that are only held by The New York Public
+# Library (a "cg" code of 11 means there is only one holding)
+# [searching with debugging]
+sru <- 'srw.dd="78*" and srw.li=NYP and srw.cg=11'
+worldcat_api_search(sru, debug=TRUE)
+
+}
 }

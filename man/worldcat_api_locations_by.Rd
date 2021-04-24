@@ -85,11 +85,12 @@ an application where a user is not logged in to an
 institution, set this to "default". It is up to you
 to respect the WorldCat API's conditions.}
 
-\item{frbrGrouping}{With this parameter set to "on" (default), an attempt
-is made by the WorldCat API to group equivalent works
-(different editions, format, etc...) together. If not,
-only institutions holding the exact standard number
-specified will be returned.}
+\item{frbrGrouping}{With this parameter set to "on" (default),
+an attempt is made by the WorldCat API to group
+together similar editions and present only the top
+held record as the representative record for that group.
+If not, only institutions holding the exact standard
+number specified will be returned.}
 
 \item{libtype}{One of \code{NULL} (default), "academic", "public",
 "government", or "other". \code{NULL} will return all

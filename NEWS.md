@@ -3,7 +3,7 @@
 [latest news on GitHub](https://github.com/NYPL/libbib/blob/master/NEWS.md)
 where the formatting is better.**
 
-# libbib 2.0 (in development)
+# libbib 1.5
 
 ## new features
 

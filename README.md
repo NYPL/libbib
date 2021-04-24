@@ -8,11 +8,12 @@ libbib <img src="http://statethatiamin.com/media/libbibsmall.png" align="right" 
 
 
 ## Description
-An R package providing functions for for validating and normalizing
-bibliographic codes such as ISBN, ISSN, and LCCN. Includes functions to
-translate Call numbers (Library of Congress and Dewey Decimal) to their
-subject classifications or subclassifications. Also provides various
-loadable data files such call number / subject crosswalks and code
+An R package providing WorldCat API communication, functions for validating
+and normalizing bibliographic codes such as ISBN; ISSN; and LCCN, translation
+from call numbers (Library of Congress and Dewey Decimal) to their subject
+classifications or subclassifications, and other related utilities helpful
+for assessment librarians. Also provides various loadable data files such
+call number / subject crosswalks and code tables.
 
 Speed of execution and robustness are priorities in this package.
 To the end of optimizing speed and efficiency, careful consideration
@@ -52,6 +53,18 @@ automated tests, at time of writing
 
 > normalize_lccn(" 79139101 /AC/r932")
 [1] "79139101"
+
+> # Do a WorldCat APU search on 19th century materials on ethics
+> # (Dewey code 170s / LC Call prefix BJ)
+> results <- worldcat_api_search('(srw.dd="17*" or srw.lc="bj*") and srw.yr="18*"')
+> results[,.(oclc, title, result_number, num_results)][1:5]
+        oclc                                       title result_number num_results
+      <char>                                      <char>         <int>      <char>
+1:   8665856 The principles of moral and political ph...             1        1716
+2: 191264919                The economy of human life. /             2        1716
+3:  22571399                                   Solitude:             3        1716
+4:  65250134 The theory of moral sentiments, or, An e...             4        1716
+5:  13106952    Letters on the improvement of the mind :             5        1716 
 
 > worldcat_api_bib_read_info_by_isbn("9780984201006")
         oclc          isbn   issn                        title
