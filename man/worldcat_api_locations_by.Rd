@@ -15,7 +15,7 @@ worldcat_api_locations_by_oclc(
   servicelevel = "full",
   frbrGrouping = "on",
   libtype = NULL,
-  wskey = getOption("libbib.wskey", ""),
+  wskey = getOption("libbib.wskey", NULL),
   print.progress = TRUE,
   debug = FALSE
 )
@@ -28,7 +28,7 @@ worldcat_api_locations_by_isbn(
   servicelevel = "full",
   frbrGrouping = "on",
   libtype = NULL,
-  wskey = getOption("libbib.wskey", ""),
+  wskey = getOption("libbib.wskey", NULL),
   print.progress = TRUE,
   debug = FALSE
 )
@@ -41,7 +41,7 @@ worldcat_api_locations_by_issn(
   servicelevel = "full",
   frbrGrouping = "on",
   libtype = NULL,
-  wskey = getOption("libbib.wskey", ""),
+  wskey = getOption("libbib.wskey", NULL),
   print.progress = TRUE,
   debug = FALSE
 )

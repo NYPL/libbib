@@ -236,7 +236,6 @@ read_a_marcxml_record <- function(exemel, more=FALSE){
     final <- cbind(final, li, oi)
     # all_fast_topical_terms <- xml2::xml_text(xml2::xml_find_all(exemel, TOPICALXPATH))
     # print(all_fast_topical_terms)
-    # uses original pub date
     setcolorder(final, c("oclc", "isbn", "issn", "title", "author", "pub_date",
                          "lang_code", "bib_level", "record_type",
                          "pub_place_code", "publisher", "leader", "oh08"))
@@ -248,7 +247,7 @@ read_a_marcxml_record <- function(exemel, more=FALSE){
 
 worldcat_api_bib_read_info_by_something <- function(x,
                                                     type_std_num="oclc",
-                                                    wskey=getOption("libbib.wskey", ""),
+                                                    wskey=getOption("libbib.wskey", NULL),
                                                     more=FALSE,
                                                     debug=FALSE){
   # error checking
@@ -258,6 +257,8 @@ worldcat_api_bib_read_info_by_something <- function(x,
     stop("x must be a string or NULL")
   if(!(type_std_num %chin% c("oclc", "isbn", "issn")))
     stop('type of standard number must be "oclc", "isbn", or "issn"')
+  if(is.null(wskey))
+    stop("a WSKEY (WorldCat API key) must be specified")
 
 
   template <- "http://www.worldcat.org/webservices/catalog/content/%s%s?wskey=%s"
@@ -368,7 +369,7 @@ worldcat_api_bib_read_info_by_something <- function(x,
 #' @rdname worldcat_api_bib_read_info_by
 #' @export
 worldcat_api_bib_read_info_by_oclc <- function(x,
-                                               wskey=getOption("libbib.wskey", ""),
+                                               wskey=getOption("libbib.wskey", NULL),
                                                more=FALSE,
                                                debug=FALSE){
   # error checking
@@ -388,7 +389,7 @@ worldcat_api_bib_read_info_by_oclc <- function(x,
 #' @rdname worldcat_api_bib_read_info_by
 #' @export
 worldcat_api_bib_read_info_by_isbn <- function(x,
-                                               wskey=getOption("libbib.wskey", ""),
+                                               wskey=getOption("libbib.wskey", NULL),
                                                more=FALSE,
                                                debug=FALSE){
   # error checking
@@ -408,7 +409,7 @@ worldcat_api_bib_read_info_by_isbn <- function(x,
 #' @rdname worldcat_api_bib_read_info_by
 #' @export
 worldcat_api_bib_read_info_by_issn <- function(x,
-                                               wskey=getOption("libbib.wskey", ""),
+                                               wskey=getOption("libbib.wskey", NULL),
                                                more=FALSE,
                                                debug=FALSE){
   # error checking
@@ -443,7 +444,7 @@ construct_wcapiloc_url <- function(stdnum,
                                    frbrGrouping="on",
                                    libtype=NULL,
                                    start_at=1,
-                                   wskey=getOption("libbib.wskey", "")){
+                                   wskey=getOption("libbib.wskey", NULL)){
 
   # error checking
   if(class(stdnum)!="character")
@@ -464,6 +465,8 @@ construct_wcapiloc_url <- function(stdnum,
     stop('libtype must be either NULL, "academic", "public", "government", or "other"')
   if(class(start_at)!="numeric")
     stop("start_at must be a number")
+  if(is.null(wskey))
+    stop("a WSKEY (WorldCat API key) must be specified")
 
   building <- "http://www.worldcat.org/webservices/catalog/content/libraries/"
 
@@ -516,7 +519,7 @@ worldcat_api_locations_helper <- function(x,
                                           frbrGrouping="on",
                                           libtype=NULL,
                                           start_at=1,
-                                          wskey=getOption("libbib.wskey", ""),
+                                          wskey=getOption("libbib.wskey", NULL),
                                           debug=FALSE){
   fullurl <- construct_wcapiloc_url(x, type_std_num=type_std_num,
                                     location=location,
@@ -565,7 +568,7 @@ worldcat_api_locations_by_something <- function(x,
                                                servicelevel="full",
                                                frbrGrouping="on",
                                                libtype=NULL,
-                                               wskey=getOption("libbib.wskey", ""),
+                                               wskey=getOption("libbib.wskey", NULL),
                                                print.progress=TRUE,
                                                debug=FALSE){
   # error checking
@@ -777,7 +780,7 @@ worldcat_api_locations_by_oclc <- function(x,
                                           servicelevel="full",
                                           frbrGrouping="on",
                                           libtype=NULL,
-                                          wskey=getOption("libbib.wskey", ""),
+                                          wskey=getOption("libbib.wskey", NULL),
                                           print.progress=TRUE,
                                           debug=FALSE){
   ret <- worldcat_api_locations_by_something(x, type_std_num="oclc",
@@ -806,7 +809,7 @@ worldcat_api_locations_by_isbn <- function(x,
                                           servicelevel="full",
                                           frbrGrouping="on",
                                           libtype=NULL,
-                                          wskey=getOption("libbib.wskey", ""),
+                                          wskey=getOption("libbib.wskey", NULL),
                                           print.progress=TRUE,
                                           debug=FALSE){
   ret <- worldcat_api_locations_by_something(x, type_std_num="isbn",
@@ -834,7 +837,7 @@ worldcat_api_locations_by_issn <- function(x,
                                           servicelevel="full",
                                           frbrGrouping="on",
                                           libtype=NULL,
-                                          wskey=getOption("libbib.wskey", ""),
+                                          wskey=getOption("libbib.wskey", NULL),
                                           print.progress=TRUE,
                                           debug=FALSE){
   ret <- worldcat_api_locations_by_something(x, type_std_num="issn",
@@ -864,7 +867,7 @@ worldcat_api_locations_by_issn <- function(x,
 # un-exported helper function
 construct_wcapi_search_url <- function(sru, max_records=100,
                                        frbrGrouping="on", start_at=1,
-                                       wskey=getOption("libbib.wskey", "")){
+                                       wskey=getOption("libbib.wskey", NULL)){
   # error checking
   if(class(sru)!="character")
     stop("SRU search must be a string")
@@ -876,6 +879,12 @@ construct_wcapi_search_url <- function(sru, max_records=100,
     stop('frfbGrouping must be "on" or "off"')
   if(class(start_at)!="numeric")
     stop("start_at must be a number")
+  if(is.null(wskey))
+    stop("a WSKEY (WorldCat API key) must be specified")
+
+  # clean SRU query
+  sru <- stringr::str_replace_all(sru, "[\r\n]" , "")
+  sru <- stringr::str_replace_all(sru, "  *" , " ")
 
   building <- "http://www.worldcat.org/webservices/catalog/search/worldcat/sru"
 
@@ -905,7 +914,7 @@ construct_wcapi_search_url <- function(sru, max_records=100,
 
 worldcat_api_search_helper <- function(sru, max_records=100,
                                        frbrGrouping="on", start_at=1,
-                                       wskey=getOption("libbib.wskey", ""),
+                                       wskey=getOption("libbib.wskey", NULL),
                                        more=TRUE,
                                        debug=FALSE){
 
@@ -1026,11 +1035,14 @@ worldcat_api_search_helper <- function(sru, max_records=100,
 #' sru <- 'srw.dd="78*" and srw.li=NYP and srw.cg=11'
 #' worldcat_api_search(sru, debug=TRUE)
 #'
+#' Keyword search for "danger music" from year 2010 to present
+#' worldcat_api_search('srw.kw="danger music" and srw.yr="2010-"')
+#'
 #' }
 #' @export
 worldcat_api_search <- function(sru, max_records=10,
                                  frbrGrouping="on", start_at=1,
-                                 wskey=getOption("libbib.wskey", ""),
+                                 wskey=getOption("libbib.wskey", NULL),
                                  more=TRUE, print.progress=TRUE,
                                  debug=FALSE){
   # debug implies print progress

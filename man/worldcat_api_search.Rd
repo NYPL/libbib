@@ -9,7 +9,7 @@ worldcat_api_search(
   max_records = 10,
   frbrGrouping = "on",
   start_at = 1,
-  wskey = getOption("libbib.wskey", ""),
+  wskey = getOption("libbib.wskey", NULL),
   more = TRUE,
   print.progress = TRUE,
   debug = FALSE
@@ -97,6 +97,9 @@ worldcat_api_search(sru, max_records=Inf)
 # [searching with debugging]
 sru <- 'srw.dd="78*" and srw.li=NYP and srw.cg=11'
 worldcat_api_search(sru, debug=TRUE)
+
+Keyword search for "danger music" from year 2010 to present
+worldcat_api_search('srw.kw="danger music" and srw.yr="2010-"')
 
 }
 }

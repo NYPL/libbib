@@ -6,19 +6,23 @@
 \usage{
 marc_008_get_info(
   x,
-  original.pub.date = TRUE,
+  original.pub.date = FALSE,
   include.questionable.dates = FALSE
 )
 }
 \arguments{
 \item{x}{A string (or vector of strings) of LCCNs}
 
-\item{original.pub.date}{If \code{TRUE} (default) and if applicable,
+\item{original.pub.date}{If \code{TRUE} and if applicable,
 return the original publication date, not
-the re-issue publication date}
+the re-issue publication date. (Default
+is \code{FALSE})}
 
 \item{include.questionable.dates}{A logical indicating whether "questionable"
-dates should be replaced with \code{NA}}
+dates should be replaced with \code{NA}.
+Questionable dates are when the "type of
+date" in character position 06 is "q".
+(default is \code{FALSE})}
 }
 \value{
 A \code{data.table}
@@ -28,20 +32,24 @@ Takes one or more MARC 008 fields (string/strings) and returns a
 \code{data.table} containing the publication date, publication
 place code, and language code.
 }
+\details{
+If any date element is "unknown" (contains a "u"), the returned
+date is NA. The returned date is always an integer.
+}
 \examples{
 
-# The Brothers Karamazov (1970 reissue but original publication date)
-marc_008_get_info("950622r19701880ru            000 0 rus d")
-#    pub_date pub_place_code lang_code
-#       <int>         <char>    <char>
-# 1:     1880             ru       rus
-
 # reissue publication date
-marc_008_get_info("950622r19701880ru            000 0 rus d",
-                  original.pub.date=FALSE)
+marc_008_get_info("950622r19701880ru            000 0 rus d")
 #     pub_date pub_place_code lang_code
 #        <int>         <char>    <char>
 #  1:     1970             ru       rus
+
+# The Brothers Karamazov (1970 reissue but original publication date)
+marc_008_get_info("950622r19701880ru            000 0 rus d",
+                  original.pub.date=TRUE)
+#    pub_date pub_place_code lang_code
+#       <int>         <char>    <char>
+# 1:     1880             ru       rus
 
 # vectorized
 marc_008_get_info(c("101106s1992    gr            000 1 gre d", NA,

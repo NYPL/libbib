@@ -9,21 +9,21 @@
 \usage{
 worldcat_api_bib_read_info_by_oclc(
   x,
-  wskey = getOption("libbib.wskey", ""),
+  wskey = getOption("libbib.wskey", NULL),
   more = FALSE,
   debug = FALSE
 )
 
 worldcat_api_bib_read_info_by_isbn(
   x,
-  wskey = getOption("libbib.wskey", ""),
+  wskey = getOption("libbib.wskey", NULL),
   more = FALSE,
   debug = FALSE
 )
 
 worldcat_api_bib_read_info_by_issn(
   x,
-  wskey = getOption("libbib.wskey", ""),
+  wskey = getOption("libbib.wskey", NULL),
   more = FALSE,
   debug = FALSE
 )

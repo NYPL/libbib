@@ -3,6 +3,31 @@
 [latest news on GitHub](https://github.com/NYPL/libbib/blob/master/NEWS.md)
 where the formatting is better.**
 
+# libbib 1.7 (in development)
+
+## new features
+
+## bug fixes
+
+## improvements
+
+1. WorldCat API functions will now error if no WSKEY is provided
+   (either with `options("libbib.wskey"=...)` or explicitly
+   in the formal parameters
+
+2. WorldCat Search function now tolerant of newlines and multiple
+   spaces. Now long queries can be look neat
+
+3. Stable releases will be prime numbers from now on (minus the decimal)
+
+## small breaking changes
+
+1. `marc_008_get_info` no longer returns the original publication
+   date by default
+
+2. excluding "questionable dates" in `marc_008_get_info` just NAs
+   character position 6="q", now
+
 # libbib 1.5
 
 ## new features

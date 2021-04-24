@@ -69,29 +69,37 @@ marc_leader_get_info <- function(x){
 #' \code{data.table} containing the publication date, publication
 #' place code, and language code.
 #'
+#' @details
+#' If any date element is "unknown" (contains a "u"), the returned
+#' date is NA. The returned date is always an integer.
+#'
 #' @param x A string (or vector of strings) of LCCNs
-#' @param original.pub.date If \code{TRUE} (default) and if applicable,
+#' @param original.pub.date If \code{TRUE} and if applicable,
 #'                          return the original publication date, not
-#'                          the re-issue publication date
+#'                          the re-issue publication date. (Default
+#'                          is \code{FALSE})
 #' @param include.questionable.dates A logical indicating whether "questionable"
-#'                                   dates should be replaced with \code{NA}
+#'                                   dates should be replaced with \code{NA}.
+#'                                   Questionable dates are when the "type of
+#'                                   date" in character position 06 is "q".
+#'                                   (default is \code{FALSE})
 #'
 #' @return A \code{data.table}
 #'
 #' @examples
 #'
-#' # The Brothers Karamazov (1970 reissue but original publication date)
-#' marc_008_get_info("950622r19701880ru            000 0 rus d")
-#' #    pub_date pub_place_code lang_code
-#' #       <int>         <char>    <char>
-#' # 1:     1880             ru       rus
-#'
 #' # reissue publication date
-#' marc_008_get_info("950622r19701880ru            000 0 rus d",
-#'                   original.pub.date=FALSE)
+#' marc_008_get_info("950622r19701880ru            000 0 rus d")
 #' #     pub_date pub_place_code lang_code
 #' #        <int>         <char>    <char>
 #' #  1:     1970             ru       rus
+#'
+#' # The Brothers Karamazov (1970 reissue but original publication date)
+#' marc_008_get_info("950622r19701880ru            000 0 rus d",
+#'                   original.pub.date=TRUE)
+#' #    pub_date pub_place_code lang_code
+#' #       <int>         <char>    <char>
+#' # 1:     1880             ru       rus
 #'
 #' # vectorized
 #' marc_008_get_info(c("101106s1992    gr            000 1 gre d", NA,
@@ -103,7 +111,7 @@ marc_leader_get_info <- function(x){
 #' #   3:     2017             ag       spa
 #'
 #' @export
-marc_008_get_info <- function(x, original.pub.date=TRUE,
+marc_008_get_info <- function(x, original.pub.date=FALSE,
                               include.questionable.dates=FALSE){
   if(class(x)!="character")
     stop("x must be a string or NA")
@@ -121,7 +129,7 @@ marc_008_get_info <- function(x, original.pub.date=TRUE,
     ret[status=="r" & !is.na(date2), pub_date:=date2]
   }
   if(!include.questionable.dates)
-    ret[!(status %chin% c("r", "s")), pub_date:=NA]
+    ret[status=="q", pub_date:=NA]
   ret[!stringr::str_detect(pub_date, "^\\d{3,4}$"), pub_date:=NA]
   ret[,pub_date:=as.integer(pub_date)]
   ret[,status:=NULL]
