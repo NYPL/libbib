@@ -7,19 +7,19 @@
 \alias{worldcat_api_classify_by_issn}
 \title{Search WorldCat classify API by ISBN, ISSN, or OCLC number}
 \usage{
-worldcat_api_classify_by_oclc(x, print.api.responses = FALSE)
+worldcat_api_classify_by_oclc(x, debug = FALSE)
 
-worldcat_api_classify_by_isbn(x, print.api.responses = FALSE)
+worldcat_api_classify_by_isbn(x, debug = FALSE)
 
-worldcat_api_classify_by_issn(x, print.api.responses = FALSE)
+worldcat_api_classify_by_issn(x, debug = FALSE)
 }
 \arguments{
 \item{x}{A string representation of the standard number that the function
 chosen accepts.}
 
-\item{print.api.responses}{A logical indicating whether the HTTP and
-classify API responses should be printed
-(for debugging) (default is \code{FALSE})}
+\item{debug}{A logical indicating whether the HTTP and classify API
+responses should be printed (for debugging)
+(default is \code{FALSE})}
 }
 \value{
 A \code{data.table} with most popular DCC and LCC call numbers

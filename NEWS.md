@@ -54,10 +54,12 @@ where the formatting is better.**
 - Mention hard dependency on data.table, pbapply, and stringr in README
 - Multijoin routine?
 - Is pbapply linux only?
+- Should I be using `message`, or conditions/error-handling?
 
 ## new features
 
 ## bug fixes
+1. `print.progress` conditional now works for Location and Search API functions
 
 ## improvements
 
@@ -68,6 +70,8 @@ where the formatting is better.**
 2. WorldCat Search function now tolerant of newlines and multiple
    spaces. Now long queries can be look neat
 
+3. More of the diagnostic output now uses `message` instead of `print` or `cat`
+
 ## small breaking changes
 
 1. `marc_008_get_info` no longer returns the original publication
@@ -75,6 +79,11 @@ where the formatting is better.**
 
 2. excluding "questionable dates" in `marc_008_get_info` just NAs
    character position 6="q", now
+
+3. The `print.api.responses` parameter in the Classify API functions has
+   been changed to `debug` to be more consistent with the other API functions.
+
+-----
 
 # libbib 1.5
 
