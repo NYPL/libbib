@@ -12,8 +12,6 @@ where the formatting is better.**
   * explain, for example, frbrGrouping
   * include all those cool links
   * mention that some docs say sru. but it's srw.
-- Put date of CRAN release in NEWS
-- Can you put spaces between equals?
 - Propagate `original.pub.date` in, for example, the search function
 - Explore and test limits of every index available
   * include relations operators
@@ -30,8 +28,6 @@ where the formatting is better.**
 - Make WorldCat search not have to be Inf but above 100
 - Make sure all good examples from dsads.R are in docs
 - What about pub date for serials?
-- If no results are found, give the XML message
-  * better handling of bad return/status codes
 - Look in to the following repositories
   * xlcnd/isbnlib
     - uses google book and wiki apis?
@@ -49,17 +45,19 @@ where the formatting is better.**
   * https://www.librarything.com/api/thingISBN/9780984201006
 - Look into FAST API
 - Read my own documentation links again?
-- LazyLoad data? Why?
 - Better handling on NAs in split_map...?
 - Mention hard dependency on data.table, pbapply, and stringr in README
 - Multijoin routine?
 - Is pbapply linux only?
-- Should I be using `message`, or conditions/error-handling?
+- Should I be using conditions/error-handling?
 
 ## new features
 
 ## bug fixes
 1. `print.progress` conditional now works for Location and Search API functions
+
+2. Fixed a bug where if the number of search results was an exact multiple
+   of 100, the search api function wouldn't return anything
 
 ## improvements
 
@@ -72,6 +70,10 @@ where the formatting is better.**
 
 3. More of the diagnostic output now uses `message` instead of `print` or `cat`
 
+4. If no Search API results are returned, the function prints the any
+   diagnostic message returned from the Search API
+   (things like Query syntax operators and unsupported indexes)
+
 ## small breaking changes
 
 1. `marc_008_get_info` no longer returns the original publication
@@ -83,9 +85,12 @@ where the formatting is better.**
 3. The `print.api.responses` parameter in the Classify API functions has
    been changed to `debug` to be more consistent with the other API functions.
 
+4. `num_total` column in search results has been renamed the (more descriptive)
+   `total_wc_results`
+
 -----
 
-# libbib 1.5
+# libbib 1.5 (on CRAN 2021-04-24)
 
 ## new features
 

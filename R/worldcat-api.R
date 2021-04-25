@@ -943,19 +943,26 @@ worldcat_api_search_helper <- function(sru, max_records=100,
   exemel <- xml2::read_xml(content, options=NULL)
   xml2::xml_ns_strip(exemel)
 
-  num_results <- xml2::xml_text(xml2::xml_find_first(exemel, "//searchRetrieveResponse/numberOfRecords"))
+  total_wc_results <- xml2::xml_text(xml2::xml_find_first(exemel, "//searchRetrieveResponse/numberOfRecords"))
   all_records <- xml2::xml_find_all(exemel, "//searchRetrieveResponse/records/record/recordData/record")
   num_records <- length(all_records)
-  if(num_records==0)
+  if(num_records==0){
+    diag.message <- xml2::xml_find_first(exemel, "//searchRetrieveResponse/diagnostics/diagnostic/message")
+    diag.details <- xml2::xml_find_first(exemel, "//searchRetrieveResponse/diagnostics/diagnostic/details")
+    if(length(diag.message)>0){
+      message("Received diagnostic message: ", xml2::xml_text(diag.message),
+              " (", xml2::xml_text(diag.details), ")")
+    }
     return(NULL)
+  }
 
   tmp <- lapply(all_records, function(x){read_a_marcxml_record(x, more=more)})
   ret <- rbindlist(tmp)
 
-  ret[, num_results:=num_results]
+  ret[, total_wc_results:=total_wc_results]
   ret[, result_number:=seq(start_at, start_at+num_records-1)]
   ret[, query:=sru]
-  setcolorder(ret, c("num_results", "result_number"))
+  setcolorder(ret, c("total_wc_results", "result_number"))
   ret[]
 }
 
@@ -1090,9 +1097,14 @@ worldcat_api_search <- function(sru, max_records=10,
                                       start_at=starting_at,
                                       wskey=wskey,
                                       more=more, debug=debug)
-    counter <- counter + 1
-    runninglist[[counter]] <- ret
-    last_pull_n_count <- ret[,.N]
+
+    if(is.null(ret)){
+      last_pull_n_count <- 0
+    } else{
+      counter <- counter + 1
+      runninglist[[counter]] <- ret
+      last_pull_n_count <- ret[,.N]
+    }
   }
 
   final <- rbindlist(runninglist)
