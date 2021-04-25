@@ -1,0 +1,68 @@
+---
+title: "Using the WorldCat Search API"
+# title: "using-the-worldcat-search-api"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Using the WorldCat Search API}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+## Sundry External / archived documentation links
+
+- __WorldCat Search API > Using the API > Request Types > SRU__
+
+  _(archived OCLC documentation link from 2013)_
+  
+  Examples of simple SRU requests and explanation of `frbrGrouping`
+  and `servicelevel` parameters
+  
+  <https://web.archive.org/web/20130915101249/http://oclc.org/developer/documentation/worldcat-search-api/sru>
+
+
+- __WorldCat Search API > Indexes__
+
+  _(archived OCLC documentation link from 2013)_
+  
+  Explation of relations operators, title index stop-words (removed words),
+  the MARC subfields search by the subject index, and explation of the
+  wildcard characters `*`; `#`; and `?`.
+  
+  <https://web.archive.org/web/20130530034745/http://oclc.org/developer/documentation/worldcat-search-api/indexes>
+
+
+- __WorldCat Search API > Indexes > Complete List of Indexes__
+
+  _(archived OCLC documentation link from 2013)_
+  
+  Explation of relations operators and a complete list of all indexes, their
+  respective SRU index code, the relations available for use with each, and
+  the MARC fields search for each index. Here, the SRU index codes have a
+  prefix of `sru`, but it's really `srw`.
+
+  <https://web.archive.org/web/20130915101232/http://oclc.org/developer/documentation/worldcat-search-api/complete-list-indexes>
+  
+  
+- __Material Types Names and Codes__
+
+  _Link to current OCLC documentation (but archived for posterity)_
+  
+  A complete list of Material Types you can search for, their codes 
+  
+  For use with the `srw.mt` index.
+
+  <https://web.archive.org/web/20210425140401/https://help.oclc.org/Librarian_Toolbox/Searching_WorldCat_Indexes/Bibliographic_records/Material_Type_names_and_codes?sl=en>
+  
+  
+  
+  
+  
+  

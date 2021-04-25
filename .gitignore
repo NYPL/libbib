@@ -25,3 +25,4 @@ recent_documentation.pdf
 *.exe
 *.out
 *.app
+inst/doc
