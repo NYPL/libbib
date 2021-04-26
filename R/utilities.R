@@ -317,3 +317,59 @@ dt_add_to_col_names <- function(DT, astring, prefix=FALSE,
 
   setnames(DT, tmp[,new_names])
 }
+
+
+
+# unexported function to assist with WorldCat Search API SRU queries
+sru_syntax_translate_worldcat <- function(x){
+  index.xlation.table <- list(
+    c("srw.kw",  "\\$keyword"),
+    c("srw.ti",  "\\$title"),
+    c("srw.ln",  "\\$language"),
+    c("srw.au",  "\\$author"),
+    c("srw.yr",  "\\$year"),
+    c("srw.su",  "\\$subject"),
+    c("srw.li",  "\\$holding_library"),
+    c("srw.mt",  "\\$material_type"),
+    c("srw.no",  "\\$oclc"),
+    c("srw.lc",  "\\$lc_call"),
+    c("srw.dd",  "\\$dewey"),
+    c("srw.dn",  "\\$lccn"),
+    c("srw.bn",  "\\$isbn"),
+    c("srw.in",  "\\$issn"),
+    c("srw.cg",  "\\$library_holdings_group"),
+    c("srw.la",  "\\$language_code"),
+    c("srw.pl",  "\\$place_of_publication"),
+    c("srw.pb",  "\\$publisher"),
+    c("srw.am",  "\\$access_method"),
+    c("srw.cn",  "\\$corporate_conference_name"),
+    c("srw.pc",  "\\$dlc_limit"),
+    c("srw.dt",  "\\$document_type"),
+    c("srw.gn",  "\\$government_document_number"),
+    c("srw.mn",  "\\$music_publisher_number"),
+    c("srw.nt",  "\\$notes"),
+    c("srw.on",  "\\$open_digital_limit"),
+    c("srw.pn",  "\\$personal_name"),
+    c("srw.se",  "\\$series"),
+    c("srw.sn",  "\\$standard_number")
+  )
+
+  xlate.each.index.one <- function(y){
+    x <<- stringr::str_replace_all(x,
+                                   # negative lookbehind assertion
+                                   sprintf('(?<![\\w\\\\])%s', y[2]),
+                                   y[1])
+  }
+
+  rem.escapes <- function(y){
+    x <<- gsub(sprintf('%s', y[2]), gsub("^.", "", y[2], perl=TRUE), x, fixed=TRUE)
+  }
+
+  lapply(index.xlation.table, xlate.each.index.one)
+  lapply(index.xlation.table, rem.escapes)
+
+  # mat type
+
+  x
+}
+

@@ -26,3 +26,5 @@ recent_documentation.pdf
 *.out
 *.app
 inst/doc
+/doc/
+/Meta/

@@ -6,9 +6,11 @@ where the formatting is better.**
 # libbib 1.7 (in development)
 
 ## TODOs
+- Mention needing an API key in README (and how to get one)
 - Explore manual firstsearch/expertsearch and parameters yielded
 - Write searching vignette
   * stress SRU, not OpenSearch
+  * mention needed API key (and how to get one)
   * explain, for example, frbrGrouping
   * include all those cool links
   * mention that some docs say sru. but it's srw.
@@ -22,8 +24,6 @@ where the formatting is better.**
   * auto detect if no 'srw\.'
   * maybe translate matereial type and number of holdings, too
   * write a lot of tests. beware of quotes in the regex
-- What's going on with the two NYPL identifiers? Search in each
-- Test search for 'finnegan's wake' (single apostrophe)
 - Take getting the FAST subjects (xpath) seriously
 - Make WorldCat search not have to be Inf but above 100
 - Make sure all good examples from dsads.R are in docs
@@ -50,8 +50,23 @@ where the formatting is better.**
 - Multijoin routine?
 - Is pbapply linux only?
 - Should I be using conditions/error-handling?
+- HathiTrust
+  * https://www.hathitrust.org/bib_api
+  * https://www.hathitrust.org/hathifiles
+- Communicate with Library of Congress SRU servers?
+  * https://www.loc.gov/standards/sru/resources/lcServers.html
+  * http://lx2.loc.gov:210/lcdb?version=1.1&operation=searchRetrieve&query=%22Marv%20Throneberry%22&startRecord=1&maximumRecords=5&recordSchema=marcxml
 
 ## new features
+
+1. Wrote a translation layer to translate more human-readable aliases
+   of every WorldCat SRU search index to their formal name. The
+   `worldcat_api_search` function now uses this by default. You can still use
+   the formal names, and even mix codes in the same query. The function
+   documentation has been updated to reflect these new aliases.
+
+2. A vignette on how to use the WorldCat search API is now available
+   this a ton of very useful information.
 
 ## bug fixes
 1. `print.progress` conditional now works for Location and Search API functions

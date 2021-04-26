@@ -975,6 +975,9 @@ worldcat_api_search_helper <- function(sru, max_records=100,
 #' containing the bibliographic metadata of the results, along
 #' with the total number of results.
 #'
+#' There is an entire vignette dedicated to this function; to view it,
+#' execute \code{vignette("using-the-worldcat-search-api")}
+#'
 #' @param sru The search query (in CQL syntax). See \code{examples} section
 #'            for some examples.
 #' @param max_records The maximum number of search results to return.
@@ -982,6 +985,12 @@ worldcat_api_search_helper <- function(sru, max_records=100,
 #'                    If \code{Inf} (default), the function will
 #'                    automatically make all follow-up requests to retrieve
 #'                    all search results. For safety, the default is 10.
+#' @param sru_query_assist A logical indicating whether translation from
+#'                         more human-readable aliases to the SRU search
+#'                         index codes should be allowed. See details for
+#'                         more information. (default is \code{TRUE}). You
+#'                         can control this parameter globally by setting
+#'                         \code{options("libbib.sru_query_assist")}.
 #' @param frbrGrouping With this parameter set to "on" (default),
 #'                     an attempt is made by the WorldCat API to group
 #'                     together similar editions and present only the top
@@ -1002,6 +1011,13 @@ worldcat_api_search_helper <- function(sru, max_records=100,
 #'
 #' @details
 #'
+#' By default, this function allows for the usage of more human-readable
+#' aliases to the arcane SRU search index codes. This allows you, for
+#' example, to search using "$title" instead of "srw.ti". This behavior is
+#' controlled using the `sru_query_assist` parameter. If it is \code{TRUE}
+#' (the default) you can still use the formal search index codes. See
+#' \code{vignette("using-the-worldcat-search-api")} for more information.
+#'
 #' As with all API access functions in this package, it's up to the
 #' user to limit their API usage so as to not get blocked. These
 #' functions are deliberately not vectorized for this reason; they
@@ -1019,44 +1035,58 @@ worldcat_api_search_helper <- function(sru, max_records=100,
 #'
 #' \dontrun{
 #'
-#' # A title search of "The Brothers Karamazov"
-#' worldcat_api_search('srw.ti="Brothers Karamazov"')
+#' # A title search for "The Brothers Karamazov"
+#' worldcat_api_search('$title = "Brothers Karamazov"')
+#'
+#' # An exact title search for "The Brothers Karamazov"
+#' worldcat_api_search('$title exact "Brothers Karamazov"')
 #'
 #' # Search for title "Madame Bovary" by author "Gustave Flaubert"
 #' # in language Greek (all results)
-#' sru <- 'srw.au="Gustave Flaubert" and srw.ti="Madame Bovary" and srw.la=gre'
+#' # (queries may span multiple lines)
+#' sru <- '$author = "Gustave Flaubert" and $title="Madame Bovary"
+#'           and $language=greek'
 #' worldcat_api_search(sru, max_records=Inf)
 #'
 #' # Hip Hop (subject) materials on Cassette, CD, or wax from years 1987 to 1990
-#' sru <- '((srw.mt=cas or srw.mt=cda or srw.mt=lps) and srw.su="Rap") and srw.yr="1987-1990"'
+#' sru <- '(($material_type=cas or $material_type=cda or $material_type=lps)
+#'            and $subject="Rap") and $year="1987-1990"'
 #' worldcat_api_search(sru)
 #'
 #' # all materials with keyword "Common Lisp" at The New York Public Library
-#' sru <- 'srw.kw="common lisp" and srw.li=NYP'
+#' sru <- '$keyword="common lisp" and $holding_library=NYP'
 #' worldcat_api_search(sru, max_records=Inf)
 #'
 #' # 19th century materials on ethics (Dewey code 170s / LC Call prefix BJ)
-#' sru <- '(srw.dd="17*" or srw.lc="bj*") and srw.yr="18*"'
+#' sru <- '($dewey="17*" or $lc_call="bj*") and $year="18*"'
 #' worldcat_api_search(sru, max_records=Inf)
 #'
 #' # Music (Dewey 780s) materials that are only held by The New York Public
 #' # Library (a "cg" code of 11 means there is only one holding)
 #' # [searching with debugging]
-#' sru <- 'srw.dd="78*" and srw.li=NYP and srw.cg=11'
+#' sru <- '$dewey="78*" and $holding_library=NYP
+#'           and $library_holdings_group=11'
 #' worldcat_api_search(sru, debug=TRUE)
 #'
 #' Keyword search for "danger music" from year 2010 to present
-#' worldcat_api_search('srw.kw="danger music" and srw.yr="2010-"')
+#' worldcat_api_search('$keyword="danger music" and $year="2010-"')
 #'
 #' }
 #' @export
 worldcat_api_search <- function(sru, max_records=10,
-                                 frbrGrouping="on", start_at=1,
-                                 wskey=getOption("libbib.wskey", NULL),
-                                 more=TRUE, print.progress=TRUE,
-                                 debug=FALSE){
+                                sru_query_assist=getOption("libbib.sru_query_assist", TRUE),
+                                frbrGrouping="on", start_at=1,
+                                wskey=getOption("libbib.wskey", NULL),
+                                more=TRUE, print.progress=TRUE,
+                                debug=FALSE){
   # debug implies print progress
   if(debug) print.progress=TRUE
+
+  # sru_query_assist (translate helpful names to worldcat SRU indexes)
+  if(sru_query_assist){
+    sru <- sru_syntax_translate_worldcat(sru)
+    if(debug) message("final (possibly translated) sru is: '", sru, "'")
+  }
 
   all_the_way_p <- FALSE
   if(is.infinite(max_records)){
