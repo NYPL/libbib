@@ -885,10 +885,6 @@ construct_wcapi_search_url <- function(sru, max_records=100,
   if(is.null(wskey))
     stop("a WSKEY (WorldCat API key) must be specified")
 
-  # clean SRU query
-  sru <- stringr::str_replace_all(sru, "[\r\n]" , "")
-  sru <- stringr::str_replace_all(sru, "  *" , " ")
-
   building <- "http://www.worldcat.org/webservices/catalog/search/worldcat/sru"
 
   # wskey
@@ -1081,6 +1077,10 @@ worldcat_api_search <- function(sru, max_records=10,
                                 debug=FALSE){
   # debug implies print progress
   if(debug) print.progress=TRUE
+
+  # clean SRU query
+  sru <- stringr::str_replace_all(sru, "[\r\n]" , "")
+  sru <- stringr::str_replace_all(sru, "  *" , " ")
 
   # sru_query_assist (translate helpful names to worldcat SRU indexes)
   if(sru_query_assist){

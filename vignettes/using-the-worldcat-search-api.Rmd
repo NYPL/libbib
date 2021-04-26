@@ -16,7 +16,283 @@ knitr::opts_chunk$set(
 ```
 
 
-## Sundry External / archived documentation links
+`libbib`'s ability to communicate to the WorldCat Search API is probably
+the most helpful capability of the package. As such, an entire vignette
+dedicated to this powerful tool is warranted.
+
+Also of note is that documentation on how to use this API
+is scattered throughout the web, in different places, and
+sometimes even no longer available and only accessible through the
+internet archive. Because of this, the goal of this vignette is not
+only to document `libbib`'s `worldcat_api_search` function, but to
+provide a single location for compiling this archived documentation
+and providing information/examples of what the WorldCat Search API is
+capable, in general.
+
+The terminology/nomenclature of the different WorldCat API offerings
+is fuzzy and inconsistent. The specific kind of Search API that this package
+offers usage of can, more specifically, be described as the
+'WorldCat SRU Search API version 1'.
+
+There is a version 2 of this API, but version 1 hasn't been sunsetted as
+of yet.
+
+First, let's speak of what this API is and what it is not.
+
+## What the WorldCat SRU Search API is
+
+This API is allows a developer to search for bibliographic records that
+are cataloged in WorldCat.
+
+The queries are made using [the SRU standard search protocol](https://en.wikipedia.org/wiki/Search/Retrieve_via_URL)
+(Search/Retrieve via URL) using a standard query syntax called [CQL](https://en.wikipedia.org/wiki/Contextual_Query_Language)
+(Contextual Query Language). The WorldCat Search API doesn't implement
+all features of CQL; this vignette will illustrate SRU/CQL only
+insofar as it is supported by this API.
+
+This API is open to libraries that maintain both WorldCat Discovery and
+OCLC Cataloging subscriptions and needs an API key (called a `WSKey`) to work.
+A request can be made for a key (if your institution doesn't already have one)
+via [this link.](https://help.oclc.org/Discovery_and_Reference/WorldCat_Discovery/Troubleshooting/How_do_I_request_a_WSKey_for_the_WorldCat_Search_API)
+
+## What the WorldCat SRU Search API is not
+
+This API is not the OpenSearch/Basic API, which doesn't allow field-specific
+searches and only supports keyword-anywhere searches.
+
+This is also not the same as using the
+[advanced search option on worldcat.org](https://www.worldcat.org/advancedsearch).
+That option only provides a subset of the bibliographic records in WorldCat and
+is a far less powerful tool.
+
+This API is most akin to using the "expert search" option in OCLC's
+FirstSearch, using the WorldCat database, but differs in that (a) searching
+the API is programmatically automate-able, and (b) the API allows for, still,
+more powerful search queries.
+
+## What `libbib`'s `worldcat_api_search` function provides
+
+At its most basic, this function takes a SRU query and returns a
+`data.table` with most of the bibliographic metadata from the MARCXml
+that the API returns. We'll see how the behavior of this function can
+be controlled by specifying certain function parameters.
+
+This function also offers assistance with the SRU query syntax. Examples
+of these aids will be explained later in the vignette.
+
+## An example of usage and what the function returns
+
+Let's look at an example of a simple query and what the returned
+`data.table` looks like.
+
+Specifically, we'll search for "Madame Bovary" by "Gustave Flaubert"
+and we'll only show the first three results
+
+```{r, eval=FALSE}
+library(libbib)      # load this package
+
+result <- worldcat_api_search('$title="Madame Bovary" and
+                                 $author="Gustave Flaubert"')
+
+# get the column names
+names(result)
+
+# show the first three results
+result[1:3,]
+```
+
+This should give you an idea of the rich information returned by the results
+`data.table`. All of the information returned is from (or derived from)
+the MARCXml that the API returns, save for
+- `total_wc_results`
+  Which returns the number of the results the query yields in WorldCat even
+  if the number of records/results requested is lower than this number.
+- `result_number`
+  This number of the result, which is helpful if you're using a starting
+  position other than `1` (the default)
+- `query`
+  The final SRU query (after any of the SRU query assistance routines step
+  in) that is sent to the API. This can be useful for debugging.
+
+Hereafter, the output of the example queries will be abbreviated, truncated,
+elided, or only show a subset of columns in order to save space and
+aid in following the guide.
+
+## What does an error look like
+
+If you craft a query that yields no results, a message telling you such
+will be displayed, and the return value is `NULL`.
+
+If you make an error in the query syntax, no results will be returned, but
+a diagnostic message returned from the server may tell you what went wrong.
+Here are two examples...
+
+```{r, error=TRUE, eval=FALSE}
+# missing ending double quotes
+worldcat_api_search('$title="Madame Bovary and $langauge=greek')
+
+# "$titley" is not a valid search index
+worldcat_api_search('$titley="Madame Bovary" and $langauge=greek')
+
+```
+
+
+## `worldcat_api_search` by example / quick start
+
+In guides like this, these is frequently tension between wanting to
+be a complete references, and wanting to show cool/helpful examples,
+at a glance.
+
+In service of easing this tension, we'll first look at some examples
+illustrating things this function can do and _then_ turn our attention
+to an adequate explanation of boolean operators, relations operators,
+search indexes, etc...
+
+These examples are largely taken from the `examples` section of the
+R documentation for this function.
+
+These examples (and the ones further along in this vignette) will also
+use `data.table` syntax to limit number of rows and columns returned
+to aid reading.
+
+We'll be focusing on the types of queries you can use in this section;
+controlling the behavior of the function via changing parameters will
+come later.
+
+```{r, eval=FALSE}
+library(libbib)
+
+# title search for "The Brothers Karamazov"
+results <- worldcat_api_search('$title="Brothers Karamazov"')
+results[1:3, .(total_wc_results, result_number, oclc, title, pub_date)]
+
+# Madame Bovary by Gustave Flaubert in Greek
+sru <- '$author="Gustave Flaubert" and
+          $title="Madame Bovary" and
+          $language=greek'
+results <- worldcat_api_search(sru)
+results[, .(result_number, title, lang_code, publisher)]
+
+# Hip Hop materials on wax, cassette, or CD published from
+# 1987 to 1990
+sru <- '(($material_type=cas or $material_type=cda or $material_type=lps)
+           and $subject="Rap") and $year="1987-1990"'
+results <- worldcat_api_search(sru)
+results[1:5, .(total_wc_results, result_number, title, record_type)]
+
+# keyword search for "Common Lisp" for materials held
+# at The New York Public Library
+sru <- '$keyword="common lisp" and $holding_library=NYP'
+results <- worldcat_api_search(sru)
+results[1:5, .(total_wc_results, result_number, title)]
+
+# keyword search for "Common Lisp" for materials held
+# at by any of the members of the "Manhattan Research
+# Library Initiative" (MaRLI) joint borrowing program
+# (New York Public Library, Columbia University, and
+# New York University)
+sru <- '($keyword="common lisp" and $holding_library=NYP)
+          or ($keyword="common lisp" and $holding_library=ZYU)
+          or ($keyword="common lisp" and $holding_library=ZCU)'
+results <- worldcat_api_search(sru)
+results[1:3, .(total_wc_results, result_number, title)]
+
+# Books (only books) about Ethics (by dewey division 170s or
+# LC call number subject class "BJ") published in the 19th
+# century
+sru <- '($dewey="17*" or $lc_call="bj*") and $year="18*" and
+           $material_type=bks'
+results <- worldcat_api_search(sru)
+results[1:5, .(result_number, title, bib_level)]
+
+# Materials on Musicology (by Dewey division 780s) at
+# the New York Public Library and not held by any
+# other insitution
+sru <- '$dewey="78*" and $holding_library=NYP and
+          $library_holdings_group=11'
+results <- worldcat_api_search(sru)
+results[1:5, .(result_number, title, record_type)]
+
+# Search for materials on "Danger Music" published since 2010
+results <- worldcat_api_search('$keyword="danger music" and $year="2010-"')
+results[1:4, .(total_wc_results, result_number, title, author)]
+```
+
+
+-----
+
+## Table of all available search indexes
+
+  | Formal search index code | libbib alias |
+  |--------------------------|--------------|
+  | srw.kw | $keyword |
+  | srw.ti | $title |
+  | srw.ln | $language |
+  | srw.au | $author |
+  | srw.yr | $year |
+  | srw.su | $subject |
+  | srw.li | $holding_library |
+  | srw.mt | $material_type |
+  | srw.no | $oclc |
+  | srw.lc | $lc_call |
+  | srw.dd | $dewey |
+  | srw.dn | $lccn |
+  | srw.bn | $isbn |
+  | srw.in | $issn |
+  | srw.cg | $library_holdings_group |
+  | srw.la | $language_code |
+  | srw.pl | $place_of_publication |
+  | srw.pb | $publisher |
+  | srw.am | $access_method |
+  | srw.cn | $corporate_conference_name |
+  | srw.pc | $dlc_limit |
+  | srw.dt | $document_type |
+  | srw.gn | $government_document_number |
+  | srw.mn | $music_publisher_number |
+  | srw.nt | $notes |
+  | srw.on | $open_digital_limit |
+  | srw.pn | $personal_name |
+  | srw.se | $series |
+  | srw.sn | $standard_number |
+
+
+
+## Relations operators
+
+
+
+## Boolean operators (and operator precedence)
+
+
+
+## Wildcards
+
+
+## Selected Search Indexes in focus
+
+### $holding_library / srw.
+
+### $library_holdings_group / srw.
+
+-----
+
+## Combining this with the other API search functions in `libbib`
+
+-----
+
+## Sundry external / archived documentation links
+
+
+- __WorldCat Search API current documentation__
+
+  _scroll to SRU_
+  
+  Current documentation on the (SRU) WorldCat Search API call. Contains all
+  index names and codes, parameters available, and the meaning of API
+  status code return numbers
+  
+  <https://developer.api.oclc.org/wcv1>
+
 
 - __WorldCat Search API > Using the API > Request Types > SRU__
 
@@ -32,9 +308,9 @@ knitr::opts_chunk$set(
 
   _(archived OCLC documentation link from 2013)_
   
-  Explation of relations operators, title index stop-words (removed words),
-  the MARC subfields search by the subject index, and explation of the
-  wildcard characters `*`; `#`; and `?`.
+  Explation of relations operators, boolean operators, title index
+  stop-words (removed words), the MARC subfields search by (only) the subject
+  index, and explation of the wildcard characters `*`; `#`; and `?`.
   
   <https://web.archive.org/web/20130530034745/http://oclc.org/developer/documentation/worldcat-search-api/indexes>
 
@@ -49,20 +325,96 @@ knitr::opts_chunk$set(
   prefix of `sru`, but it's really `srw`.
 
   <https://web.archive.org/web/20130915101232/http://oclc.org/developer/documentation/worldcat-search-api/complete-list-indexes>
-  
-  
+
+
 - __Material Types Names and Codes__
 
-  _Link to current OCLC documentation (but archived for posterity)_
-  
   A complete list of Material Types you can search for, their codes 
   
-  For use with the `srw.mt` index.
+  For use with the `srw.mt`/`$material_type` index.
 
-  <https://web.archive.org/web/20210425140401/https://help.oclc.org/Librarian_Toolbox/Searching_WorldCat_Indexes/Bibliographic_records/Material_Type_names_and_codes?sl=en>
+  [Material Type names and codes - OCLC Support](https://help.oclc.org/Librarian_Toolbox/Searching_WorldCat_Indexes/Bibliographic_records/Material_Type_names_and_codes?sl=en)
+  
+  [Archived from original for posterity](https://web.archive.org/web/20210425140401/https://help.oclc.org/Librarian_Toolbox/Searching_WorldCat_Indexes/Bibliographic_records/Material_Type_names_and_codes?sl=en>)
+
+
+- __WorldCat Search API > Indexes > Tips for specific indexes__
+
+  _(archived OCLC documentation link from 2013)_
+  
+  Contains a lot of very helpful information about some of the different
+  search indexes, the stop words they use, normalization rules, and
+  a very helpful cross-walk on the "Number of Holding Libraries" index.
+  
+  <https://web.archive.org/web/20120311003221/http://oclc.org/developer/documentation/worldcat-search-api/tips-specific-indexes>
+
+
+- __WorldCat Search API > Using the API > Parameters__
+
+  _(archived OCLC documentation link from 2013)_
+
+  Helpful information about what the different SRU search parameters mean.
+  Remember that the parameters of the `worldcat_api_search` function (a) only
+  contain a subset of these, and (b) may have slightly different names
+  <https://web.archive.org/web/20121101034843/http://oclc.org/developer/documentation/worldcat-search-api/parameters>
   
   
+- __Finding Institution Codes__
+
+  A search box for searching institution names and returning instituion
+  codes suitable for use in the holding institution search index.
+  
+  <https://www.oclc.org/en/contacts/libraries.html>
+
+
+- __Searching WorldCat Indexes__
+
+  _(archived OCLC documentation link from 2012)_
+  
+  Information about search indexes that are largely available in the above
+  links. Not related to the (SRU) Search API but could be helpful, anyway.
+  
+  <https://web.archive.org/web/20120509072600/http://www.oclc.org/us/en/support/documentation/worldcat/searching/searchworldcatindexes/default.htm>
   
   
-  
-  
+- __CQL specification__
+
+  Helpful information about CQL query syntax. Not all is applicable to
+  the WorldCat Search API that is discussed here.
+
+  <https://www.loc.gov/standards/sru/cql/spec.html>
+
+
+- __Searching WorldCat Indexes__
+
+  Current page with links containing a lot of information about
+  wielding WorldCat searches. Not all information is application to
+  the WorldCat Search API that is discussed here, and most of the
+  most helpful information is already covered in the links above.
+
+  <https://help.oclc.org/Librarian_Toolbox/Searching_WorldCat_Indexes>
+
+
+
+## Similar projects / code
+
+- __A Ruby Gem to communicate with the WorldCat Search API__
+
+  <https://github.com/vivien/worldcat>
+
+
+- __Python scripts using the WorldCat search API__
+
+  <https://github.com/ysugiyama3/worldcat-search-api>
+
+
+## Papers/Articles
+
+- __Using the WorldCat API to Develop Data-Driven Decision-Making for Gifts-in-Kind__
+
+  <https://journals.ala.org/index.php/lrts/article/view/7074/9638>
+
+
+- __Destroyer and Preserver, Hear, Oh Hear! Not All Uncirculated Books Must Chariotest to a Dark Wintry Bed: How We Used the Books Must Chariotest to a Dark Wintry Bed: How We Used the OCLC WorldCat Search API to Inform Our Weeding Decisions with OCLC WorldCat Search API to Inform Our Weeding Decisions with Holdings Data Holdings Data__
+
+  <https://docs.lib.purdue.edu/cgi/viewcontent.cgi?article=2026&context=charleston>
