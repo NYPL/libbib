@@ -164,27 +164,23 @@ library(libbib)
 
 # title search for "The Brothers Karamazov"
 results <- worldcat_api_search('$title="Brothers Karamazov"')
-results[1:3, .(total_wc_results, result_number, oclc, title, pub_date)]
 
 # Madame Bovary by Gustave Flaubert in Greek
 sru <- '$author="Gustave Flaubert" and
           $title="Madame Bovary" and
           $language=greek'
 results <- worldcat_api_search(sru)
-results[, .(result_number, title, lang_code, publisher)]
 
 # Hip Hop materials on wax, cassette, or CD published from
 # 1987 to 1990
 sru <- '(($material_type=cas or $material_type=cda or $material_type=lps)
            and $subject="Rap") and $year="1987-1990"'
 results <- worldcat_api_search(sru)
-results[1:5, .(total_wc_results, result_number, title, record_type)]
 
 # keyword search for "Common Lisp" for materials held
 # at The New York Public Library
 sru <- '$keyword="common lisp" and $holding_library=NYP'
 results <- worldcat_api_search(sru)
-results[1:5, .(total_wc_results, result_number, title)]
 
 # keyword search for "Common Lisp" for materials held
 # at by any of the members of the "Manhattan Research
@@ -195,7 +191,6 @@ sru <- '($keyword="common lisp" and $holding_library=NYP)
           or ($keyword="common lisp" and $holding_library=ZYU)
           or ($keyword="common lisp" and $holding_library=ZCU)'
 results <- worldcat_api_search(sru)
-results[1:3, .(total_wc_results, result_number, title)]
 
 # Books (only books) about Ethics (by dewey division 170s or
 # LC call number subject class "BJ") published in the 19th
@@ -203,7 +198,6 @@ results[1:3, .(total_wc_results, result_number, title)]
 sru <- '($dewey="17*" or $lc_call="bj*") and $year="18*" and
            $material_type=bks'
 results <- worldcat_api_search(sru)
-results[1:5, .(result_number, title, bib_level)]
 
 # Materials on Musicology (by Dewey division 780s) at
 # the New York Public Library and not held by any
@@ -211,15 +205,11 @@ results[1:5, .(result_number, title, bib_level)]
 sru <- '$dewey="78*" and $holding_library=NYP and
           $library_holdings_group=11'
 results <- worldcat_api_search(sru)
-results[1:5, .(result_number, title, record_type)]
 
 # Search for materials on "Danger Music" published since 2010
 results <- worldcat_api_search('$keyword="danger music" and $year="2010-"')
-results[1:4, .(total_wc_results, result_number, title, author)]
 ```
 
-
------
 
 ## Table of all available search indexes
 
