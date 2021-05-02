@@ -52,6 +52,12 @@ dt_keep_cols <- function(DT, ...){
   if(!("data.table" %in% class(DT)))
     stop("DT must be a data.table object")
   cols <- c(...)
+  badp <- setdiff(cols, names(DT))
+  if(length(badp)){
+    missingnames <- paste(sprintf('"%s"', badp), collapse=', ')
+    warning(sprintf("Columns (%s) are missing from supplied data.table",
+                    missingnames))
+  }
   these <- setdiff(names(DT), cols)
   dt_del_cols(DT, these)
 }
@@ -155,29 +161,46 @@ dt_counts_and_percents <- function(DT, group_by_this, percent.cutoff=0){
 #' All space/whitespace characters are replaced with underscores,
 #' as are all characters not from A-Z, a-z, an underscore, or a digit
 #'
+#' If there are duplicate column names after the cleaning, a message
+#' will show stating such and the duplicate column names will be
+#' make unique.
+#'
 #' @param dat A data.frame
+#' @param lower A logical indicating whether all column names should be
+#'              made lower case (default \code{TRUE}).
 #'
 #' @return Returns a vector of cleaned names
+#'
+#' @seealso \code{\link{make.unique}}
 #'
 #' @examples
 #' ejemplo <- iris
 #' names(ejemplo) <- c("Sepal Length", "Sepal@Width", "Petal	Length",
 #'                     "Petal\\nWidth", "Spêcies")
 # get_clean_names(ejemplo)
+#' # c("sepal_length" "sepal_width"  "petallength"  "petal_nwidth" "sp_cies")
+#'
+# get_clean_names(ejemplo, lower=FALSE)
 #' # c("Sepal_Length" "Sepal_Width"  "PetalLength"  "Petal_nWidth" "Sp_cies")
 #'
 #' @export
-get_clean_names <- function(dat){
+get_clean_names <- function(dat, lower=TRUE){
   thenames <- names(dat)
   nospace <- stringr::str_replace_all(thenames, "\\s+", "_")
   nobad <- stringr::str_replace_all(nospace, "[^_A-Za-z1-9]", "_")
+  if(lower)
+    nobad <- tolower(nobad)
+  if(sum(duplicated(nobad))){
+    message("cleaned names contain duplicates... correcting")
+    nobad <- make.unique(nobad, sep="_")
+  }
   return(nobad)
 }
 
 
 # --------------------------------------------------------------- #
 
-#' Takes a data.table and returns
+#' Takes a data.table and set to cleaned column names
 #'
 #' This function takes a data.table, and returns the same data.table
 #' with column names that are cleaned and stripped of potentially
@@ -189,6 +212,8 @@ get_clean_names <- function(dat){
 #' @import data.table
 #'
 #' @param DT a data.table
+#' @param lower A logical indicating whether all column names should be
+#'              made lower case (default \code{TRUE}).
 #'
 #' @return Returns the data.table but with cleaned names
 #'
@@ -202,10 +227,10 @@ get_clean_names <- function(dat){
 #' dt_set_clean_names(ejemplo)
 #'
 #' @export
-dt_set_clean_names <- function(DT){
+dt_set_clean_names <- function(DT, lower=TRUE){
   if(!("data.table" %in% class(DT)))
     stop("DT must be a data.table object")
-  setnames(DT, get_clean_names(DT))
+  setnames(DT, get_clean_names(DT, lower=lower))
 }
 
 
@@ -260,8 +285,18 @@ dt_percent_not_na <- function(DT, acolumn){
 #'        Cannot co-exist with \code{include}
 #' @param include A quoted vector or column names. Changes names of only
 #'        these columns. Cannot co-exist with \code{exclude}
+#' @param fix.duplicates A logical indicating whether to, if after the
+#'                       suffix/prefixes are added to the selected column
+#'                       names, correct those duplicate column names by
+#'                       making them unique. If \code{FALSE} (default),
+#'                       if any of the column names are duplicated, an
+#'                       error is raised and the new names are not set.
+#'                       If \code{TRUE}, all the column names are made unique,
+#'                       potentially renaming excluded column names that
+#'                       were not supposed to be changed.
 #'
-#' @return Returns data.table with string appended or prefixed
+#' @return Returns data.table with string appended or prefixed to all selected
+#'         column names.
 #'
 #' @examples
 #' DT <- as.data.table(iris)
@@ -285,7 +320,8 @@ dt_percent_not_na <- function(DT, acolumn){
 #'
 #' @export
 dt_add_to_col_names <- function(DT, astring, prefix=FALSE,
-                                exclude=NULL, include=NULL){
+                                exclude=NULL, include=NULL,
+                                fix.duplicates=FALSE){
   if(!("data.table" %chin% class(DT)))
     stop("DT must be a data.table")
   if(!is.null(exclude) && !is.null(include))
@@ -315,10 +351,20 @@ dt_add_to_col_names <- function(DT, astring, prefix=FALSE,
   if(!is.null(include))
     tmp[!(old_names %chin% include), new_names:=old_names]
 
+  if(tmp[,sum(duplicated(new_names))]){
+    if(fix.duplicates){
+      message("cleaned names contain duplicates... correcting")
+      tmp[, new_names:=make.unique(new_names, sep="_")]
+    }
+    else
+      stop("not resetting column names... new names contain duplicates")
+  }
+
   setnames(DT, tmp[,new_names])
 }
 
 
+# --------------------------------------------------------------- #
 
 # unexported function to assist with WorldCat Search API SRU queries
 sru_syntax_translate_worldcat <- function(x){

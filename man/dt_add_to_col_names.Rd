@@ -9,7 +9,8 @@ dt_add_to_col_names(
   astring,
   prefix = FALSE,
   exclude = NULL,
-  include = NULL
+  include = NULL,
+  fix.duplicates = FALSE
 )
 }
 \arguments{
@@ -26,9 +27,20 @@ Cannot co-exist with \code{include}}
 
 \item{include}{A quoted vector or column names. Changes names of only
 these columns. Cannot co-exist with \code{exclude}}
+
+\item{fix.duplicates}{A logical indicating whether to, if after the
+suffix/prefixes are added to the selected column
+names, correct those duplicate column names by
+making them unique. If \code{FALSE} (default),
+if any of the column names are duplicated, an
+error is raised and the new names are not set.
+If \code{TRUE}, all the column names are made unique,
+potentially renaming excluded column names that
+were not supposed to be changed.}
 }
 \value{
-Returns data.table with string appended or prefixed
+Returns data.table with string appended or prefixed to all selected
+        column names.
 }
 \description{
 Takes a data.table and a string. The supplied string will

@@ -14,6 +14,13 @@ ejemplo <- as.data.table(iris)
 setnames(ejemplo, c("Sepal Length", "Sepal@Width", "Petal Length",
                     "Petal\\nWidth", "Spêcies"))
 
+ejemplo2 <- as.data.table(iris)
+setnames(ejemplo2, c("Sepal Length", "Sepal@Width", "Petal Length",
+                     "Petal\\nWidth", "Spêcies"))
+ejemplo2[, Sp_cies:=1]
+ejemplo2[, Sp_cies_1:=2]
+
+
 # --------------------------------------------------------------- #
 
 
@@ -38,8 +45,14 @@ test_that("dt_counts_and_percents() works", {
 
 test_that("get_clean_names() works", {
   expect_equal(get_clean_names(ejemplo),
+               c("sepal_length", "sepal_width", "petal_length",
+                 "petal_nwidth", "sp_cies"))
+  expect_equal(get_clean_names(ejemplo, lower=FALSE),
                c("Sepal_Length", "Sepal_Width", "Petal_Length",
                  "Petal_nWidth", "Sp_cies"))
+  expect_equal(get_clean_names(ejemplo2, lower=FALSE),
+               c("Sepal_Length", "Sepal_Width", "Petal_Length",
+                 "Petal_nWidth", "Sp_cies", "Sp_cies_2", "Sp_cies_1"))
 })
 
 test_that("dt_set_clean_names() works", {

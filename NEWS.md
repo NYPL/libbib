@@ -22,6 +22,7 @@ where the formatting is better.**
 2. Fixed a bug where if the number of search results was an exact multiple
    of 100, the search api function wouldn't return anything
 
+
 ## improvements
 
 1. WorldCat API functions will now error if no WSKEY is provided
@@ -37,6 +38,18 @@ where the formatting is better.**
    diagnostic message returned from the Search API
    (things like Query syntax operators and unsupported indexes)
 
+5. `get_clean_names` and `dt_set_clean_names` will now never produce
+   duplicate column names
+
+6. `dt_keep_cols` will warn user if a supplied column name doesn't
+   exist in the supplied data.table
+
+7. `dt_add_to_col_names` will, by default, error if any of the new
+   names create any duplicate column names (not setting the new
+   names). If `TRUE`, all the column names are made unique,
+   potentially renaming excluded column names that were not supposed
+   to be changed.
+
 ## small breaking changes
 
 1. `marc_008_get_info` no longer returns the original publication
@@ -50,6 +63,10 @@ where the formatting is better.**
 
 4. `num_total` column in search results has been renamed the (more descriptive)
    `total_wc_results`
+
+5. By default, `get_clean_names` and `dt_set_clean_names` will convert
+   all upper case characters to lower case. This can be overidden with
+   by setting the `lower` parameter (in both) to `FALSE`.
 
 -----
 

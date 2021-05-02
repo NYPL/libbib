@@ -4,16 +4,9 @@
 ## immediately
 
 - can we make `split_map_filter_reduce` more efficient?
-- add warning to del cols and keep cols if vars doesn't exist?
-  * take the code from `dt_add_to_col_names`
-- check for duplicate names in `clean_names` after cleaning
-  * add a suffix if it already exists earlier
-- `dt_set_clean_names` has a bad doc title
 - can `dt_percent_not_na` return counts like `dt_counts_and_percent`?
   * maybe in a nice table
   * maybe `dt_col_na_breakdown`
-- make sure there are no duplicate column names when using
-  `dt_add_to_col_names`
 - can `dt_col_na_breakdown` and `dt_counts_and_percents` have a pretty
   options to format N with big mark, etc...?
 - function to clip year/date before or after current year/date?

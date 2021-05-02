@@ -4,10 +4,13 @@
 \alias{get_clean_names}
 \title{Takes a data.frame and returns cleaned column names}
 \usage{
-get_clean_names(dat)
+get_clean_names(dat, lower = TRUE)
 }
 \arguments{
 \item{dat}{A data.frame}
+
+\item{lower}{A logical indicating whether all column names should be
+made lower case (default \code{TRUE}).}
 }
 \value{
 Returns a vector of cleaned names
@@ -20,11 +23,20 @@ stripped of potentially troublesome names
 \details{
 All space/whitespace characters are replaced with underscores,
 as are all characters not from A-Z, a-z, an underscore, or a digit
+
+If there are duplicate column names after the cleaning, a message
+will show stating such and the duplicate column names will be
+make unique.
 }
 \examples{
 ejemplo <- iris
 names(ejemplo) <- c("Sepal Length", "Sepal@Width", "Petal	Length",
                     "Petal\\\\nWidth", "Spêcies")
+# c("sepal_length" "sepal_width"  "petallength"  "petal_nwidth" "sp_cies")
+
 # c("Sepal_Length" "Sepal_Width"  "PetalLength"  "Petal_nWidth" "Sp_cies")
 
+}
+\seealso{
+\code{\link{make.unique}}
 }

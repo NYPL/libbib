@@ -2,12 +2,15 @@
 % Please edit documentation in R/utilities.R
 \name{dt_set_clean_names}
 \alias{dt_set_clean_names}
-\title{Takes a data.table and returns}
+\title{Takes a data.table and set to cleaned column names}
 \usage{
-dt_set_clean_names(DT)
+dt_set_clean_names(DT, lower = TRUE)
 }
 \arguments{
 \item{DT}{a data.table}
+
+\item{lower}{A logical indicating whether all column names should be
+made lower case (default \code{TRUE}).}
 }
 \value{
 Returns the data.table but with cleaned names
