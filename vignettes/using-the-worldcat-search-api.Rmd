@@ -100,10 +100,10 @@ Specifically, we'll search for "Madame Bovary" by "Gustave Flaubert"
 and we'll only show the first three results
 
 ```{r, echo=FALSE}
-Sys.sleep(1)
+# Sys.sleep(1)
 ```
 
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 library(libbib)      # load this package
 
 result <- worldcat_api_search('$title="Madame Bovary" and
@@ -111,9 +111,38 @@ result <- worldcat_api_search('$title="Madame Bovary" and
 
 # get the column names
 names(result)
+#>  [1] "total_wc_results" "result_number"   "oclc"           "isbn"            
+#>  [5] "issn"             "title"           "author"         "pub_date"        
+#>  [9] "lang_code"        "bib_level"       "record_type"    "pub_place_code"  
+#> [13] "publisher"        "leader"          "oh08"           "query"
 
 # show the first three results
 result[1:3,]
+#>    total_wc_results result_number       oclc          isbn   issn
+#>              <char>         <int>     <char>        <char> <char>
+#> 1:              986             1 1125170419 9782253183464   <NA>
+#> 2:              986             2 1049849403 9788415618843   <NA>
+#> 3:              986             3 1203070641 9781664921993   <NA>
+#>              title             author pub_date lang_code      bib_level
+#>             <char>             <char>    <int>    <char>         <char>
+#> 1: Madame Bovary : Flaubert, Gustave,     2019       fre Monograph/Item
+#> 2: Madame Bovary / Flaubert, Gustave,     2019       spa Monograph/Item
+#> 3: Madame Bovary / Flaubert, Gustave,     2021       eng Monograph/Item
+#>                   record_type pub_place_code          publisher
+#>                        <char>         <char>             <char>
+#> 1:          Language Material             fr le Livre de poche,
+#> 2:          Language Material             sp               <NA>
+#> 3: Nonmusical sound recording            ohu               <NA>
+#>                      leader                                     oh08
+#>                      <char>                                   <char>
+#> 1: 00000cam a2200000Mi 4500 190619s2019    fr a   g      000 1 fre d
+#> 2: 00000cam a2200000Ii 4500 180827t20192018sp a          000 1 spa d
+#> 3: 00000cim a2200000Mi 4500 201104s2021    ohunnnneq      f  n eng d
+#>                                                    query
+#>                                                   <char>
+#> 1: srw.ti="Madame Bovary" and srw.au="Gustave Flauber...
+#> 2: srw.ti="Madame Bovary" and srw.au="Gustave Flauber...
+#> 3: srw.ti="Madame Bovary" and srw.au="Gustave Flauber...
 ```
 
 This should give you an idea of the rich information returned by the results
@@ -146,16 +175,21 @@ a diagnostic message returned from the server may tell you what went wrong.
 Here are two examples...
 
 ```{r, echo=FALSE}
-Sys.sleep(1)
+# Sys.sleep(1)
 ```
 
-```{r, error=TRUE, eval=TRUE}
+```{r, eval=FALSE}
 # missing ending double quotes
 worldcat_api_search('$title="Madame Bovary and $langauge=greek')
+#> Received diagnostic message: Query syntax error (org.z3950.zing.cql.CQLParseException: expected index or term, got EOF)
+#> no results found
+#> NULL
 
 # "$titley" is not a valid search index
 worldcat_api_search('$titley="Madame Bovary" and $langauge=greek')
-
+#> Received diagnostic message: Unsupported index (srw.tiy)
+#> no results found
+#> NULL
 ```
 
 
@@ -291,25 +325,35 @@ You can use both spaces and `+` to separate the search index and the
 search term on both sides of the relations operator...
 
 ```{r, echo=FALSE}
-Sys.sleep(1)
+# Sys.sleep(1)
 ```
 
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 sru <- '$title+=+"Common Lisp"'
 results <- worldcat_api_search(sru)
 results[1:3, .(total_wc_results, title)]
+#>    total_wc_results                   title
+#>              <char>                  <char>
+#> 1:              367           Common Lisp /
+#> 2:              367 Practical Common Lisp /
+#> 3:              367           Common LISP /
 ```
 
 is the same as...
 
 ```{r, echo=FALSE}
-Sys.sleep(1)
+# Sys.sleep(1)
 ```
 
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 sru <- '$title = "Common Lisp"'
 results <- worldcat_api_search(sru)
 results[1:3, .(total_wc_results, title)]
+#>    total_wc_results                   title
+#>              <char>                  <char>
+#> 1:              367           Common Lisp /
+#> 2:              367 Practical Common Lisp /
+#> 3:              367           Common LISP /
 ```
 
 But we'll be using spaces here.
@@ -330,12 +374,17 @@ is sometimes referred to as an "anchored search".
 Here's an example using the same title search as above...
 
 ```{r, echo=FALSE}
-Sys.sleep(1)
+# Sys.sleep(1)
 ```
 
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 results <- worldcat_api_search('$title exact "Common Lisp"')
 results[1:3, .(total_wc_results, title)]
+#>    total_wc_results         title
+#>              <char>        <char>
+#> 1:               37 Common Lisp /
+#> 2:               37 Common LISP /
+#> 3:               37 Common LISP /
 ```
 
 Note that the title "Practical Common Lisp" was returned by the
@@ -358,12 +407,17 @@ Using `any` means that any of your search terms (inside the double quotes)
 can match. For example...
 
 ```{r, echo=FALSE}
-Sys.sleep(1)
+# Sys.sleep(1)
 ```
 
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 results <- worldcat_api_search('$title any "Common Lisp"')
 results[1:3, .(total_wc_results, title)]
+#>    total_wc_results                                                 title
+#>              <char>                                                <char>
+#> 1:           351777 An Inquiry into the Human Mind on the Principles o...
+#> 2:           351777                            The book of common prayer.
+#> 3:           351777                        Dictionary of Phrase and Fable
 ```
 
 matches the title "The book of common prayer" (decidedly _not_ a book
@@ -374,12 +428,17 @@ Using `any` in this context is tantamount to using an `or` boolean operator,
 which we'll look at in the next section...
 
 ```{r, echo=FALSE}
-Sys.sleep(1)
+# Sys.sleep(1)
 ```
 
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 results <- worldcat_api_search('$title = Common or $title = "Lisp"')
 results[1:3, .(total_wc_results, title)]
+#>    total_wc_results                                                 title
+#>              <char>                                                <char>
+#> 1:           351777 An Inquiry into the Human Mind on the Principles o...
+#> 2:           351777                            The book of common prayer.
+#> 3:           351777                        Dictionary of Phrase and Fable
 ```
 
 (Note the same number and order of results)
@@ -403,18 +462,28 @@ being said, it appears as if you can just drop the single quote
 and the search will carry on perfectly fine...
 
 ```{r, echo=FALSE}
-Sys.sleep(1)
+# Sys.sleep(1)
 ```
 
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 results <- worldcat_api_search('$title exact "Finnegans Wake"')
 results[1:3, .(total_wc_results, title, query)]
+#>    total_wc_results            title                         query
+#>              <char>           <char>                        <char>
+#> 1:              761 Finnegans wake / srw.ti exact "Finnegans Wake"
+#> 2:              761   Finnegans Wake srw.ti exact "Finnegans Wake"
+#> 3:              761   Finnegans wake srw.ti exact "Finnegans Wake"
 
 # yields the same results as
 
 results <- worldcat_api_search('$title exact "Finnegan\'s Wake"')
 results[1:3, .(total_wc_results, title, query)]
-"
+#>    total_wc_results            title                         query
+#>              <char>           <char>                        <char>
+#> 1:              761 Finnegans wake / srw.ti exact "Finnegan's Wake"
+#> 2:              761   Finnegans Wake srw.ti exact "Finnegan's Wake"
+#> 3:              761   Finnegans wake srw.ti exact "Finnegan's Wake"
+
 ```
 
 I suspect single quotes are automatically elided by the API.
@@ -422,10 +491,11 @@ I suspect single quotes are automatically elided by the API.
 
 ## Boolean operators (and operator precedence)
 
-
+this is a stub.
 
 ## Wildcards
 
+this is a stub.
 
 ## Table of all available search indexes
 
@@ -464,14 +534,59 @@ I suspect single quotes are automatically elided by the API.
 
 ## Selected Search Indexes in focus
 
-### $holding_library / srw.
+### $holding_library / srw.li
 
-### $library_holdings_group / srw.
+As shown in one of the examples above, the holding library search term
+is the official OCLC designator. You can search for an institution's
+code by the institutions name [using this link.](https://www.oclc.org/en/contacts/libraries.html)
+
+
+### $library_holdings_group / srw.cg
+
+The "library holdings group" search term is, perhaps, a confusing one.
+The table below is a crosswalk between the search codes to use in the
+SRU query, and what they mean.
+
+  | Search code | Meaning |
+  |-------------|---------|
+  | 05 | 5 or more holdings |
+  | 06 | 10 or more holdings |
+  | 07 | 50 or more holdings |
+  | 08 | 100 or more holdings |
+  | 09 | 500 or more holdings |
+  | 10 | No holdings |
+  | 11 | 1 holding only |
+  | 12 | 2 – 4 holdings |
+  | 13 | 5 – 9 holdings |
+  | 14 | 10 – 24 holdings |
+  | 15 | 25 – 49 holdings |
+  | 16 | 50 - 74 holdings |
+  | 17 | 75 – 99 holdings |
+  | 18 | 100 - 149 holdings |
+  | 19 | 150 - 199 holdings |
+  | 20 | 200 - 299 holdings |
+  | 21 | 300 - 399 holdings |
+  | 22 | 400 - 499 holdings |
+  | 23 | 500 - 599 holdings |
+  | 24 | 600 - 699 holdings |
+  | 25 | 700 - 799 holdings |
+  | 26 | 800 - 899 holdings |
+  | 27 | 900 - 999 holdings |
+  | 28 | 1,000 - 1,499 holdings |
+  | 29 | 1,500 - 1,999 holdings |
+  | 30 | 2,000 - 2,499 holdings |
+  | 31 | 2,500 or more holdings |
+  
+So, for example, if you wanted to limit your search to
+items that are held by between 100 to 149 institutions,
+you would have to add `$library_holdings_group=18` to
+your SRU query.
 
 -----
 
 ## Combining this with the other API search functions in `libbib`
 
+this is a stub.
 -----
 
 ## Sundry external / archived documentation links

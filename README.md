@@ -56,7 +56,7 @@ automated tests, at time of writing
 
 > # Do a WorldCat APU search on 19th century materials on ethics
 > # (Dewey code 170s / LC Call prefix BJ)
-> results <- worldcat_api_search('(srw.dd="17*" or srw.lc="bj*") and srw.yr="18*"')
+> results <- worldcat_api_search('($dewey="17*" or $lc_call="bj*") and srw.yr="18*"')
 > results[,.(oclc, title, result_number, num_results)][1:5]
         oclc                                       title result_number num_results
       <char>                                      <char>         <int>      <char>
