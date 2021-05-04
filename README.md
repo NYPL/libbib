@@ -270,6 +270,7 @@ Key: <thekey>
 - `get_clean_names`
 - `dt_set_clean_names`
 - `dt_percent_not_na`
+- `dt_na_breakdown`
 - `dt_add_to_col_names`
 
 

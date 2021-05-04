@@ -126,6 +126,10 @@ dt_pivot <- function(DT, theby, theexp, percent.cutoff=0, value.name="value",
 #'        the count percents lower than this number will be
 #'        grouped into "OTHER" in the returned data.table
 #'        (default is 0)
+#' @param big.mark If \code{FALSE} (default) the "count" column is left
+#'                 as an integer. If not \code{FALSE}, it must be a
+#'                 character to separate every three digits of the count.
+#'                 This turns the count column into a string.
 #'
 #' @return Returns a data.table with three columns:
 #'         the grouped-by column, a count column, and a
@@ -142,12 +146,23 @@ dt_pivot <- function(DT, theby, theexp, percent.cutoff=0, value.name="value",
 #' dt_counts_and_percents(mt, "cyl", percent.cutoff=25)
 #'
 #' @export
-dt_counts_and_percents <- function(DT, group_by_this, percent.cutoff=0){
+dt_counts_and_percents <- function(DT, group_by_this, percent.cutoff=0,
+                                   big.mark=FALSE){
   if(!("data.table" %in% class(DT)))
     stop("DT must be a data.table object")
-  dt_pivot(DT, group_by_this, .N, percent.cutoff=percent.cutoff,
-           value.name="count", percent.name="percent")
+  if(!(big.mark==FALSE || is.character(big.mark)))
+    stop("big.mark must either be FALSE or a character type")
+
+  count <- NULL
+
+  tmp <- dt_pivot(DT, group_by_this, .N, percent.cutoff=percent.cutoff,
+                  value.name="count", percent.name="percent")
+  if(big.mark!=FALSE)
+    tmp[, count:=prettyNum(count, big.mark=big.mark)]
+  tmp[]
 }
+
+
 
 
 # --------------------------------------------------------------- #
@@ -265,6 +280,57 @@ dt_percent_not_na <- function(DT, acolumn){
   DT[, round(100*sum(!is.na(get(acolumn)))/.N, 2)]
 }
 
+
+
+# --------------------------------------------------------------- #
+
+#' Get a breakdown of the NA-status of a column in a data.table
+#'
+#' This function takes a (quoted) column to group by, and tabulates
+#' the count of how many of those values are not-NA and NA, and adds
+#' the percent of occurrences. A \code{TRUE} in the first output
+#' column means the data is _not_ missing; \code{FALSE} corresponds
+#' to missing.
+#'
+#' The final row is a total count
+#'
+#' The quoted group-by variable must be a character or factor
+#'
+#' @import data.table
+#'
+#' @param DT The data.table object to operate on
+#' @param acolumn a quoted column name
+#' @param big.mark If \code{FALSE} (default) the "count" column is left
+#'                 as an integer. If not \code{FALSE}, it must be a
+#'                 character to separate every three digits of the count.
+#'                 This turns the count column into a string.
+#'
+#' @return Returns a data.table with three columns:
+#'         the not-NA status of the column specified, a count column, and a
+#'         percent column (out of 100) to two decimal places
+#'
+#' @examples
+#'
+#' iris_dt <- as.data.table(iris)
+#' iris_dt[sample(1:.N, 10), Species:=NA_character_]
+#' dt_na_breakdown(iris_dt, "Species")
+#'
+#' @export
+dt_na_breakdown <- function(DT, acolumn, big.mark=FALSE){
+  if(!("data.table" %in% class(DT)))
+    stop("DT must be a data.table object")
+  if(!(big.mark==FALSE || is.character(big.mark)))
+    stop("big.mark must either be FALSE or a character type")
+
+  count <- . <- NULL
+
+  tmp <- dt_pivot(DT[, .(not_na=as.character(!is.na(get(acolumn))))],
+            "not_na", .N, value.name="count", percent.name="percent")
+  if(big.mark!=FALSE)
+    tmp[, count:=prettyNum(count, big.mark=big.mark)]
+  setnames(tmp, "not_na", sprintf("%s_not_na", acolumn))
+  tmp[]
+}
 
 # --------------------------------------------------------------- #
 
@@ -418,4 +484,5 @@ sru_syntax_translate_worldcat <- function(x){
 
   x
 }
+
 

@@ -4,7 +4,7 @@
 \alias{dt_counts_and_percents}
 \title{Group by, count, and percent count in a data.table}
 \usage{
-dt_counts_and_percents(DT, group_by_this, percent.cutoff = 0)
+dt_counts_and_percents(DT, group_by_this, percent.cutoff = 0, big.mark = FALSE)
 }
 \arguments{
 \item{DT}{The data.table object to operate on}
@@ -15,6 +15,11 @@ dt_counts_and_percents(DT, group_by_this, percent.cutoff = 0)
 the count percents lower than this number will be
 grouped into "OTHER" in the returned data.table
 (default is 0)}
+
+\item{big.mark}{If \code{FALSE} (default) the "count" column is left
+as an integer. If not \code{FALSE}, it must be a
+character to separate every three digits of the count.
+This turns the count column into a string.}
 }
 \value{
 Returns a data.table with three columns:

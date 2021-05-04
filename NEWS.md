@@ -16,6 +16,8 @@ where the formatting is better.**
 2. A vignette on how to use the WorldCat search API is now available
    with a ton of very useful information.
 
+3. Added `dt_na_breakdown` function.
+
 ## bug fixes
 1. `print.progress` conditional now works for Location and Search API functions
 
@@ -49,6 +51,11 @@ where the formatting is better.**
    names). If `TRUE`, all the column names are made unique,
    potentially renaming excluded column names that were not supposed
    to be changed.
+
+8. Added option in `dt_counts_and_percents` (and `dt_na_breakdown`)
+   to specify a `big.mark` which will be used to separate every
+   three digits of the count. If `FALSE` (the default) the count
+   will remain and integer.
 
 ## small breaking changes
 
