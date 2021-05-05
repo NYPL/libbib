@@ -22,7 +22,7 @@ for some examples.}
 
 \item{max_records}{The maximum number of search results to return.
 Must be a number between 0 and 100 or \code{Inf}.
-If \code{Inf} (default), the function will
+If \code{Inf}, the function will
 automatically make all follow-up requests to retrieve
 all search results. For safety, the default is 10.}
 
@@ -42,13 +42,13 @@ held record as the representative record for that group.}
 
 \item{wskey}{A WorldCat API key (default is \code{getOption("libbib.wskey")})}
 
-\item{more}{A logical indicating whether more infomation from the MARCXML
+\item{more}{A logical indicating whether more information from the MARCXML
 search results should be returned (publisher, bib level, etc....).
 (Default is \code{TRUE})}
 
 \item{print.progress}{A logical indicating whether a message should be
 displayed for each API request. If \code{max_records}
-is \code{TRUE} a message will be displayed for every
+is \code{Inf} a message will be displayed for every
 group of 100 search results the function fetches.
 (default is \code{TRUE})}
 

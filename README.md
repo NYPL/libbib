@@ -26,13 +26,14 @@ It salvaged almost half a million previously unusable ISBNs, bringing
 the number of usable ISBNs (for matching, cataloging, etc...) from
 less than 90% to 99.6%!
 
-_Note these timings will change for the better or worse pending_
-  - _performance enhancements_
-  - _recognition and handling procedures for other ways in which
-   malformed ISBNs can be salvaged_
-
 As for robustness, this package is well tested, with over 300
-automated tests, at time of writing
+automated tests, at time of writing.
+
+`data.table` is a hard dependency of this package. Using `data.table`
+internally makes, for example, the call number -> subject conversions
+very fast. Additionally, loading this package also automatically
+loads `data.table`. If you don't use `data.table` in your own code,
+everything will work just fine! But you might want to look into it!
 
 ## Some examples
 
@@ -56,7 +57,8 @@ automated tests, at time of writing
 
 > # Do a WorldCat APU search on 19th century materials on ethics
 > # (Dewey code 170s / LC Call prefix BJ)
-> results <- worldcat_api_search('($dewey="17*" or $lc_call="bj*") and srw.yr="18*"')
+> results <- worldcat_api_search('($dewey="17*" or $lc_call="bj*")
++                                    and srw.yr="18*"')
 > results[,.(oclc, title, result_number, num_results)][1:5]
         oclc                                       title result_number num_results
       <char>                                      <char>         <int>      <char>

@@ -3,7 +3,7 @@
 [latest news on GitHub](https://github.com/NYPL/libbib/blob/master/NEWS.md)
 where the formatting is better.**
 
-# libbib 1.7 (in development)
+# libbib 1.6
 
 ## new features
 
@@ -17,6 +17,8 @@ where the formatting is better.**
    with a ton of very useful information.
 
 3. Added `dt_na_breakdown` function.
+
+4. Added detailed vignette on using the `worldcat_api_search` function
 
 ## bug fixes
 1. `print.progress` conditional now works for Location and Search API functions

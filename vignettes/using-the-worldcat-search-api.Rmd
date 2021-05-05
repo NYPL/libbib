@@ -88,8 +88,10 @@ At its most basic, this function takes a SRU query and returns a
 that the API returns. We'll see how the behavior of this function can
 be controlled by specifying certain function parameters.
 
-This function also offers assistance with the SRU query syntax. Examples
-of these aids will be explained later in the vignette.
+This function also offers assistance with the SRU query syntax.
+Mainly, the function allows you to substitute the arcane search index
+codes for more human-readable equivalents, prefixed be a (US) dollar-sign.
+Examples of these aids will be explained later in the vignette.
 
 ## An example of usage and what the function returns
 
@@ -190,13 +192,24 @@ worldcat_api_search('$titley="Madame Bovary" and $langauge=greek')
 #> Received diagnostic message: Unsupported index (srw.tiy)
 #> no results found
 #> NULL
+
+worldcat_api_search("$holding_library=NYP")
+#> Received diagnostic message: Limit index, can only be used to narrow a result
+#> for a non-limit index (srw.li)
+#> no results found
+#> NULL
 ```
 
+This last one failed because `$holding_library` is considered
+a _limit index_. This means that you can't use it to search directly,
+you can only combine with search facet with other non-limiting
+indexes to filter the results.
+Hopefully this will make more sense as you go through this vignette.
 
 ## `worldcat_api_search` by example / quick start
 
-In guides like this, these is frequently tension between wanting to
-be a complete references, and wanting to show cool/helpful examples,
+In guides like this, there is frequently tension between wanting to
+be a complete reference, and wanting to show cool/helpful examples
 at a glance.
 
 In service of easing this tension, we'll first look at some examples
@@ -239,7 +252,7 @@ sru <- '$keyword="common lisp" and $holding_library=NYP'
 results <- worldcat_api_search(sru)
 
 # keyword search for "Common Lisp" for materials held
-# at by any of the members of the "Manhattan Research
+# by any of the members of the "Manhattan Research
 # Library Initiative" (MaRLI) joint borrowing program
 # (New York Public Library, Columbia University, and
 # New York University)
@@ -301,13 +314,13 @@ There are four relations operators available for use...
   
   - `all`
 
-It should be noted that not every relations operators is available
+It should be noted that not every relations operator is available
 for use with every search index.
 
 ### `=`
 
 This was the most common operator used in the quick-start examples above.
-Though this operator can be most fully understood via constrast with the
+Though this operator can be most fully understood via contrast with the
 next operator, `exact`, suffice it to say, for now, that using `=` means
 that all of your search terms must match, without intervening words.
 This is sometimes referred to as an "un-anchored" search.
@@ -318,7 +331,7 @@ function must be a string, and strings can be made with single quotes
 and double quotes, we need to surround the entire query with single
 quotes.
 
-We can get around this by "escaping" the quotes, using only single
+We can get around this by "escaping" the quotes, but using only single
 quotes to surround the whole query is the most elegant approach.
 
 You can use both spaces and `+` to separate the search index and the
@@ -366,7 +379,7 @@ operator, only.
 
 ### `exact` (anchored search)
 
-The `exact` operator, in constrast with the `=` operator, signals to
+The `exact` operator, in contrast with the `=` operator, signals to
 the API that your search must match as an exact phrase, without
 any other terms in the matching string. For this reason, this operator
 is sometimes referred to as an "anchored search".
@@ -448,13 +461,13 @@ results[1:3, .(total_wc_results, title)]
 Using the `all` operator means that _all_ of the search terms must match but
 the search terms can be in any order and have intervening terms in between.
 For example, search like `$title all "Common Lisp"` can match a (fictional)
-book book named _"Speaking with a lisp is common"_.
+book named _"Speaking with a lisp is common"_.
 
 ### A quick note before continuing
 
 If your search term is one word, you do not have to use double quotes
 to surround the term. For example, `$title = Ethics` and
-`$title exact Ethics` word perfectly well.
+`$title exact Ethics` work perfectly well.
 
 If your search term as a single quote in it, it must be escaped so
 that R doesn't interpret it as the end of the search string. That
@@ -491,11 +504,50 @@ I suspect single quotes are automatically elided by the API.
 
 ## Boolean operators (and operator precedence)
 
-this is a stub.
+As evinced in the examples shown earlier in this vignette, you can
+use the boolean operators __and__, __or__, and __not__ to refine your
+search.
+
+As you mix different boolean operators in a single query, care must be
+taken to ensure that the order/precedence of these operators matches
+your intention.
+
+For example, in one of the examples above, we searched for Hip Hop materials
+on wax, cassette, or CD published from 1987 to 1990 with the following
+SRU query
+
+```
+'(($material_type=cas or $material_type=cda or $material_type=lps)
+   and $subject="Rap") and $year="1987-1990"'
+```
+
+It's important to note that if we wrote the query like shown below
+
+```
+$material_type=cas or $material_type=cda or $material_type=lps
+   and $subject="Rap" and $year="1987-1990"'
+```
+
+without any parentheses, the meaning of the query would be ambiguous.
+Make sure you use parentheses around distinct sections of your search
+incantation to disambiguate the query.
 
 ## Wildcards
 
-this is a stub.
+_taken verbatim from the archived documentation_
+
+For right truncation use an asterisk - * There must be at least three
+characters before the * for the query to work. There is no left truncation.
+
+To wildcard a single character wildcard use a number sign - #. So a query
+for wom#n provides results that include both woman and women in the results.
+
+For a 0-9 number of characters as wildcard characters use ?n. So a query
+for colo?1r provides results of color and colour.
+
+To wildcard characters within (or at the end) a term use the question
+mark - ?. So a query for colo?r provides results of color, colour, colonizer,
+and colorimeter.
 
 ## Table of all available search indexes
 
@@ -534,12 +586,49 @@ this is a stub.
 
 ## Selected Search Indexes in focus
 
+### $title / srw.ti
+
+According to the archived Search API documentation, (I have strong doubts)
+the title search phrase will automatically elide certain common and
+"un-important" words. In the field of Natural Language Processing,
+we call these "stop words".
+
+The archive docs indicates that the following words will be removed
+from the search phase:
+
+a, als, am, an, are, as, at, auf, aus, be, but, by, das, dass, de, der,
+des, dich, dir, du, er, es, for, from, had, have, he, her, his, how, ihr,
+ihre, ihres, im, in, is, ist, it, kein, la, le, les, mein, mich, mir, mit,
+of, on, sein, sie, that, the, this, to, un, une, von, was, wer, which, wie,
+wird, with, yousie, that, the, this, to, un, une, von, was, wer, which, wie,
+wird, with, you.
+
+This means that title searches for _The Brothers Karamazov_,
+_La Noche Boca Arriba_, _Das Spiel ist aus_, or _Das Kapital_ will,
+alledgely, internally use the seach phrases _Brothers Karamazov_,
+_Noche Boca Arriba_, _Spiel_, and _Kapital_, respectively.
+
+When searching the title index, though, I'd leave these words in the
+SRU search query for two reasons...
+
+  - It makes the title search phrase more readable, _especially_ with
+    non-english phrases.
+  
+  - I have strong doubts that all of these words are elided. For example,
+    a search for _Das Spiel ist aus_, yields results as if the search phrase
+    were indeed _Das Spiel ist aus_, and not as if it were simply _Spiel_.
+
 ### $holding_library / srw.li
 
 As shown in one of the examples above, the holding library search term
 is the official OCLC designator. You can search for an institution's
 code by the institutions name [using this link.](https://www.oclc.org/en/contacts/libraries.html)
 
+### $material_type / srw.mt
+
+An exhaustive crosswalk of all material types and their (normally 3-letter)
+codes would be too large to include here, but you can access the crosswalk
+in the documentation that is archived [at this link](https://web.archive.org/web/20210426232556/https://help.oclc.org/Librarian_Toolbox/Searching_WorldCat_Indexes/Bibliographic_records/Material_Type_names_and_codes?sl=en%3E)
 
 ### $library_holdings_group / srw.cg
 
@@ -582,11 +671,184 @@ items that are held by between 100 to 149 institutions,
 you would have to add `$library_holdings_group=18` to
 your SRU query.
 
+### others
+
+For all the available search indexes, it is very helpful to know which
+exact MARC fields are searched in each one.
+[This archived documentation link](https://web.archive.org/web/20130915101232/http://oclc.org/developer/documentation/worldcat-search-api/complete-list-indexes) contains that information.
+
+On that page, the SRU index codes have a prefix of `sru`, but it's really
+`srw`.
+Consult the _Table of all available search indexes_ above to find the libbib
+aliases for the indexes of interest (though, of course, you can use the
+un-translated index codes if you'd like, too).
+
 -----
+
+## Options in the `worldcat_api_search` function
+
+Besides for, of course, the SRU query, the `worldcat_api_search` function
+takes a number of optional parameters that can be used to alter its semantics.
+Below is a list and explanation of each of those parameters.
+(This information is also available by running
+`help("worldcat_api_search")` in an R console after loading the `libbib`
+package.)
+
+  - __max_records__
+  The maximum number of search results to return. This must be a number
+  between 0 and 100 or `Inf`. If `Inf`, the function will automatically
+  make all follow-up requests to retrieve all search results. 
+  To limit the number of times the API is hit, the default is 10 search
+  results.
+  
+  - __sru_query_assist__
+  A logical (boolean) indicating whether translation from more human-readable
+  aliases to the SRU search index codes should be allowed. The default
+  is `TRUE`. It can also be set to `FALSE`.
+  You can control this parameter globally by setting
+  `options("libbib.sru_query_assist")`.
+                        
+  - __frbrGrouping__
+  FRBR (_Functional Requirements for Bibliographic Records_) is a conceptual
+  framework for understanding the relationships between a "work" (e.g. a
+  novel as planned by an author), its "expression" (e.g. the manuscript of
+  that novel), it's "manifestation" (e.g. the first published version of
+  the novel), and, finally, an "item" (e.g an actual physical book
+  [or microform; audio file; etc...] of the work).
+  With the `frbrGrouping` parameter set to `on` (default), an attempt is
+  made by the WorldCat API to group together similar editions and present
+  only the top held record as the representative record for that group.
+  This, conceptually, can be viewed as an attempt to return search results for
+  any expression of the "work" (or works) referred to in the search query.
+                    
+  - __start_at__
+  The search result to start at (default is 1)
+  
+  - __wskey__
+  A WorldCat API key. This function is easiest to use by setting the
+  wskey globally, with the following incantation:
+  `options(libbib.wskey="YOUR WSKEY GOES HERE")`
+  
+  - __more__
+  A logical indicating whether more information from the MARCXML
+  search results should be returned (publisher, bib level, etc....).
+  The default is `TRUE`.
+  
+  - __print.progress__
+  A logical indicating whether a message should be displayed for each
+  API request. If `max_records` is `Inf` a message will be displayed for
+  every group of 100 search results the function fetches. The default is
+  `TRUE`.
+  
+  - __debug__
+  A logical indicating whether the HTTP and API responses should be printed
+  (for debugging). The default is `FALSE`.
+
 
 ## Combining this with the other API search functions in `libbib`
 
-this is a stub.
+There are numerous ways to combine the `worldcat_api_search` with the
+other functions that `libbib` provides to do some really useful
+investigations. In the example below, will be using the
+`worldcat_api_search` and `worldcat_api_locations_by_oclc` functions to
+get a list of institutions that hold any edition of my textbook. (This
+example uses some `data.table` specific syntax for brevity, but it will
+work with base R [or "tidyverse"] translations just fine.)
+
+First, let's use the search function to get a list of all search results
+for the book...
+
+```{r, eval=FALSE}
+results <- worldcat_api_search('srw.ti="Data Analysis with r"
+                                  and srw.au=fischetti',
+                                max_records=Inf)
+
+# inspect some of the columns in the first 5 results
+results[1:5, .(total_wc_results, result_number, oclc,
+               title, author, pub_date)
+#>    total_wc_results result_number       oclc                   title
+#>              <char>         <int>     <char>                  <char>
+#> 1:               11             1 1005106045 DATA ANALYSIS WITH R -.
+#> 2:               11             2 1089176194  Data analysis with R :
+#> 3:               11             3  949229431  Data analysis with R :
+#> 4:               11             4 1242682069    Data Analysis with R
+#> 5:               11             5 1242707288    Data Analysis with R
+#>              author pub_date
+#>              <char>    <int>
+#> 1: FISCHETTI, TONY.     2018
+#> 2: Fischetti, Tony.     2018
+#> 3: Fischetti, Tony.     2015
+#> 4:  Fischetti, Tony     2015
+#> 5:  Fischetti, Tony     2015
+```
+
+Now let's get all the unique OCLC numbers from all the search results.
+
+```{r, eval=FALSE}
+all_the_oclcs <- results[, unique(oclc)]
+all_the_oclcs
+#>  [1] "1005106045" "1089176194" "949229431"  "1242682069" "1242707288"
+#>  [6] "1244405806" "1104264768" "1242685020" "1242707684" "1244406814"
+#> [11] "1104846312"
+```
+
+On to the `worldcat_api_locations_by_oclc` function!
+Since this function takes one OCLC number at a time, we need to use
+a looping-construct to run the function with _all_ the OCLC numbers
+in `all_the_oclcs`.
+We'll be using the `pblapply` function (from the great `pbapply` package)
+to do this because we get a useful progress bar with no extra effort.
+
+```{r, eval=FALSE}
+holds <- pblapply(all_the_oclcs,
+                  function(x){
+                    worldcat_api_locations_by_oclc(x,
+                      include.bib.info=FALSE)
+                    })
+```
+
+Since the `pblapply` function returns a list of `data.tables` (on for each
+OCLC), we'll use `data.table`'s `rbindlist` function to one `data.table`
+containing all the results.
+
+```{r, eval=FALSE}
+all_holdings_dt <- rbindlist(holds)
+all_holdings_dt[1:3]
+#>          oclc institution_identifier            institution_name copies
+#>        <char>                 <char>                      <char> <char>
+#> 1: 1005106045                    FEM        The Ferguson Library      1
+#> 2: 1005106045                    YDX        YBP Library Services      1
+#> 3: 1005106045                    DUQ Duquesne University Library      1
+
+all_holdings_dt[, .(institution_name)]
+#>                                            institution_name
+#>                                                      <char>
+#>    1:                                  The Ferguson Library
+#>    2:                                  YBP Library Services
+#>    3:                           Duquesne University Library
+#>    4:                                    Centennial College
+#>    5:                                  George Brown College
+#>   ---
+#> 1029:        Hochschule Mittweida (FH), Hochschulbibliothek
+#> 1030:                                           Cyberlibris
+#> 1031:                                           Cyberlibris
+#> 1032:                                           Cyberlibris
+#> 1033: Bibliothèque de l'Université du Québec à Trois-Riv...
+```
+
+There you have it! My textbook is held by 1033 distinct OCLC institutions!
+
+Although the example above only searches the holding institutions of one
+specific book, the idiom is most helpful/interesting/cool when used for
+finding the holding institution of a entire class of materials.
+
+For example, in a recent project for a curator at my institution, I used
+the Search API to find all search results for materials on a very specific
+topic, got all the holding institutions for each of the search results, and
+then aggregated the institutions (with this package's `dt_counts_and_percents`
+function) to find the institutions holding the most items on this particular
+(very specific) topic.
+
 -----
 
 ## Sundry external / archived documentation links

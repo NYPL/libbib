@@ -1,15 +1,12 @@
 
 ## TODOs
 
-## immediately
-
-- can we make `split_map_filter_reduce` more efficient?
-
-
-
 ### near future
 
-- explain, for example, frbrGrouping in vignette
+- if the number of search results is less than `max_records`,
+  make sure the returned `data.table` contains only as many
+  rows as is needed to cover all search results.
+- can we make `split_map_filter_reduce` more efficient?
 - Propagate `original.pub.date` in, for example, the search function
 - Take getting the FAST subjects (xpath) seriously
 - Make WorldCat search not have to be Inf but above 100
