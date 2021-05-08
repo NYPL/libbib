@@ -7,7 +7,7 @@
 #' Delete columns in a data.table
 #'
 #' Takes a data.table and a quoted sequence of column names
-#' and removes the specified column names from the data.tablee
+#' and removes the specified column names from the data.table
 #'
 #' @import data.table
 #'
