@@ -16,7 +16,7 @@ Returns data.table with those columns removed
 }
 \description{
 Takes a data.table and a quoted sequence of column names
-and removes the specified column names from the data.tablee
+and removes the specified column names from the data.table
 }
 \examples{
 mt <- as.data.table(mtcars)

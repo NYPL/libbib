@@ -275,5 +275,10 @@ Key: <thekey>
 - `dt_na_breakdown`
 - `dt_add_to_col_names`
 
-
+### working with special attributes
+- `fread_plus_date`
+- `fwrite_plus_date`
+- `set_lb_attribute`
+- `set_lb_date`
+- `cp_lb_attributes``
 
