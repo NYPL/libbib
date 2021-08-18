@@ -7,6 +7,8 @@ data("books_serials_etc_sample")
 test_that("lc_call_subject_classification() works", {
   expect_equal(get_lc_call_subject_classification("ND 237.S18 $b S87 1997"),
                "Fine Arts")
+  expect_equal(get_lc_call_subject_classification("   ND 237.S18 $b S87 1997 "),
+               "Fine Arts")
   expect_equal(get_lc_call_subject_classification("ND 237.S18 $b S87 1997", subclassification=TRUE),
                "Painting")
   expect_equal(get_lc_call_subject_classification("PQ2246.M3", already.parsed=TRUE),
@@ -46,6 +48,7 @@ test_that("lc_call_subject_classification() works", {
   expect_equal(get_lc_call_subject_classification("KDC", allow.bare=FALSE, subclassification=TRUE),
                NA_character_)
   expect_equal(get_lc_call_subject_classification("K"), "Law")
+  expect_equal(get_lc_call_subject_classification(" K "), "Law")
   expect_equal(get_lc_call_subject_classification("K", allow.bare=FALSE), NA_character_)
   expect_equal(get_lc_call_subject_classification("C13.2:R 31/7"),
                "Auxiliary Sciences of History")
@@ -109,6 +112,7 @@ test_that("is_valid_lc_call() works", {
   expect_equal(is_valid_lc_call(c("Q 172.5", "AF172", "PR6023.A93")),
                c(TRUE, FALSE, TRUE))
   expect_equal(is_valid_lc_call("H29.S75 A38"), TRUE)
+  expect_equal(is_valid_lc_call("  H29.S75  A38 "), TRUE)
   expect_equal(is_valid_lc_call("Pk3798.K74 C33 1963"), TRUE)
   expect_equal(is_valid_lc_call("Rs164 .K894818 1966"), TRUE)
   expect_equal(is_valid_lc_call("KKT5674.18 .P75 1986"), TRUE)
@@ -123,6 +127,7 @@ test_that("get_lc_call_first_letter() works", {
   expect_equal(get_lc_call_first_letter(c("Q 172.5", "AF172", NA, "PR6023.A93")),
                c("Q", NA, NA, "P"))
   expect_equal(get_lc_call_first_letter("H29.S75 A38"), "H")
+  expect_equal(get_lc_call_first_letter("\tH29.S75 A38"), "H")
   expect_equal(get_lc_call_first_letter("Pk3798.K74 C33 1963"), "P")
   expect_equal(get_lc_call_first_letter("KKT5674.18 .P75 1986"), "K")
   expect_equal(get_lc_call_first_letter("KDC"), NA)
@@ -137,6 +142,7 @@ test_that("get_all_lc_call_subject_letters() works", {
                                                  "PR6023.A93")),
                c("Q", NA, NA, "PR"))
   expect_equal(get_all_lc_call_subject_letters("Pk3798.K74 C33 1963"), "PK")
+  expect_equal(get_all_lc_call_subject_letters(" Pk3798.K74 C33 1963"), "PK")
   expect_equal(get_all_lc_call_subject_letters("KKT5674.18 .P75 1986"), "KKT")
   expect_equal(get_all_lc_call_subject_letters("KDC"), NA)
   expect_equal(get_all_lc_call_subject_letters("KDC", allow.bare=TRUE), "KDC")

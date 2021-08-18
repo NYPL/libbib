@@ -81,6 +81,7 @@ get_lc_call_subject_classification <- function(x, subclassification=FALSE,
     stop("Input must be a character string")
 
   x <- stringr::str_to_upper(x)
+  x <- stringr::str_trim(x)
 
   thekey <- usersupplied <- description <- NULL
   lc_subject_classification <- lc_subject_subclassification <- NULL
@@ -144,6 +145,7 @@ is_valid_lc_call <- function(x, allow.bare=FALSE){
     stop("Input must be a character string")
 
   x <- stringr::str_to_upper(x)
+  x <- stringr::str_trim(x)
 
   if(allow.bare)
     ret <- (stringr::str_detect(x, REGEX.VALID.LCCALL.BARE) |
@@ -188,6 +190,7 @@ get_lc_call_first_letter <- function(x, allow.bare=FALSE){
     stop("Input must be a character string")
 
   x <- stringr::str_to_upper(x)
+  x <- stringr::str_trim(x)
 
   thekey <- usersupplied <- NULL
 
@@ -233,6 +236,7 @@ get_all_lc_call_subject_letters <- function(x, allow.bare=FALSE){
     stop("Input must be a character string")
 
   x <- stringr::str_to_upper(x)
+  x <- stringr::str_trim(x)
 
   description <- usersupplied <- thekey <- lc_first_letter_subject <- NULL
 
