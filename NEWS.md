@@ -5,12 +5,20 @@ where the formatting is better.**
 
 # libbib 1.7 (in development)
 
+1. Nothing yet
+
+# libbib 1.6.2
+
 ## new features
 
 1. Functions `fread_plus_date`, `fwrite_plus_date`, `set_lb_attribute`,
    `set_lb_date`, and `cp_lb_attributes` to read/write files with
    special date attribute and work with date and other special
    attributes.
+
+## bug fixes
+
+1. LC call number functions now call str_trim before anything
 
 
 # libbib 1.6
