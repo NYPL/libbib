@@ -35,6 +35,8 @@ very fast. Additionally, loading this package also automatically
 loads `data.table`. If you don't use `data.table` in your own code,
 everything will work just fine! But you might want to look into it!
 
+`stringr` and `pbapply` are the only other direct hard dependencies.
+
 ## Some examples
 
 ```r

@@ -29,7 +29,6 @@
 - Look into FAST API
 - Read my own documentation links again?
 - Better handling on NAs in split_map...?
-- Mention hard dependency on data.table, pbapply, and stringr in README
 - Multijoin routine?
 - Is pbapply linux only?
 - Should I be using conditions/error-handling?
