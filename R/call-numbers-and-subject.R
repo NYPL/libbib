@@ -77,7 +77,7 @@ get_lc_call_subject_classification <- function(x, subclassification=FALSE,
                                                already.parsed=FALSE,
                                                allow.bare=TRUE){
   if(all(is.na(x))) return(as.character(x))
-  if(class(x)!="character")
+  if(!methods::is(x, "character"))
     stop("Input must be a character string")
 
   x <- stringr::str_to_upper(x)
@@ -141,7 +141,7 @@ get_lc_call_subject_classification <- function(x, subclassification=FALSE,
 #'
 #' @export
 is_valid_lc_call <- function(x, allow.bare=FALSE){
-  if(class(x)!="character")
+  if(!methods::is(x, "character"))
     stop("Input must be a character string")
 
   x <- stringr::str_to_upper(x)
@@ -186,7 +186,7 @@ attr(is_valid_lc_call, "assertr_vectorized") <- TRUE
 #' @export
 get_lc_call_first_letter <- function(x, allow.bare=FALSE){
   if(all(is.na(x))) return(as.character(x))
-  if(class(x)!="character")
+  if(!methods::is(x, "character"))
     stop("Input must be a character string")
 
   x <- stringr::str_to_upper(x)
@@ -232,7 +232,7 @@ get_lc_call_first_letter <- function(x, allow.bare=FALSE){
 #' @export
 get_all_lc_call_subject_letters <- function(x, allow.bare=FALSE){
   if(all(is.na(x))) return(as.character(x))
-  if(class(x)!="character")
+  if(!methods::is(x, "character"))
     stop("Input must be a character string")
 
   x <- stringr::str_to_upper(x)
@@ -257,8 +257,8 @@ get_all_lc_call_subject_letters <- function(x, allow.bare=FALSE){
 #' Conversion from Dewey Decimal call numbers to first-level subject description
 #'
 #' Takes a string representation of a Dewey Decimal
-#' call number (DCC) and returns it's subject description.
-#' This uses the hundreds place of the DCC number
+#' call number (DDC) and returns it's subject description.
+#' This uses the hundreds place of the DDC number
 #' and returns the most general subject classification.
 #'
 #' @import data.table
@@ -266,7 +266,7 @@ get_all_lc_call_subject_letters <- function(x, allow.bare=FALSE){
 #' @param x A Dewey Decimal call number
 #'
 #' @return Returns the most general subject classification using the
-#'         hundreds places from the DCC. Returns NA if the DCC looks
+#'         hundreds places from the DDC. Returns NA if the DDC looks
 #'         invalid
 #'
 #' @examples
@@ -283,7 +283,7 @@ get_all_lc_call_subject_letters <- function(x, allow.bare=FALSE){
 #' @export
 get_dewey_decimal_subject_class <- function(x){
   if(all(is.na(x))) return(as.character(x))
-  if(class(x)!="character")
+  if(!methods::is(x, "character"))
     stop("Input must be a character string")
 
   x <- stringr::str_trim(x)
@@ -309,8 +309,8 @@ get_dewey_decimal_subject_class <- function(x){
 #' Conversion from Dewey Decimal call numbers to second-level subject description
 #'
 #' Takes a string representation of a Dewey Decimal
-#' call number (DCC) and returns it's subject description.
-#' This uses the first two digits of the DCC number
+#' call number (DDC) and returns it's subject description.
+#' This uses the first two digits of the DDC number
 #' and returns the second most general subject classification.
 #'
 #' @import data.table
@@ -318,7 +318,7 @@ get_dewey_decimal_subject_class <- function(x){
 #' @param x A Dewey Decimal call number
 #'
 #' @return Returns the most general subject classification using the
-#'         first two digits from the DCC. Returns NA if the DCC looks
+#'         first two digits from the DDC. Returns NA if the DDC looks
 #'         invalid
 #'
 #' @examples
@@ -335,7 +335,7 @@ get_dewey_decimal_subject_class <- function(x){
 #' @export
 get_dewey_decimal_subject_division <- function(x){
   if(all(is.na(x))) return(as.character(x))
-  if(class(x)!="character")
+  if(!methods::is(x, "character"))
     stop("Input must be a character string")
 
   x <- stringr::str_trim(x)
@@ -361,8 +361,8 @@ get_dewey_decimal_subject_division <- function(x){
 #' Conversion from Dewey Decimal call numbers to third-level subject description
 #'
 #' Takes a string representation of a Dewey Decimal
-#' call number (DCC) and returns it's subject description.
-#' This uses the first three digits of the DCC number
+#' call number (DDC) and returns it's subject description.
+#' This uses the first three digits of the DDC number
 #' and returns the third most general subject classification.
 #'
 #' @import data.table
@@ -370,7 +370,7 @@ get_dewey_decimal_subject_division <- function(x){
 #' @param x A Dewey Decimal call number
 #'
 #' @return Returns the most general subject sectionification using the
-#'         first three digits from the DCC. Returns NA if the DCC looks
+#'         first three digits from the DDC. Returns NA if the DDC looks
 #'         invalid
 #'
 #' @examples
@@ -389,7 +389,7 @@ get_dewey_decimal_subject_division <- function(x){
 #' @export
 get_dewey_decimal_subject_section <- function(x){
   if(all(is.na(x))) return(as.character(x))
-  if(class(x)!="character")
+  if(!methods::is(x, "character"))
     stop("Input must be a character string")
 
   x <- stringr::str_trim(x)

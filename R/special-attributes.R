@@ -52,7 +52,7 @@ set_lb_attribute <- function(x, type, value){
 #'
 #' @export
 set_lb_date <- function(x, value){
-  if("Date" %chin% class(value))
+  if(methods::is(value, "Date"))
     set_lb_attribute(x, "date", value)
   else
     set_lb_attribute(x, "date", as.Date(value))

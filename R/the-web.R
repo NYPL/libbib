@@ -35,7 +35,7 @@
 #' @export
 loc_permalink_from_lccn <- function(x, normalize=TRUE, format=""){
   if(all(is.na(x))) return(as.character(x))
-  if(class(x)!="character")
+  if(!methods::is(x, "character"))
     stop("Input must be a character string")
 
   postfix <- fcase(format=="",         "",
@@ -82,7 +82,7 @@ loc_permalink_from_lccn <- function(x, normalize=TRUE, format=""){
 #' @export
 worldcat_permalink_from_issn <- function(x, normalize=TRUE){
   if(all(is.na(x))) return(as.character(x))
-  if(class(x)!="character")
+  if(!methods::is(x, "character"))
     stop("Input must be a character string")
   if(normalize)
     x <- normalize_issn(x)
@@ -126,7 +126,7 @@ worldcat_permalink_from_issn <- function(x, normalize=TRUE){
 #' @export
 worldcat_permalink_from_isbn <- function(x, normalize=TRUE){
   if(all(is.na(x))) return(as.character(x))
-  if(class(x)!="character")
+  if(!methods::is(x, "character"))
     stop("Input must be a character string")
   if(normalize)
     x <- normalize_isbn(x)
@@ -160,7 +160,7 @@ worldcat_permalink_from_isbn <- function(x, normalize=TRUE){
 #' @export
 worldcat_permalink_from_oclc_number <- function(x){
   if(all(is.na(x))) return(as.character(x))
-  if(class(x)!="character")
+  if(!methods::is(x, "character"))
     stop("Input must be a character string")
   x <- stringr::str_replace_all(x, "\\s", "")
   ifelse(is.na(x), NA_character_,
@@ -201,7 +201,7 @@ worldcat_permalink_from_oclc_number <- function(x){
 #' @export
 oclc_classify_link_from_standard_num <- function(x){
   if(all(is.na(x))) return(as.character(x))
-  if(class(x)!="character")
+  if(!methods::is(x, "character"))
     stop("Input must be a character string")
   x <- stringr::str_replace_all(x, "\\s", "")
   part1 <- "http://classify.oclc.org/classify2/ClassifyDemo?search-standnum-txt="

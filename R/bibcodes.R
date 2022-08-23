@@ -50,7 +50,7 @@ REGEX.ISSN <- "^\\d{7}(X|\\d)$"
 #' @export
 get_isbn_10_check_digit <- function(x, allow.hyphens=FALSE, errors.as.nas=FALSE){
   if(all(is.na(x))) return(as.character(x))
-  if(class(x)!="character")
+  if(!methods::is(x, "character"))
     stop("Input must be a character string")
   if(allow.hyphens)
     x <- gsub("-", "", x, fixed=TRUE)
@@ -98,7 +98,7 @@ get_isbn_10_check_digit <- function(x, allow.hyphens=FALSE, errors.as.nas=FALSE)
 #' @export
 check_isbn_10_check_digit <- function(x, allow.hyphens=TRUE, errors.as.false=TRUE){
   if(all(is.na(x))) return(as.character(x))
-  if(class(x)!="character"){
+  if(!methods::is(x, "character")){
     if(errors.as.false)
       return(rep(FALSE, length(x)))
     stop("Input must be a character string")
@@ -146,7 +146,7 @@ check_isbn_10_check_digit <- function(x, allow.hyphens=TRUE, errors.as.false=TRU
 #' @export
 is_valid_isbn_10 <- function(x, allow.hyphens=TRUE, lower.x.allowed=TRUE){
   if(all(is.na(x))) return(as.character(x))
-  if(class(x)!="character"){
+  if(!methods::is(x, "character")){
     stop("Input must be a character string")
   }
   if(allow.hyphens)
@@ -202,7 +202,7 @@ attr(is_valid_isbn_10, "assertr_vectorized") <- TRUE
 #' @export
 normalize_isbn_10 <- function(x, aggressive=TRUE, convert.to.isbn.13=FALSE){
   if(all(is.na(x))) return(as.character(x))
-  if(class(x)!="character")
+  if(!methods::is(x, "character"))
     x <- as.character(x)
   x <- toupper(x)
   x <- gsub("[^\\d|X]", "", x, perl=TRUE)
@@ -295,7 +295,7 @@ normalize_isbn_10 <- function(x, aggressive=TRUE, convert.to.isbn.13=FALSE){
 #' @export
 get_isbn_13_check_digit <- function(x, allow.hyphens=FALSE, errors.as.nas=FALSE){
   if(all(is.na(x))) return(as.character(x))
-  if(class(x)!="character")
+  if(!methods::is(x, "character"))
     stop("Input must be a character string")
   if(allow.hyphens)
     x <- gsub("-", "", x, fixed=TRUE)
@@ -342,7 +342,7 @@ get_isbn_13_check_digit <- function(x, allow.hyphens=FALSE, errors.as.nas=FALSE)
 #' @export
 check_isbn_13_check_digit <- function(x, allow.hyphens=TRUE, errors.as.false=TRUE){
   if(all(is.na(x))) return(as.character(x))
-  if(class(x)!="character"){
+  if(!methods::is(x, "character")){
     if(errors.as.false)
       return(rep(FALSE, length(x)))
     stop("Input must be a character string")
@@ -384,7 +384,7 @@ check_isbn_13_check_digit <- function(x, allow.hyphens=TRUE, errors.as.false=TRU
 #' @export
 is_valid_isbn_13 <- function(x, allow.hyphens=TRUE){
   if(all(is.na(x))) return(as.character(x))
-  if(class(x)!="character"){
+  if(!methods::is(x, "character")){
     stop("Input must be a character string")
   }
   if(allow.hyphens)
@@ -423,7 +423,7 @@ attr(is_valid_isbn_13, "assertr_vectorized") <- TRUE
 convert_to_isbn_13 <- function(x, skip.validity.check=FALSE,
                                errors.as.nas=FALSE){
   if(all(is.na(x))) return(as.character(x))
-  if(class(x)!="character"){
+  if(!methods::is(x, "character")){
     stop("Input must be a character string")
   }
   x <- toupper(x)
@@ -475,7 +475,7 @@ convert_to_isbn_13 <- function(x, skip.validity.check=FALSE,
 #' @export
 normalize_isbn_13 <- function(x, aggressive=TRUE){
   if(all(is.na(x))) return(as.character(x))
-  if(class(x)!="character")
+  if(!methods::is(x, "character"))
     x <- as.character(x)
   x <- gsub("\\D", "", x, perl=TRUE)
   is.all.valid <- all(is_valid_isbn_13(x), na.rm=TRUE)
@@ -542,7 +542,7 @@ normalize_isbn_13 <- function(x, aggressive=TRUE){
 #' @export
 normalize_isbn <- function(x, aggressive=TRUE, convert.to.isbn.13=FALSE){
   if(all(is.na(x))) return(as.character(x))
-  if(class(x)!="character")
+  if(!methods::is(x, "character"))
     x <- as.character(x)
 
   x <- gsub("[^\\d|X|x]", "", x, perl=TRUE)
@@ -595,7 +595,7 @@ normalize_isbn <- function(x, aggressive=TRUE, convert.to.isbn.13=FALSE){
 #' @export
 get_issn_check_digit <- function(x, allow.hyphens=FALSE, errors.as.nas=FALSE){
   if(all(is.na(x))) return(as.character(x))
-  if(class(x)!="character")
+  if(!methods::is(x, "character"))
     stop("Input must be a character string")
   if(allow.hyphens)
     x <- gsub("-", "", x, fixed=TRUE)
@@ -647,7 +647,7 @@ get_issn_check_digit <- function(x, allow.hyphens=FALSE, errors.as.nas=FALSE){
 #' @export
 check_issn_check_digit <- function(x, allow.hyphens=TRUE, errors.as.false=FALSE){
   if(all(is.na(x))) return(as.character(x))
-  if(class(x)!="character"){
+  if(!methods::is(x, "character")){
     if(errors.as.false)
       return(rep(FALSE, length(x)))
     stop("Input must be a character string")
@@ -697,7 +697,7 @@ check_issn_check_digit <- function(x, allow.hyphens=TRUE, errors.as.false=FALSE)
 #' @export
 is_valid_issn <- function(x, allow.hyphens=TRUE, lower.x.allowed=TRUE){
   if(all(is.na(x))) return(as.character(x))
-  if(class(x)!="character"){
+  if(!methods::is(x, "character")){
     stop("Input must be a character string")
   }
   if(allow.hyphens)
@@ -759,7 +759,7 @@ attr(is_valid_issn, "assertr_vectorized") <- TRUE
 #' @export
 normalize_issn <- function(x, aggressive=TRUE, pretty=FALSE){
   if(all(is.na(x))) return(as.character(x))
-  if(class(x)!="character")
+  if(!methods::is(x, "character"))
     x <- as.character(x)
   x <- toupper(x)
   x <- gsub("[^\\d|X]", "", x, perl=TRUE)
@@ -857,11 +857,12 @@ normalize_issn <- function(x, aggressive=TRUE, pretty=FALSE){
 #' @export
 normalize_lccn <- function(userlccns, allow.hyphens=TRUE){
   if(all(is.na(userlccns))) return(as.character(userlccns))
-  if(class(userlccns)!="character")
+  if(!methods::is(userlccns, "character"))
     stop("Input must be a character string")
 
   userlccns <- stringr::str_replace_all(userlccns, "\\s", "")
   userlccns <- stringr::str_replace_all(userlccns, "#", "")
+  userlccns <- stringr::str_replace_all(userlccns, "\\^", "")
   userlccns <- stringr::str_replace(userlccns, "/.+$", "")
 
   where.bad <- !stringr::str_detect(userlccns, "\\d")

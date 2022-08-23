@@ -25,7 +25,7 @@
 #' @export
 get_language_from_code <- function(x){
   if(all(is.na(x))) return(as.character(x))
-  if(class(x)!="character")
+  if(!methods::is(x, "character"))
     stop("Input must be a character string")
   x <- stringr::str_trim(stringr::str_to_lower(x))
   thekey <- language <- language_code_crosswalk <-  NULL
@@ -66,7 +66,7 @@ get_language_from_code <- function(x){
 #' @export
 get_country_from_code <- function(x){
   if(all(is.na(x))) return(as.character(x))
-  if(class(x)!="character")
+  if(!methods::is(x, "character"))
     stop("Input must be a character string")
   x <- stringr::str_trim(stringr::str_to_lower(x))
   thekey <- country <- country_code_crosswalk <-  NULL

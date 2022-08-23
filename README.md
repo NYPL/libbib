@@ -86,7 +86,7 @@ everything will work just fine! But you might want to look into it!
 2: 877749545 Max Ernst's 'Celebes' Penrose, Roland, Sir              8               0
    call_type recommendation holdings http_status_code classify_response_code
       <char>         <char>   <char>            <int>                  <int>
-1:       DCC          759.4        6              200                      0
+1:       DDC          759.4        6              200                      0
 2:       LCC       ND588.E7        6              200                      0
 
 > worldcat_api_locations_by_oclc("877749545", max_libraries=10,
@@ -210,7 +210,7 @@ Key: <thekey>
 - `get_lc_call_first_letter`
 - `get_all_lc_call_subject_letters`
 
-### Dewey Decimal (DCC) Call Numbers
+### Dewey Decimal (DDC) Call Numbers
 - `get_dewey_decimal_subject_class`
 - `get_dewey_decimal_subject_division`
 - `get_dewey_decimal_subject_section`
@@ -280,5 +280,5 @@ Key: <thekey>
 - `fwrite_plus_date`
 - `set_lb_attribute`
 - `set_lb_date`
-- `cp_lb_attributes``
+- `cp_lb_attributes`
 

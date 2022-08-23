@@ -11,13 +11,13 @@ get_dewey_decimal_subject_class(x)
 }
 \value{
 Returns the most general subject classification using the
-        hundreds places from the DCC. Returns NA if the DCC looks
+        hundreds places from the DDC. Returns NA if the DDC looks
         invalid
 }
 \description{
 Takes a string representation of a Dewey Decimal
-call number (DCC) and returns it's subject description.
-This uses the hundreds place of the DCC number
+call number (DDC) and returns it's subject description.
+This uses the hundreds place of the DDC number
 and returns the most general subject classification.
 }
 \examples{

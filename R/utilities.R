@@ -22,7 +22,7 @@
 #'
 #' @export
 dt_del_cols <- function(DT, ...){
-  if(!("data.table" %in% class(DT)))
+  if(!methods::is(DT, "data.table"))
     stop("DT must be a data.table object")
   cols <- c(...)
   DT[, (cols):=NULL]
@@ -49,7 +49,7 @@ dt_del_cols <- function(DT, ...){
 #'
 #' @export
 dt_keep_cols <- function(DT, ...){
-  if(!("data.table" %in% class(DT)))
+  if(!methods::is(DT, "data.table"))
     stop("DT must be a data.table object")
   cols <- c(...)
   badp <- setdiff(cols, names(DT))
@@ -148,7 +148,7 @@ dt_pivot <- function(DT, theby, theexp, percent.cutoff=0, value.name="value",
 #' @export
 dt_counts_and_percents <- function(DT, group_by_this, percent.cutoff=0,
                                    big.mark=FALSE){
-  if(!("data.table" %in% class(DT)))
+  if(!methods::is(DT, "data.table"))
     stop("DT must be a data.table object")
   if(!(big.mark==FALSE || is.character(big.mark)))
     stop("big.mark must either be FALSE or a character type")
@@ -243,7 +243,7 @@ get_clean_names <- function(dat, lower=TRUE){
 #'
 #' @export
 dt_set_clean_names <- function(DT, lower=TRUE){
-  if(!("data.table" %in% class(DT)))
+  if(!methods::is(DT, "data.table"))
     stop("DT must be a data.table object")
   setnames(DT, get_clean_names(DT, lower=lower))
 }
@@ -275,7 +275,7 @@ dt_set_clean_names <- function(DT, lower=TRUE){
 #'
 #' @export
 dt_percent_not_na <- function(DT, acolumn){
-  if(!("data.table" %in% class(DT)))
+  if(!methods::is(DT, "data.table"))
     stop("DT must be a data.table object")
   DT[, round(100*sum(!is.na(get(acolumn)))/.N, 2)]
 }
@@ -317,7 +317,7 @@ dt_percent_not_na <- function(DT, acolumn){
 #'
 #' @export
 dt_na_breakdown <- function(DT, acolumn, big.mark=FALSE){
-  if(!("data.table" %in% class(DT)))
+  if(!methods::is(DT, "data.table"))
     stop("DT must be a data.table object")
   if(!(big.mark==FALSE || is.character(big.mark)))
     stop("big.mark must either be FALSE or a character type")
@@ -388,7 +388,7 @@ dt_na_breakdown <- function(DT, acolumn, big.mark=FALSE){
 dt_add_to_col_names <- function(DT, astring, prefix=FALSE,
                                 exclude=NULL, include=NULL,
                                 fix.duplicates=FALSE){
-  if(!("data.table" %chin% class(DT)))
+  if(!methods::is(DT, "data.table"))
     stop("DT must be a data.table")
   if(!is.null(exclude) && !is.null(include))
     stop("cannot have both 'include' and 'exclude' parameters at the same time")

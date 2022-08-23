@@ -1,7 +1,7 @@
 Package: libbib
 Type: Package
 Title: Various Utilities for Library Science/Assessment and Cataloging
-Version: 1.6.2
+Version: 1.6.3
 Authors@R: person("Tony", "Fischetti",
              email="tony.fischetti@gmail.com",
              role=c("aut", "cre"))
@@ -14,10 +14,10 @@ Description: Provides functions for validating and normalizing bibliographic
    crosswalks and code tables.
 License: GPL-3
 Depends: R (>= 3.5.0), data.table, utils
-Imports: curl, pbapply, stringr, xml2
+Imports: curl, methods, pbapply, stringr, xml2
 Suggests: assertr, testthat, knitr, magrittr, rmarkdown
 Encoding: UTF-8
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.0
 VignetteBuilder: knitr
 NeedsCompilation: no
 Packaged: 2021-05-05 13:51:08 UTC; tonyfischetti

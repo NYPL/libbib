@@ -391,6 +391,7 @@ test_that("normalize_lccn() succeeds properly", {
   expect_equal(normalize_lccn("sa 65001662"), "sa65001662")
   expect_equal(normalize_lccn("2003306761"), "2003306761")
   expect_equal(normalize_lccn("###78890351#"), "78890351")
+  expect_equal(normalize_lccn("^^^78890351^"), "78890351")
   expect_equal(normalize_lccn("i was happy for a day in 1975"), NA_character_)
 
   # hyphen fails

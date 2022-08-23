@@ -26,7 +26,7 @@ worldcat_api_get_http_response <- function(aurl, print.api.responses=FALSE){
 worldcat_api_classify <- function(thetype, thenumber, debug=FALSE){
   if(length(thenumber)>1) stop("only accepts one standard number at a time")
   if(is.na(thenumber)) return(NULL)
-  if(class(thenumber)!="character")
+  if(!methods::is(thenumber, "character"))
     stop("ISBN, ISSN, or OCLC number must be a string")
 
   template      <- "http://classify.oclc.org/classify2/Classify?%s=%s&summary=true"
@@ -61,7 +61,7 @@ worldcat_api_classify <- function(thetype, thenumber, debug=FALSE){
   dcc_holdings  <- xml2::xml_attr(dcc, "holdings")
   dcc_sfa       <- xml2::xml_attr(dcc, "sfa")
   dcc_frame     <- data.table(standard_number=thenumber,
-                              call_type="DCC",
+                              call_type="DDC",
                               holdings=dcc_holdings,
                               recommendation=dcc_sfa)
 
@@ -94,7 +94,7 @@ worldcat_api_classify <- function(thetype, thenumber, debug=FALSE){
 #' Search WorldCat classify API by ISBN, ISSN, or OCLC number
 #'
 #' Access the results of a WorldCat classify API search by ISBN, ISSN,
-#' or OCLC number to get the most frequent call numbers (DCC and LCC)
+#' or OCLC number to get the most frequent call numbers (DDC and LCC)
 #' associated with a work. Returns a \code{data.table} with those call
 #' numbers and various other metadata. See "Details" for more information.
 #'
@@ -108,7 +108,7 @@ worldcat_api_classify <- function(thetype, thenumber, debug=FALSE){
 #' API response code.
 #'
 #' For each ISBN/ISSN/OCLC number used, two rows will be returned; one for
-#' the DCC and one for the LCC. Common information (work metadata)
+#' the DDC and one for the LCC. Common information (work metadata)
 #' will the the same in both rows. If one of the call numbers is missing,
 #' the recommendation and holdings fields will be NA.
 #'
@@ -144,7 +144,7 @@ worldcat_api_classify <- function(thetype, thenumber, debug=FALSE){
 #'              responses should be printed (for debugging)
 #'              (default is \code{FALSE})
 #'
-#' @return A \code{data.table} with most popular DCC and LCC call numbers
+#' @return A \code{data.table} with most popular DDC and LCC call numbers
 #'         and various other metadata. See "Details" for more information.
 #'
 #' @examples
@@ -153,7 +153,7 @@ worldcat_api_classify <- function(thetype, thenumber, debug=FALSE){
 #'   worldcat_api_classify_by_oclc("93976650")
 #'    #         oclc   title           author total_holdings total_eholdings call_type
 #'    #       <char>  <char>           <char>          <int>           <int>    <char>
-#'    # 1: 939766505 Lobster King, Richard J.            244             534       DCC
+#'    # 1: 939766505 Lobster King, Richard J.            244             534       DDC
 #'    # 2: 939766505 Lobster King, Richard J.            244             534       LCC
 #'    #    recommendation holdings http_status_code classify_response_code
 #'    #            <char>   <char>            <int>                  <int>
@@ -252,7 +252,7 @@ worldcat_api_bib_read_info_by_something <- function(x,
   # error checking
   if(length(x)>1) stop("only accepts one standard number at a time")
   if(is.na(x)) return(NULL)
-  if(class(x)!="character")
+  if(!methods::is(x, "character"))
     stop("x must be a string or NULL")
   if(!(type_std_num %chin% c("oclc", "isbn", "issn")))
     stop('type of standard number must be "oclc", "isbn", or "issn"')
@@ -374,7 +374,7 @@ worldcat_api_bib_read_info_by_oclc <- function(x,
   # error checking
   if(length(x)>1) stop("only accepts one standard number at a time")
   if(is.na(x)) return(NULL)
-  if(class(x)!="character")
+  if(!methods::is(x, "character"))
     stop("x must be a string or NULL")
 
   oclc <- NULL
@@ -394,7 +394,7 @@ worldcat_api_bib_read_info_by_isbn <- function(x,
   # error checking
   if(length(x)>1) stop("only accepts one standard number at a time")
   if(is.na(x)) return(NULL)
-  if(class(x)!="character")
+  if(!methods::is(x, "character"))
     stop("x must be a string or NULL")
 
   isbn <- NULL
@@ -414,7 +414,7 @@ worldcat_api_bib_read_info_by_issn <- function(x,
   # error checking
   if(length(x)>1) stop("only accepts one standard number at a time")
   if(is.na(x)) return(NULL)
-  if(class(x)!="character")
+  if(!methods::is(x, "character"))
     stop("x must be a string or NULL")
 
   issn <- NULL
@@ -446,13 +446,13 @@ construct_wcapiloc_url <- function(stdnum,
                                    wskey=getOption("libbib.wskey", NULL)){
 
   # error checking
-  if(class(stdnum)!="character")
+  if(!methods::is(stdnum, "character"))
     stop("standard number must be a string")
-  if(class(max_libraries)!="numeric")
+  if(!methods::is(max_libraries, "numeric"))
     stop("max_libraries must be a number between 1 and 100")
   if(max_libraries < 1 || max_libraries > 100)
     stop("max_libraries must be a number between 1 and 100")
-  if(!is.null(location) && class(location)!="character")
+  if(!is.null(location) && !methods::is(location, "character"))
     stop("location must be a string or NULL")
   if(!(type_std_num %chin% c("oclc", "isbn", "issn")))
     stop('type of standard number must be "oclc", "isbn", or "issn"')
@@ -462,7 +462,7 @@ construct_wcapiloc_url <- function(stdnum,
     stop('frfbGrouping must be "on" or "off"')
   if(!is.null(libtype) && !(libtype %chin% c("academic", "public", "government", "other")))
     stop('libtype must be either NULL, "academic", "public", "government", or "other"')
-  if(class(start_at)!="numeric")
+  if(!methods::is(start_at, "numeric"))
     stop("start_at must be a number")
   if(is.null(wskey))
     stop("a WSKEY (WorldCat API key) must be specified")
@@ -573,7 +573,7 @@ worldcat_api_locations_by_something <- function(x,
   # error checking
   if(length(x)>1) stop("only accepts one standard number at a time")
   if(is.na(x)) return(NULL)
-  if(class(x)!="character")
+  if(!methods::is(x, "character"))
     stop("x must be a string or NULL")
 
   # debug implies print progress
@@ -872,15 +872,15 @@ construct_wcapi_search_url <- function(sru, max_records=100,
                                        frbrGrouping="on", start_at=1,
                                        wskey=getOption("libbib.wskey", NULL)){
   # error checking
-  if(class(sru)!="character")
+  if(!methods::is(sru, "character"))
     stop("SRU search must be a string")
-  if(class(max_records)!="numeric")
+  if(!methods::is(max_records, "numeric"))
     stop("max_records must be a number between 1 and 100")
   if(max_records < 1 || max_records > 100)
     stop("max_records must be a number between 1 and 100")
   if(!(frbrGrouping %chin% c("on", "off")))
     stop('frfbGrouping must be "on" or "off"')
-  if(class(start_at)!="numeric")
+  if(!methods::is(start_at, "numeric"))
     stop("start_at must be a number")
   if(is.null(wskey))
     stop("a WSKEY (WorldCat API key) must be specified")

@@ -26,7 +26,7 @@
 #'
 #' @export
 marc_leader_get_info <- function(x){
-  if(class(x)!="character")
+  if(!methods::is(x, "character"))
     stop("x must be a string or NA")
 
   record_type       <- stringr::str_sub(x, 7, 7)
@@ -113,7 +113,7 @@ marc_leader_get_info <- function(x){
 #' @export
 marc_008_get_info <- function(x, original.pub.date=FALSE,
                               include.questionable.dates=FALSE){
-  if(class(x)!="character")
+  if(!methods::is(x, "character"))
     stop("x must be a string or NA")
 
   pub_date <- NULL

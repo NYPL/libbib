@@ -22,12 +22,12 @@ responses should be printed (for debugging)
 (default is \code{FALSE})}
 }
 \value{
-A \code{data.table} with most popular DCC and LCC call numbers
+A \code{data.table} with most popular DDC and LCC call numbers
         and various other metadata. See "Details" for more information.
 }
 \description{
 Access the results of a WorldCat classify API search by ISBN, ISSN,
-or OCLC number to get the most frequent call numbers (DCC and LCC)
+or OCLC number to get the most frequent call numbers (DDC and LCC)
 associated with a work. Returns a \code{data.table} with those call
 numbers and various other metadata. See "Details" for more information.
 }
@@ -41,7 +41,7 @@ using that call number, the HTTP status code, and the Classify
 API response code.
 
 For each ISBN/ISSN/OCLC number used, two rows will be returned; one for
-the DCC and one for the LCC. Common information (work metadata)
+the DDC and one for the LCC. Common information (work metadata)
 will the the same in both rows. If one of the call numbers is missing,
 the recommendation and holdings fields will be NA.
 
@@ -77,7 +77,7 @@ numbers are available, using the OCLC number is always preferred.
   worldcat_api_classify_by_oclc("93976650")
    #         oclc   title           author total_holdings total_eholdings call_type
    #       <char>  <char>           <char>          <int>           <int>    <char>
-   # 1: 939766505 Lobster King, Richard J.            244             534       DCC
+   # 1: 939766505 Lobster King, Richard J.            244             534       DDC
    # 2: 939766505 Lobster King, Richard J.            244             534       LCC
    #    recommendation holdings http_status_code classify_response_code
    #            <char>   <char>            <int>                  <int>

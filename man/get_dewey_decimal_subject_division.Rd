@@ -11,13 +11,13 @@ get_dewey_decimal_subject_division(x)
 }
 \value{
 Returns the most general subject classification using the
-        first two digits from the DCC. Returns NA if the DCC looks
+        first two digits from the DDC. Returns NA if the DDC looks
         invalid
 }
 \description{
 Takes a string representation of a Dewey Decimal
-call number (DCC) and returns it's subject description.
-This uses the first two digits of the DCC number
+call number (DDC) and returns it's subject description.
+This uses the first two digits of the DDC number
 and returns the second most general subject classification.
 }
 \examples{
