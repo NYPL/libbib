@@ -155,15 +155,21 @@ dt_counts_and_percents <- function(DT, group_by_this, percent.cutoff=0,
 
   count <- NULL
 
+  # determine if casting to factor is necessary
+  if(!methods::is(DT[[group_by_this]], "character") &&
+     !methods::is(DT[[group_by_this]], "factor")) {
+    warning(sprintf("Column (%s) is not a factor (or character), %s",
+                    group_by_this, "copying DT and converting..."))
+    DT <- copy(DT)
+    DT[, (group_by_this):=as.factor(get(group_by_this))]
+  }
+
   tmp <- dt_pivot(DT, group_by_this, .N, percent.cutoff=percent.cutoff,
                   value.name="count", percent.name="percent")
   if(big.mark!=FALSE)
     tmp[, count:=prettyNum(count, big.mark=big.mark)]
   tmp[]
 }
-
-
-
 
 # --------------------------------------------------------------- #
 
@@ -202,7 +208,7 @@ dt_counts_and_percents <- function(DT, group_by_this, percent.cutoff=0,
 get_clean_names <- function(dat, lower=TRUE){
   thenames <- names(dat)
   nospace <- stringr::str_replace_all(thenames, "\\s+", "_")
-  nobad <- stringr::str_replace_all(nospace, "[^_A-Za-z1-9]", "_")
+  nobad <- stringr::str_replace_all(nospace, "[^_A-Za-z0-9]", "_")
   if(lower)
     nobad <- tolower(nobad)
   if(sum(duplicated(nobad))){
