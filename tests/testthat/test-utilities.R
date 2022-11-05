@@ -20,6 +20,9 @@ setnames(ejemplo2, c("Sepal Length", "Sepal@Width", "Petal Length",
 ejemplo2[, Sp_cies:=1]
 ejemplo2[, Sp_cies_1:=2]
 
+ejemplo3 <- as.data.table(iris)
+setnames(ejemplo3, c("data0", "data1", "data!", "data@", "d4ta4"))
+
 
 # --------------------------------------------------------------- #
 
@@ -53,6 +56,8 @@ test_that("get_clean_names() works", {
   expect_equal(get_clean_names(ejemplo2, lower=FALSE),
                c("Sepal_Length", "Sepal_Width", "Petal_Length",
                  "Petal_nWidth", "Sp_cies", "Sp_cies_2", "Sp_cies_1"))
+  expect_equal(get_clean_names(ejemplo3),
+               c("data0", "data1", "data_", "data__1", "d4ta4"))
 })
 
 test_that("dt_set_clean_names() works", {
