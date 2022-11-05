@@ -37,9 +37,10 @@ placed; percent of counts lower than this percent will be grouped
 into a category called "OTHER".
 The percent is a number out of 100
 
-The final row is a total count
+The final row is a total count.
 
-The quoted group-by variable must be a character or factor
+The quoted group-by variable must be a character or factor. If it is
+not, it will be temporarily converted into one and a warning is issued.
 }
 \examples{
 
