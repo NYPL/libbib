@@ -7,6 +7,15 @@ where the formatting is better.**
 
 1. Nothing yet
 
+# libbib 1.6.4
+
+1. Bug fix in `dt_counts_and_percents` wherein if the group by column
+   was not a character or a factor, the "TOTAL"", and "OTHER" rows would
+   be NA.
+
+2. Fixed a bug in `get_clean_names` (and, by extension, `dt_set_clean_names`)
+   where "0" was accidentally excluded from the whitelisted character set.
+
 # libbib 1.6.2
 
 ## new features
