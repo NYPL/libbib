@@ -99,7 +99,7 @@ recombine_with_sep_closure <- function(sep=";"){
 #' Split, Map, Filter, and Reduce a string vector
 #'
 #' This function takes a vector of strings, splits those strings
-#' on a particular character; string; or regex patters, applies a
+#' on a particular character; string; or regex pattern, applies a
 #' user-specified function to each sub-element of the now split element,
 #' filters those sub-elements using a user-specified function, and, finally,
 #' recombines each element's sub-elements using a user specified reduction
