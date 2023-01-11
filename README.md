@@ -1,4 +1,4 @@
-libbib <img src="http://statethatiamin.com/media/libbibsmall.png" align="right" height="126"/>
+libbib <img src="http://thepolygram.com/libbib-small.png" align="right" height="126"/>
 ===
 
 <!-- badges: start -->
