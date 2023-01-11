@@ -3,7 +3,6 @@ libbib <img src="http://thepolygram.com/libbib-small.png" align="right" height="
 
 <!-- badges: start -->
 [![Cran Version](http://www.r-pkg.org/badges/version/libbib)](https://cran.r-project.org/package=libbib)
-[![Build Status](http://travis-ci.org/NYPL/libbib.svg?branch=master)](https://travis-ci.org/NYPL/libbib)
 <!-- badges: end -->
 
 
