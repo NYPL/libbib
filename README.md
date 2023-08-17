@@ -3,6 +3,7 @@ libbib <img src="http://thepolygram.com/libbib-small.png" align="right" height="
 
 <!-- badges: start -->
 [![Cran Version](http://www.r-pkg.org/badges/version/libbib)](https://cran.r-project.org/package=libbib)
+[![](https://cranlogs.r-pkg.org/badges/libbib)](https://cran.r-project.org/package=libbib)
 <!-- badges: end -->
 
 
