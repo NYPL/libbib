@@ -43,6 +43,7 @@ The quoted group-by variable must be a character or factor. If it is
 not, it will be temporarily converted into one and a warning is issued.
 }
 \examples{
+library(data.table)
 
 iris_dt <- as.data.table(iris)
 dt_counts_and_percents(iris_dt, "Species")

@@ -25,6 +25,7 @@ All space/whitespace characters are replaced with underscores,
 as are all characters not from A-Z, a-z, an underscore, or a digit
 }
 \examples{
+library(data.table)
 
 ejemplo <- as.data.table(iris)
 setnames(ejemplo, c("Sepal Length", "Sepal@Width", "Petal	Length",

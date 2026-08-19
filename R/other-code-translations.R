@@ -5,7 +5,7 @@
 #' Takes a language code (defined in the Marc standards)
 #' and returns the language name.
 #'
-#' @import data.table
+#' @importFrom data.table data.table setindex
 #'
 #' @param x A language code (defined in the Marc standards) or a vector
 #'          of language codes
@@ -46,7 +46,7 @@ get_language_from_code <- function(x){
 #' Interestingly, although it's called 'country' in the Marc standard,
 #' cities, states, and other non-countries also have codes
 #'
-#' @import data.table
+#' @importFrom data.table data.table setindex
 #'
 #' @param x A country code (defined in the Marc standards) or a vector
 #'          of country codes

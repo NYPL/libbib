@@ -21,6 +21,7 @@ NA.
 The percent is out of 100 and contains up to two decimal places
 }
 \examples{
+library(data.table)
 
 mt <- as.data.table(mtcars)
 mt[mpg<16, mpg:=NA]

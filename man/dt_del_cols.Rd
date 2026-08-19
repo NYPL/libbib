@@ -19,6 +19,7 @@ Takes a data.table and a quoted sequence of column names
 and removes the specified column names from the data.table
 }
 \examples{
+library(data.table)
 mt <- as.data.table(mtcars)
 dt_del_cols(mt, "cyl", "disp", "hp")
 

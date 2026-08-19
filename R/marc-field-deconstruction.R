@@ -25,6 +25,7 @@
 #' #  3: Cartographic material Monograph/Item
 #'
 #' @export
+#' @importFrom data.table fcase
 marc_leader_get_info <- function(x){
   if(!methods::is(x, "character"))
     stop("x must be a string or NA")

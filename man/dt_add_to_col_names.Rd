@@ -48,6 +48,7 @@ be added to end of the each column's name. If \code{prefix}
 is \code{TRUE}, the string is added to the beginning, instead.
 }
 \examples{
+library(data.table)
 DT <- as.data.table(iris)
 
 dt_add_to_col_names(DT, "_post")

@@ -9,7 +9,7 @@
 #' Takes a data.table and a quoted sequence of column names
 #' and removes the specified column names from the data.table
 #'
-#' @import data.table
+#' @importFrom data.table := %chin% .N as.data.table copy data.table setnames
 #'
 #' @param DT A data.table
 #' @param ... arbitrary number of column names in quotes
@@ -17,6 +17,7 @@
 #' @return Returns data.table with those columns removed
 #'
 #' @examples
+#' library(data.table)
 #' mt <- as.data.table(mtcars)
 #' dt_del_cols(mt, "cyl", "disp", "hp")
 #'
@@ -36,7 +37,7 @@ dt_del_cols <- function(DT, ...){
 #' Takes a data.table and a quoted sequence of column names
 #' and removes all columns but the ones specified
 #'
-#' @import data.table
+#' @importFrom data.table := %chin% .N as.data.table copy data.table setnames
 #'
 #' @param DT A data.table
 #' @param ... arbitrary number of column names in quotes
@@ -44,6 +45,7 @@ dt_del_cols <- function(DT, ...){
 #' @return Returns data.table with only those columns
 #'
 #' @examples
+#' library(data.table)
 #' mt <- as.data.table(mtcars)
 #' dt_keep_cols(mt, "mpg", "am", "gear", "carb")
 #'
@@ -119,7 +121,7 @@ dt_pivot <- function(DT, theby, theexp, percent.cutoff=0, value.name="value",
 #' The quoted group-by variable must be a character or factor. If it is
 #' not, it will be temporarily converted into one and a warning is issued.
 #'
-#' @import data.table
+#' @importFrom data.table := %chin% .N as.data.table copy data.table setnames
 #'
 #' @param DT The data.table object to operate on
 #' @param group_by_this A quoted column to group by
@@ -137,6 +139,7 @@ dt_pivot <- function(DT, theby, theexp, percent.cutoff=0, value.name="value",
 #'         percent column (out of 100) to two decimal places
 #'
 #' @examples
+#' library(data.table)
 #'
 #' iris_dt <- as.data.table(iris)
 #' dt_counts_and_percents(iris_dt, "Species")
@@ -231,7 +234,7 @@ get_clean_names <- function(dat, lower=TRUE){
 #' All space/whitespace characters are replaced with underscores,
 #' as are all characters not from A-Z, a-z, an underscore, or a digit
 #'
-#' @import data.table
+#' @importFrom data.table := %chin% .N as.data.table copy data.table setnames
 #'
 #' @param DT a data.table
 #' @param lower A logical indicating whether all column names should be
@@ -242,6 +245,7 @@ get_clean_names <- function(dat, lower=TRUE){
 #' @seealso \code{\link{get_clean_names}}
 #'
 #' @examples
+#' library(data.table)
 #'
 #' ejemplo <- as.data.table(iris)
 #' setnames(ejemplo, c("Sepal Length", "Sepal@Width", "Petal	Length",
@@ -265,7 +269,7 @@ dt_set_clean_names <- function(DT, lower=TRUE){
 #' NA.
 #' The percent is out of 100 and contains up to two decimal places
 #'
-#' @import data.table
+#' @importFrom data.table := %chin% .N as.data.table copy data.table setnames
 #'
 #' @param DT A data.table object
 #' @param acolumn a quoted column name
@@ -275,6 +279,7 @@ dt_set_clean_names <- function(DT, lower=TRUE){
 #' @seealso \code{\link{is.na}}
 #'
 #' @examples
+#' library(data.table)
 #'
 #' mt <- as.data.table(mtcars)
 #' mt[mpg<16, mpg:=NA]
@@ -303,7 +308,7 @@ dt_percent_not_na <- function(DT, acolumn){
 #'
 #' The quoted group-by variable must be a character or factor
 #'
-#' @import data.table
+#' @importFrom data.table := %chin% .N as.data.table copy data.table setnames
 #'
 #' @param DT The data.table object to operate on
 #' @param acolumn a quoted column name
@@ -317,6 +322,7 @@ dt_percent_not_na <- function(DT, acolumn){
 #'         percent column (out of 100) to two decimal places
 #'
 #' @examples
+#' library(data.table)
 #'
 #' iris_dt <- as.data.table(iris)
 #' iris_dt[sample(1:.N, 10), Species:=NA_character_]
@@ -347,7 +353,7 @@ dt_na_breakdown <- function(DT, acolumn, big.mark=FALSE){
 #' be added to end of the each column's name. If \code{prefix}
 #' is \code{TRUE}, the string is added to the beginning, instead.
 #'
-#' @import data.table
+#' @importFrom data.table := %chin% .N as.data.table copy data.table setnames
 #'
 #' @param DT A data.table
 #' @param astring A string to add to each column name
@@ -372,6 +378,7 @@ dt_na_breakdown <- function(DT, acolumn, big.mark=FALSE){
 #'         column names.
 #'
 #' @examples
+#' library(data.table)
 #' DT <- as.data.table(iris)
 #'
 #' dt_add_to_col_names(DT, "_post")

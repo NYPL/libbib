@@ -5,7 +5,7 @@
 #' Takes an object, attribute name, and a value and sets a special
 #' libbib attribute by reference
 #'
-#' @import data.table
+#' @importFrom data.table fread fwrite setattr
 #'
 #' @param x An object to set the attribute on
 #' @param type The name of the attribute to set. \code{lb.} will be appended
@@ -35,7 +35,7 @@ set_lb_attribute <- function(x, type, value){
 #' Takes an object and a date and sets a special attribute, "lb.date"
 #' by reference
 #'
-#' @import data.table
+#' @importFrom data.table fread fwrite setattr
 #'
 #' @param x An object to set the attribute on
 #' @param value Either a value of class \code{Date} or a string in ISO 8601
@@ -66,7 +66,7 @@ set_lb_date <- function(x, value){
 #' (attributes beginning with \code{lb.}) from the first object
 #' to the second, by reference.
 #'
-#' @import data.table
+#' @importFrom data.table fread fwrite setattr
 #'
 #' @param a The first object (the one with the attributes to copy)
 #' @param b The second object (the one to copy those attributes to)
@@ -162,7 +162,7 @@ fread_plus_helper <- function(fname){
 #' \code{allow.fallback.date} is \code{TRUE}, then the \code{lb.date}
 #' attribute is set to the current date.
 #'
-#' @import data.table
+#' @importFrom data.table fread fwrite setattr
 #'
 #' @param fname The file name to read
 #' @param allow.fallback.date A logical indicating whether, if no
@@ -243,7 +243,7 @@ fread_plus_date <- function(fname, allow.fallback.date=TRUE, ...){
 #' the base file name (after any directories) with the exception of
 #' the file extension.
 #'
-#' @import data.table
+#' @importFrom data.table fread fwrite setattr
 #'
 #' @param DT a \code{data.table} to write to disk
 #' @param fname The file name to write the \code{data.table} to. The

@@ -34,6 +34,7 @@ The final row is a total count
 The quoted group-by variable must be a character or factor
 }
 \examples{
+library(data.table)
 
 iris_dt <- as.data.table(iris)
 iris_dt[sample(1:.N, 10), Species:=NA_character_]

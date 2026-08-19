@@ -33,6 +33,7 @@
 #' # "https://lccn.loc.gov/73167510/marcxml"
 #'
 #' @export
+#' @importFrom data.table fcase
 loc_permalink_from_lccn <- function(x, normalize=TRUE, format=""){
   if(all(is.na(x))) return(as.character(x))
   if(!methods::is(x, "character"))

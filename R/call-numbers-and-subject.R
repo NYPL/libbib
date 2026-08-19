@@ -28,7 +28,7 @@ REGEX.VALID.LCCALL.BARE <- make.valid.lccall.regex(allow.bare=TRUE)
 #' letter, or a second-level subclassification
 #' description based on the all the letters
 #'
-#' @import data.table
+#' @importFrom data.table := data.table setindex
 #'
 #' @param x A Library of Congress call number (string)
 #' @param subclassification A logical indicating whether the letters of
@@ -119,7 +119,7 @@ get_lc_call_subject_classification <- function(x, subclassification=FALSE,
 #' whether or not the input fits the canonical LC Call
 #' Number pattern
 #'
-#' @import data.table
+#' @importFrom data.table := data.table setindex
 #'
 #' @param x A Library of Congress call number (string)
 #' @param allow.bare A logical indicating whether an LC Call with only
@@ -164,7 +164,7 @@ attr(is_valid_lc_call, "assertr_vectorized") <- TRUE
 #' call number and returns the first letter if and only if
 #' the LC Call Number is valid
 #'
-#' @import data.table
+#' @importFrom data.table := data.table setindex
 #'
 #' @param x A Library of Congress call number (string)
 #' @param allow.bare A logical indicating whether an LC Call with only
@@ -209,7 +209,7 @@ get_lc_call_first_letter <- function(x, allow.bare=FALSE){
 #' call number and returns all the subject letters if and only if
 #' the LC Call Number is valid
 #'
-#' @import data.table
+#' @importFrom data.table := data.table setindex
 #' @import utils
 #'
 #' @param x A Library of Congress call number (string)
@@ -261,7 +261,7 @@ get_all_lc_call_subject_letters <- function(x, allow.bare=FALSE){
 #' This uses the hundreds place of the DDC number
 #' and returns the most general subject classification.
 #'
-#' @import data.table
+#' @importFrom data.table := data.table setindex
 #'
 #' @param x A Dewey Decimal call number
 #'
@@ -313,7 +313,7 @@ get_dewey_decimal_subject_class <- function(x){
 #' This uses the first two digits of the DDC number
 #' and returns the second most general subject classification.
 #'
-#' @import data.table
+#' @importFrom data.table := data.table setindex
 #'
 #' @param x A Dewey Decimal call number
 #'
@@ -365,7 +365,7 @@ get_dewey_decimal_subject_division <- function(x){
 #' This uses the first three digits of the DDC number
 #' and returns the third most general subject classification.
 #'
-#' @import data.table
+#' @importFrom data.table := data.table setindex
 #'
 #' @param x A Dewey Decimal call number
 #'

@@ -1069,6 +1069,7 @@ worldcat_api_search_helper <- function(sru, max_records=100,
 #'
 #' }
 #' @export
+#' @importFrom data.table fcase rbindlist setcolorder
 worldcat_api_search <- function(sru, max_records=10,
                                 sru_query_assist=getOption("libbib.sru_query_assist", TRUE),
                                 frbrGrouping="on", start_at=1,

@@ -19,6 +19,7 @@ Takes a data.table and a quoted sequence of column names
 and removes all columns but the ones specified
 }
 \examples{
+library(data.table)
 mt <- as.data.table(mtcars)
 dt_keep_cols(mt, "mpg", "am", "gear", "carb")
 
